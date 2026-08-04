@@ -4,7 +4,7 @@ Aggiornare man mano che si raccolgono dati e feedback. Non è immutabile.
 
 | # | Milestone | Stato |
 |---|---|---|
-| 1 | Home online su GitHub Pages | ✅ In corso (questa release) |
+| 1 | Home online su GitHub Pages | ✅ Completata (2026-08-04) |
 | 2 | Pagina personale NFC per Lorenzo (`/maatbric/lorenzo` + vCard) | ⬜ |
 | 3 | Pagine NFC degli altri soci Maatbric | ⬜ |
 | 4 | Progettazione e documentazione del biglietto NFC (Fusion, sede tag, pausa stampa, test) | ⬜ |
