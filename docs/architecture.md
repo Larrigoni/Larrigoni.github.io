@@ -16,7 +16,7 @@ con schema validato (Zod). Nessun backend, database o CMS.
 `https://larrigoni.github.io` (nessun prefisso di percorso, nessun `base` in Astro).
 
 **Motivo:** URL più pulito e corto possibile senza acquistare un dominio. Le future
-pagine NFC diventano `https://larrigoni.github.io/maatbric/lorenzo` — ideale da
+pagine NFC diventano `https://larrigoni.github.io/card/lorenzo` — ideale da
 scrivere su un tag NFC. Un dominio personalizzato potrà essere collegato in seguito
 senza cambiare architettura (CNAME + `site` in `astro.config.mjs`).
 
@@ -54,8 +54,21 @@ Performance e manutenzione al minimo.
 ## ADR-006 — Struttura URL predisposta per il futuro (2026-08-04)
 
 **Decisione:** la V1 pubblica solo `/` e `/404`. L'architettura prevede già, senza
-implementarle: `/projects/<slug>` (pagine case study), `/maatbric/<nome>` (business
-card digitali NFC), `/print-lab`, `/about`, `/contact`.
+implementarle: `/projects/<slug>` (pagine case study), `/card/lorenzo` (business
+card digitale NFC personale), `/print-lab`, `/about`, `/contact`.
 
 **Motivo:** evitare overengineering (regola fondamentale del brief) mantenendo il
 percorso di crescita libero.
+
+## ADR-007 — Iterazione del design via Claude Design (2026-08-05)
+
+**Decisione:** il design system del sito (colori, tipografia, componenti, pagine)
+viene replicato come card di anteprima in un progetto **Claude Design**
+(claude.ai/design, progetto "Lorenzo Arrigoni — Portfolio"). Lì si itera
+visivamente; le varianti approvate vengono poi riportate a mano nel codice Astro
+(`src/styles/global.css` e componenti), con build e deploy da questo repository.
+
+**Motivo:** iterare sul design in chat visuale è più rapido che via codice.
+**Vincolo:** il repository resta l'unica fonte di verità — nessuna modifica fatta
+su Claude Design è "vera" finché non è portata qui, committata e deployata.
+Le card di anteprima sono artefatti generati, rigenerabili dal codice sorgente.

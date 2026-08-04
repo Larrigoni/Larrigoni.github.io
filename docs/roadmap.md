@@ -5,8 +5,8 @@ Aggiornare man mano che si raccolgono dati e feedback. Non è immutabile.
 | # | Milestone | Stato |
 |---|---|---|
 | 1 | Home online su GitHub Pages | ✅ Completata (2026-08-04) |
-| 2 | Pagina personale NFC per Lorenzo (`/maatbric/lorenzo` + vCard) | ⬜ |
-| 3 | Pagine NFC degli altri soci Maatbric | ⬜ |
+| 2 | Design system su Claude Design (iterazione visiva del front end) | 🔄 In corso |
+| 3 | Pagina personale NFC (`/card/lorenzo` + vCard) | ⬜ |
 | 4 | Progettazione e documentazione del biglietto NFC (Fusion, sede tag, pausa stampa, test) | ⬜ |
 | 5 | Primo case study completo (Maatbric Smart Business Card) | ⬜ |
 | 6 | Sezione Projects con pagine di dettaglio `/projects/<slug>` | ⬜ |
