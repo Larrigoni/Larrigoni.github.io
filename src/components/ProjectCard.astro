@@ -1,0 +1,119 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, status, category, summary, originalDesign, printer, software } = project.data;
+
+const statusLabels: Record<string, string> = {
+  concept: 'Concept',
+  'in-sviluppo': 'In sviluppo',
+  prototipo: 'Prototipo',
+  completato: 'Completato',
+};
+
+const categoryLabels: Record<string, string> = {
+  'smart-objects': 'Smart Objects',
+  'custom-fit': 'Custom Fit',
+  'process-tools': 'Process Tools',
+  'print-lab': 'Print Lab',
+};
+---
+
+<article class="card">
+  <div class="badges">
+    <span class:list={['badge', { accent: originalDesign }]}>
+      {originalDesign ? 'Design originale' : 'Print Lab · modello di terzi'}
+    </span>
+    <span class="badge">{statusLabels[status]}</span>
+  </div>
+
+  <h3>{title}</h3>
+  <p class="summary">{summary}</p>
+
+  <dl class="meta">
+    <div>
+      <dt class="label">Categoria</dt>
+      <dd>{categoryLabels[category]}</dd>
+    </div>
+    <div>
+      <dt class="label">Stampante</dt>
+      <dd>{printer}</dd>
+    </div>
+    <div>
+      <dt class="label">Software</dt>
+      <dd>{software.join(', ')}</dd>
+    </div>
+  </dl>
+
+  <p class="note label">Case study completo — in arrivo</p>
+</article>
+
+<style>
+  .card {
+    border: 1px solid var(--ink);
+    background: var(--paper-raised);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    transition:
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 rgba(23, 20, 13, 0.12);
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid var(--line-strong);
+    padding: 0.25rem 0.6rem;
+  }
+
+  .badge.accent {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  h3 {
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+  }
+
+  .summary {
+    color: var(--ink-soft);
+    max-width: 38rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    border-top: 1px solid var(--line);
+    padding-top: 1.1rem;
+  }
+
+  .meta dd {
+    margin: 0.15rem 0 0;
+    font-size: 0.9rem;
+  }
+
+  .note {
+    color: var(--accent);
+  }
+</style>

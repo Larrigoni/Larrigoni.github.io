@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Pagina non trovata — Lorenzo Arrigoni" description="La pagina richiesta non esiste.">
+  <section class="wrap not-found">
+    <p class="label">Errore 404</p>
+    <h1>Pagina non trovata</h1>
+    <p>La pagina che cerchi non esiste o è stata spostata.</p>
+    <p><a href="/">← Torna alla home</a></p>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding-top: clamp(4rem, 10vw, 7rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 7vw, 4rem);
+    text-transform: uppercase;
+  }
+</style>

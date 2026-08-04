@@ -1,0 +1,16 @@
+# dipendenze e output di build
+node_modules/
+dist/
+.astro/
+
+# log e file temporanei
+npm-debug.log*
+*.log
+
+# ambiente (mai committare secret)
+.env
+.env.*
+
+# sistema operativo
+.DS_Store
+Thumbs.db

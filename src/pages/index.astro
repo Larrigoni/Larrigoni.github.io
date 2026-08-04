@@ -1,0 +1,288 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// Copy provvisorio (vedi brief): facilmente modificabile qui sotto.
+const capabilities = [
+  'Oggetti personalizzati',
+  'Prototipi',
+  'Accessori funzionali',
+  'Piccoli ricambi non critici',
+  'Organizer',
+  'Supporti',
+  'Adattatori',
+  'Oggetti intelligenti con NFC',
+];
+
+const process = [
+  'Problema',
+  'Analisi',
+  'Vincoli',
+  'Progettazione',
+  'Prototipo',
+  'Test',
+  'Iterazione',
+  'Soluzione',
+];
+---
+
+<BaseLayout>
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="titolo-hero">
+    <div class="wrap">
+      <p class="label reveal" style="--d: 0ms">Portfolio · Progettazione &amp; stampa 3D</p>
+      <h1 id="titolo-hero" class="hero-title reveal" style="--d: 80ms">
+        Lorenzo<br />Arrigoni
+      </h1>
+      <p class="hero-tagline reveal" style="--d: 160ms">
+        Progettazione 3D&ensp;·&ensp;Prototipazione&ensp;·&ensp;Soluzioni su misura
+      </p>
+      <p class="hero-lead reveal" style="--d: 240ms">
+        Progetto e realizzo oggetti che risolvono piccoli problemi reali.
+      </p>
+      <p class="hero-tools label reveal" style="--d: 320ms">
+        Bambu Lab X2D · Autodesk Fusion
+      </p>
+    </div>
+
+    <!-- striscia metodo: dal problema alla soluzione -->
+    <div class="wrap">
+      <ol class="process reveal" style="--d: 400ms" aria-label="Metodo di lavoro">
+        {
+          process.map((step, i) => (
+            <li>
+              <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+              {step}
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- COSA PROGETTO -->
+  <section class="section" aria-labelledby="titolo-cosa">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-num" aria-hidden="true">01</span>
+        <h2 id="titolo-cosa">Cosa progetto</h2>
+      </div>
+      <p class="intro">
+        Non parto da «cosa posso stampare», ma da «quale problema posso risolvere».
+        Osservo un problema, ne capisco i vincoli, progetto una soluzione in Autodesk
+        Fusion, la prototipo, la testo e la miglioro finché funziona davvero.
+      </p>
+      <ul class="cap-grid" role="list">
+        {
+          capabilities.map((cap, i) => (
+            <li>
+              <span class="cap-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              {cap}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- PROGETTI -->
+  <section id="progetti" class="section" aria-labelledby="titolo-progetti">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-num" aria-hidden="true">02</span>
+        <h2 id="titolo-progetti">Progetti</h2>
+      </div>
+      <p class="intro">
+        Ogni progetto originale racconta un percorso: problema, vincoli, progettazione,
+        prototipo, test, iterazioni, soluzione. I design originali sono sempre distinti
+        dalle stampe di modelli di altri designer.
+      </p>
+      <div class="projects-grid">
+        {projects.map((project) => <ProjectCard project={project} />)}
+        <div class="placeholder-card" role="note">
+          <span class="label">In lavorazione</span>
+          <p>Altri case study sono in preparazione e verranno pubblicati qui.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATTO -->
+  <section id="contatto" class="section" aria-labelledby="titolo-contatto">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-num" aria-hidden="true">03</span>
+        <h2 id="titolo-contatto">Contatto</h2>
+      </div>
+      <p class="cta">
+        Hai un problema che potrebbe essere risolto con un oggetto su&nbsp;misura?
+      </p>
+      <p class="intro">
+        Un pezzo introvabile, un supporto che non esiste, un accessorio che «quasi»
+        funziona: raccontamelo e valutiamo insieme se si può progettare una soluzione.
+      </p>
+      <div class="contact-placeholder" role="note">
+        <span class="label">Placeholder · TODO</span>
+        <p>
+          Canale di contatto in configurazione — l'indirizzo email e i profili social
+          verranno pubblicati qui a breve.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- hero ---------- */
+  .hero {
+    padding-top: clamp(3.5rem, 9vw, 6.5rem);
+    background-image: radial-gradient(var(--line) 1px, transparent 1px);
+    background-size: 26px 26px;
+    background-position: center top;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 12vw, 7rem);
+    font-weight: 720;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    line-height: 0.95;
+    margin-top: 1.25rem;
+  }
+
+  .hero-tagline {
+    margin-top: 1.75rem;
+    font-family: var(--font-mono);
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+  }
+
+  .hero-lead {
+    margin-top: 1rem;
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    font-weight: 460;
+    max-width: 34ch;
+    text-wrap: balance;
+  }
+
+  .hero-tools {
+    margin-top: 1.5rem;
+  }
+
+  .process {
+    list-style: none;
+    padding: 0.9rem 0;
+    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.6rem;
+    background: var(--paper);
+  }
+
+  .process li {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .process li:not(:last-child)::after {
+    content: '→';
+    margin-left: 1.6rem;
+    color: var(--ink-soft);
+  }
+
+  .step-num {
+    color: var(--accent);
+    margin-right: 0.45rem;
+  }
+
+  /* ---------- sezioni ---------- */
+  .intro {
+    max-width: var(--measure);
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+  }
+
+  /* cosa progetto */
+  .cap-grid {
+    list-style: none;
+    padding: 0;
+    margin-top: 2.25rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+  }
+
+  .cap-grid li {
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 1.1rem 1.2rem;
+    font-weight: 500;
+    font-size: 0.98rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: baseline;
+    background: var(--paper-raised);
+  }
+
+  .cap-num {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+  }
+
+  /* progetti */
+  .projects-grid {
+    margin-top: 2.25rem;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .placeholder-card {
+    border: 1px dashed var(--line-strong);
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    color: var(--ink-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* contatto */
+  .cta {
+    font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+    font-weight: 640;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    max-width: 24ch;
+    margin-bottom: 1.25rem;
+    text-wrap: balance;
+  }
+
+  .contact-placeholder {
+    margin-top: 2rem;
+    border: 1px dashed var(--accent);
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    max-width: var(--measure);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .contact-placeholder .label {
+    color: var(--accent);
+  }
+</style>

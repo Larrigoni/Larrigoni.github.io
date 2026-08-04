@@ -1,0 +1,41 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap grid">
+    <p class="colophon">
+      © {year} Lorenzo Arrigoni<br />
+      Progettazione 3D · Prototipazione · Soluzioni su misura
+    </p>
+    <p class="meta label">
+      Social — in arrivo (placeholder)<br />
+      <a href="https://github.com/Larrigoni/Larrigoni.github.io">Codice sorgente su GitHub</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--section-gap);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.25rem 3rem;
+    padding-block: 2rem 2.5rem;
+  }
+
+  .colophon {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  .meta {
+    line-height: 2;
+  }
+</style>
