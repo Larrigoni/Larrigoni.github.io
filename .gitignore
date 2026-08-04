@@ -2,6 +2,7 @@
 node_modules/
 dist/
 .astro/
+.design-bundle/
 
 # log e file temporanei
 npm-debug.log*
