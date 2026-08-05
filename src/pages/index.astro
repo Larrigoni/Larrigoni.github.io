@@ -50,6 +50,13 @@ const metodo = [
   { n: '06', c: 'n-plain', t: 'La soluzione', d: 'Versione finale, replicabile e documentata. Poi si ricomincia.' },
 ];
 
+const preventivo = [
+  { n: '01', c: 'n-cyan', t: 'Invio del modello', d: 'Un file 3D (STL, STEP, OBJ, 3MF) oppure il pezzo da rifare, anche solo una foto quotata.' },
+  { n: '02', c: 'n-yellow', t: 'Analisi del pezzo', d: 'Il modello viene elaborato: tempo macchina e grammi di materiale calcolati sul pezzo reale, non a occhio.' },
+  { n: '03', c: 'n-red', t: 'Costi reali', d: 'Materiale, tempo di stampa, energia e usura, più eventuali extra: inserti, tag NFC, spedizione.' },
+  { n: '04', c: 'n-green', t: 'Preventivo in PDF', d: 'Prezzo chiaro, voci separate, nessuna sorpresa. Se cambi quantità o materiale, si ricalcola.' },
+];
+
 const problemi = [
   { chip: 'var(--red)', t: 'Oggetti personalizzati', e: 'Un portapenne disegnato sulle misure esatte della tua scrivania.' },
   { chip: 'var(--yellow)', t: 'Prototipi', e: 'Tenere in mano una forma prima di deciderne la versione definitiva.' },
@@ -80,12 +87,6 @@ const problemi = [
       <div class="cta-row">
         <a class="btn primary" href="#progetti">Guarda i progetti →</a>
         <a class="btn accent" href="#contatto">Raccontami il problema</a>
-      </div>
-      <div class="hero-tools">
-        <div><span class="k">Stampante</span><span class="v">Bambu Lab X2D</span></div>
-        <div><span class="k">CAD</span><span class="v">Autodesk Fusion</span></div>
-        <div><span class="k">Metodo</span><span class="v">Problema → soluzione</span></div>
-        <div><span class="badge eco">PLA da fonti rinnovabili</span></div>
       </div>
     </div>
   </section>
@@ -215,6 +216,56 @@ const problemi = [
       <div class="figure">
         <span class="big">Foto del laboratorio — in arrivo</span>
         <span class="cap">Placeholder · Bambu Lab X2D al lavoro</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREVENTIVO -->
+  <section class="wrap section-pad-b" id="preventivo" aria-labelledby="titolo-preventivo">
+    <div class="section-head">
+      <div class="titles"><span class="section-num" aria-hidden="true">05</span><h2 id="titolo-preventivo">Come nasce un preventivo</h2></div>
+      <p>Niente stime a occhio: il costo si calcola sul modello 3D vero. Quattro passaggi e ricevi un PDF con ogni voce in chiaro.</p>
+    </div>
+    <div class="section-body">
+      <ol class="process" aria-label="Come nasce un preventivo">
+        {
+          preventivo.map((s) => (
+            <li>
+              <span class="top">
+                <span class:list={['step-num', s.c]} aria-hidden="true">{s.n}</span>
+                <h3>{s.t}</h3>
+              </span>
+              <p>{s.d}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <div class="quote-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-tab">PDF · Esempio</span>
+          <p class="panel-title">Esempio di preventivo</p>
+          <p class="panel-meta">Dati di esempio</p>
+        </div>
+        <div class="panel-kerb"></div>
+        <div class="rows">
+          <div class="row txt3"><span class="pos" aria-hidden="true">01</span><span class="who">Materiale · PETG</span><span class="val">124 g</span></div>
+          <div class="row txt3"><span class="pos" aria-hidden="true">02</span><span class="who">Tempo di stampa</span><span class="val">4:10 h</span></div>
+          <div class="row txt3"><span class="pos" aria-hidden="true">03</span><span class="who">Servizi extra · inserti M4</span><span class="val">×6</span></div>
+          <div class="row txt3"><span class="pos" aria-hidden="true">04</span><span class="who">Copie</span><span class="val">×2</span></div>
+        </div>
+        <div class="panel-foot">
+          <span>Voci e margini sempre <b>visibili</b></span>
+          <span>Consegna PDF · <b>immediata</b></span>
+        </div>
+      </div>
+      <div class="placeholder-card wide" role="note">
+        <span class="label">Nota</span>
+        <p>
+          Il preventivo è gratuito e non impegna: serve a decidere insieme se il pezzo vale la
+          stampa. Prezzi e voci dell'esempio sono indicativi.
+        </p>
       </div>
     </div>
   </section>

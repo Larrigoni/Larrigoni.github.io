@@ -94,3 +94,26 @@ placeholder dichiarati.
 quindi obsoleto: il progetto Claude Design è ora avanti rispetto al generatore.
 Non rigenerare il bundle senza prima aggiornare lo script, o si sovrascrive il
 lavoro fatto sulla piattaforma.
+
+## ADR-009 — Round-trip 2: logo, barre verdi, sezione Preventivo (2026-08-05)
+
+**Decisione:** portate a bordo le novità della seconda iterazione su Claude Design:
+
+- **logo ufficiale** `public/logo.svg` (monogramma "LA" racing) nell'header e
+  sulla card `/card/lorenzo`; la favicon resta il monogramma washi "AL"
+  (scelta esplicita di Lorenzo);
+- header e footer passano da giallo a **verde**; targa numero di sezione da
+  rosso a **cyan**; hero senza striscia strumenti;
+- nuova sezione home **05 · Come nasce un preventivo** (`#preventivo`, anche in
+  nav): 4 passaggi + pannello "Esempio di preventivo" con valori dichiarati
+  indicativi dalla nota a fianco.
+
+**Contenuti preventivo:** ispirati al flusso del software di preventivazione che
+Lorenzo userà (guida di terzi analizzata ma NON citata né copiata: il copy è
+originale, il PDF non è nel repo). Le parti stale del design (contatto
+placeholder, registro con dati finti) NON sono state riportate: sul sito restano
+email reale e dati reali (regola ADR-008).
+
+**Nota tecnica:** il testo "LA" in `logo.svg` usa `font-family: Archivo` con
+fallback `system-ui`; dentro `<img>` i font esterni non si caricano, quindi la
+resa dipende dal fallback. Polish futuro: convertire il testo in tracciato.

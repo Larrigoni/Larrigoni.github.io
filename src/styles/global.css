@@ -207,8 +207,8 @@ h1.hero-title .c4 { color: var(--green); }
 .section-num {
   display: grid;
   place-items: center;
-  background: var(--red);
-  color: var(--surface);
+  background: var(--cyan);
+  color: var(--ink);
   border: var(--edge);
   border-right: 0;
   font-family: var(--font-mono);
@@ -278,7 +278,7 @@ h1.hero-title .c4 { color: var(--green); }
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--yellow);
+  background: var(--green);
   border-bottom: var(--edge);
 }
 
@@ -298,14 +298,11 @@ h1.hero-title .c4 { color: var(--green); }
   color: var(--ink);
 }
 
-.wordmark .cube {
-  width: 1.9rem;
-  height: 1.9rem;
-  border: var(--edge);
-  background: var(--red);
-  box-shadow: 3px 3px 0 var(--ink);
-  transform: skewX(var(--skew));
+.wordmark .logo {
+  width: 2.2rem;
+  height: 2.2rem;
   flex: none;
+  filter: drop-shadow(2px 2px 0 rgba(21, 21, 29, 0.35));
 }
 
 .wordmark b {
@@ -679,6 +676,11 @@ h1.hero-title .c4 { color: var(--green); }
   grid-template-columns: 2.4rem minmax(0, 1fr);
 }
 
+/* riga a tre colonne: targa + voce + valore */
+.row.txt3 {
+  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+}
+
 .row.txt .who {
   white-space: normal;
   text-transform: none;
@@ -946,6 +948,10 @@ h1.hero-title .c4 { color: var(--green); }
   max-width: 34rem;
 }
 
+.placeholder-card.wide {
+  max-width: none;
+}
+
 .placeholder-card .label {
   color: var(--red);
 }
@@ -1011,7 +1017,7 @@ h1.hero-title .c4 { color: var(--green); }
 /* footer */
 .site-footer {
   border-top: var(--edge);
-  background: var(--yellow);
+  background: var(--green);
   margin-top: var(--section-gap);
 }
 
@@ -1072,6 +1078,14 @@ h1.hero-title .c4 { color: var(--green); }
   align-items: start;
 }
 
+.quote-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.25rem;
+  margin-top: 1.6rem;
+  align-items: start;
+}
+
 @media (max-width: 64rem) {
   .process,
   .cap-grid {
@@ -1082,7 +1096,8 @@ h1.hero-title .c4 { color: var(--green); }
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .impronta-grid {
+  .impronta-grid,
+  .quote-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -24,6 +24,7 @@ Aggiornare man mano che si raccolgono dati e feedback. Non è immutabile.
 - [ ] Fotografie per gli slot "figure" (pezzo finito 4:3, laboratorio)
 - [ ] Scheda tecnica con dati di stampa reali (componente pronto nel design system, entra col primo case study)
 - [ ] Aggiornare `scripts/gen-design-bundle.mjs` al nuovo design (vedi ADR-008)
+- [ ] Logo: convertire il testo "LA" di `logo.svg` in tracciato (resa font garantita ovunque)
 - [ ] Link social (Instagram / LinkedIn / altro)
 - [ ] Immagine Open Graph per le anteprime social
 - [ ] Sitemap (`@astrojs/sitemap`) quando le pagine saranno più di due

@@ -11,7 +11,7 @@ const email = 'lore.larrigoni@gmail.com';
   <div class="kerb" role="presentation"></div>
 
   <main class="card-page">
-    <span class="cube" aria-hidden="true"></span>
+    <img class="logo" src="/logo.svg" alt="" />
     <h1 class="display name">Lorenzo<br />Arrigoni</h1>
     <p class="label role">Progettazione 3D · Prototipazione · Su misura</p>
 
@@ -43,13 +43,10 @@ const email = 'lore.larrigoni@gmail.com';
     align-content: center;
   }
 
-  .cube {
-    width: 3.2rem;
-    height: 3.2rem;
-    border: var(--edge);
-    background: var(--red);
-    box-shadow: 4px 4px 0 var(--ink);
-    transform: skewX(var(--skew));
+  .logo {
+    width: 4rem;
+    height: 4rem;
+    filter: drop-shadow(3px 3px 0 rgba(21, 21, 29, 0.35));
   }
 
   h1.name {
