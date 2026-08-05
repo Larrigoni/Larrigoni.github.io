@@ -1,0 +1,47 @@
+---
+// Layout minimale per le business card digitali (/card/*): niente header
+// e footer di navigazione — la pagina viene aperta da un tag NFC e deve
+// essere immediata su mobile.
+import '@fontsource/titan-one';
+import '@fontsource-variable/archivo';
+import '@fontsource-variable/archivo/wght-italic.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f5c518" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Lorenzo Arrigoni" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="it_IT" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

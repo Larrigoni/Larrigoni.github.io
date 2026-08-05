@@ -1,0 +1,89 @@
+---
+import CardLayout from '../../layouts/CardLayout.astro';
+
+const email = 'lore.larrigoni@gmail.com';
+---
+
+<CardLayout
+  title="Lorenzo Arrigoni — Biglietto da visita digitale"
+  description="Contatti di Lorenzo Arrigoni: progettazione 3D, prototipazione, soluzioni su misura."
+>
+  <div class="kerb" role="presentation"></div>
+
+  <main class="card-page">
+    <span class="cube" aria-hidden="true"></span>
+    <h1 class="display name">Lorenzo<br />Arrigoni</h1>
+    <p class="label role">Progettazione 3D · Prototipazione · Su misura</p>
+
+    <div class="actions">
+      <a class="btn primary" href={`mailto:${email}`}>Scrivimi</a>
+      <a class="btn accent" href="/lorenzo-arrigoni.vcf">Salva il contatto</a>
+      <a class="btn" href="/">Guarda il portfolio</a>
+    </div>
+
+    <p class="label mail"><a href={`mailto:${email}`}>{email}</a></p>
+  </main>
+
+  <footer class="card-foot">
+    <div class="kerb yellow slim" role="presentation"></div>
+    <p class="label">© {new Date().getFullYear()} Lorenzo Arrigoni</p>
+  </footer>
+</CardLayout>
+
+<style>
+  .card-page {
+    max-width: 26rem;
+    margin-inline: auto;
+    min-height: calc(100svh - 6rem);
+    padding: clamp(2.5rem, 10vw, 4rem) var(--pad) 2.5rem;
+    display: grid;
+    gap: 1.3rem;
+    justify-items: center;
+    text-align: center;
+    align-content: center;
+  }
+
+  .cube {
+    width: 3.2rem;
+    height: 3.2rem;
+    border: var(--edge);
+    background: var(--red);
+    box-shadow: 4px 4px 0 var(--ink);
+    transform: skewX(var(--skew));
+  }
+
+  h1.name {
+    font-size: clamp(2.6rem, 13vw, 3.6rem);
+    color: var(--yellow);
+    transform: skewX(-4deg);
+  }
+
+  .role {
+    color: var(--ink);
+  }
+
+  .actions {
+    display: grid;
+    gap: 0.9rem;
+    width: 100%;
+    margin-top: 0.8rem;
+  }
+
+  .actions .btn {
+    justify-content: center;
+  }
+
+  .mail a {
+    color: var(--ink-soft);
+  }
+
+  .card-foot {
+    display: grid;
+    gap: 0.9rem;
+    padding-bottom: 1.4rem;
+  }
+
+  .card-foot .label {
+    text-align: center;
+  }
+</style>

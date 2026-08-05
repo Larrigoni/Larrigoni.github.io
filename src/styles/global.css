@@ -996,6 +996,18 @@ h1.hero-title .c4 { color: var(--green); }
   font-weight: 500;
 }
 
+.contact .mail {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contact .mail a {
+  color: var(--ink);
+}
+
 /* footer */
 .site-footer {
   border-top: var(--edge);
