@@ -5,7 +5,7 @@ Aggiornare man mano che si raccolgono dati e feedback. Non è immutabile.
 | # | Milestone | Stato |
 |---|---|---|
 | 1 | Home online su GitHub Pages | ✅ Completata (2026-08-04) |
-| 2 | Design system su Claude Design (iterazione visiva del front end) | 🔄 In corso |
+| 2 | Design system su Claude Design (iterazione visiva del front end) | ✅ Completata (2026-08-05) |
 | 3 | Pagina personale NFC (`/card/lorenzo` + vCard) | ⬜ |
 | 4 | Progettazione e documentazione del biglietto NFC (Fusion, sede tag, pausa stampa, test) | ⬜ |
 | 5 | Primo case study completo (Maatbric Smart Business Card) | ⬜ |
@@ -20,7 +20,9 @@ Aggiornare man mano che si raccolgono dati e feedback. Non è immutabile.
 ## TODO aperti (V1)
 
 - [ ] Email di contatto definitiva (attualmente placeholder marcato TODO)
-- [ ] Fotografie dei progetti e delle stampe
+- [ ] Fotografie per gli slot "figure" (pezzo finito 4:3, laboratorio)
+- [ ] Scheda tecnica con dati di stampa reali (componente pronto nel design system, entra col primo case study)
+- [ ] Aggiornare `scripts/gen-design-bundle.mjs` al nuovo design (vedi ADR-008)
 - [ ] Link social (Instagram / LinkedIn / altro)
 - [ ] Immagine Open Graph per le anteprime social
 - [ ] Sitemap (`@astrojs/sitemap`) quando le pagine saranno più di due

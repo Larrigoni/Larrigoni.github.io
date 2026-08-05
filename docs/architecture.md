@@ -72,3 +72,25 @@ visivamente; le varianti approvate vengono poi riportate a mano nel codice Astro
 **Vincolo:** il repository resta l'unica fonte di verità — nessuna modifica fatta
 su Claude Design è "vera" finché non è portata qui, committata e deployata.
 Le card di anteprima sono artefatti generati, rigenerabili dal codice sorgente.
+
+## ADR-008 — Design "racing pop / pit lane" dal round-trip Claude Design (2026-08-05)
+
+**Decisione:** adottato il design system iterato da Lorenzo su Claude Design:
+Titan One come display (lettere multicolori bordate), Archivo per il testo,
+IBM Plex Mono per i dati; cordoli diagonali come divisori, blocchi inclinati
+(-12°), ombre piatte, pannelli "telemetria" in carbonio, sezione scura Progetti
+con registro, sezione Impronta. `src/styles/global.css` è il porting fedele di
+`styles.css` del progetto design (font self-hosted invece di Google Fonts).
+Supera l'estetica minimale di ADR-005.
+
+**Regola contenuti:** i dati segnaposto delle card di design (righe "Titolo
+progetto uno", percentuali eco, scheda tecnica demo) NON vengono pubblicati.
+Sul sito il registro mostra i progetti reali (collection + coda dalla roadmap),
+il pannello Impronta contiene solo affermazioni qualitative vere, e la scheda
+tecnica con dati di stampa reali arriverà con i case study. Gli slot foto sono
+placeholder dichiarati.
+
+**Nota:** `scripts/gen-design-bundle.mjs` replica ancora il vecchio design ed è
+quindi obsoleto: il progetto Claude Design è ora avanti rispetto al generatore.
+Non rigenerare il bundle senza prima aggiornare lo script, o si sovrascrive il
+lavoro fatto sulla piattaforma.

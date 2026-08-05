@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource-variable/archivo": "^5.2.5",
     "@fontsource/ibm-plex-mono": "^5.2.5",
+    "@fontsource/titan-one": "^5.2.5",
     "astro": "^5.12.0"
   }
 }

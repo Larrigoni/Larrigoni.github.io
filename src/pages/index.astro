@@ -7,27 +7,58 @@ const projects = (await getCollection('projects')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
-// Copy provvisorio (vedi brief): facilmente modificabile qui sotto.
-const capabilities = [
-  'Oggetti personalizzati',
-  'Prototipi',
-  'Accessori funzionali',
-  'Piccoli ricambi non critici',
-  'Organizer',
-  'Supporti',
-  'Adattatori',
-  'Oggetti intelligenti con NFC',
+const categoryLabels: Record<string, string> = {
+  'smart-objects': 'Smart Objects',
+  'custom-fit': 'Custom Fit',
+  'process-tools': 'Process Tools',
+  'print-lab': 'Print Lab',
+};
+
+// LED di stato del registro: classe CSS + etichetta
+const statusInfo: Record<string, { cls: string; label: string }> = {
+  completato: { cls: '', label: 'Validato' },
+  prototipo: { cls: 'warn', label: 'In prova' },
+  'in-sviluppo': { cls: 'warn', label: 'In sviluppo' },
+  concept: { cls: 'queue', label: 'In coda' },
+};
+
+// Registro: progetti reali dalla collection + progetti in coda dalla roadmap
+const registro = [
+  ...projects.map((p) => ({
+    title: p.data.title,
+    category: categoryLabels[p.data.category],
+    st: statusInfo[p.data.status],
+    lead: p.data.featured,
+  })),
+  { title: 'SinkFit', category: 'Custom Fit', st: statusInfo.concept, lead: false },
+  { title: 'Custom Lid System', category: 'Custom Fit', st: statusInfo.concept, lead: false },
+  { title: 'DeskDock', category: 'Custom Fit', st: statusInfo.concept, lead: false },
+  { title: 'ProcessAid', category: 'Process Tools', st: statusInfo.concept, lead: false },
 ];
 
-const process = [
-  'Problema',
-  'Analisi',
-  'Vincoli',
-  'Progettazione',
-  'Prototipo',
-  'Test',
-  'Iterazione',
-  'Soluzione',
+const aggiornato = new Date()
+  .toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  .replaceAll('/', '.');
+
+// Copy provvisorio: modificabile qui sotto
+const metodo = [
+  { n: '01', c: 'n-red', t: 'Il problema', d: 'Qualcosa non esiste, non entra o si rompe sempre nello stesso punto.' },
+  { n: '02', c: 'n-yellow', t: 'I vincoli', d: 'Misure reali, spazi stretti, materiali già presenti: si parte da lì.' },
+  { n: '03', c: 'n-cyan', t: 'Il progetto', d: 'Disegno in Fusion partendo dalle quote, non dall’idea di forma.' },
+  { n: '04', c: 'n-green', t: 'Il prototipo', d: 'Prima versione stampata: serve per sbagliare presto e a poco.' },
+  { n: '05', c: 'n-blue', t: 'Il test', d: 'Si monta, si carica, si usa per giorni. Se cede, si annota perché.' },
+  { n: '06', c: 'n-plain', t: 'La soluzione', d: 'Versione finale, replicabile e documentata. Poi si ricomincia.' },
+];
+
+const problemi = [
+  { chip: 'var(--red)', t: 'Oggetti personalizzati', e: 'Un portapenne disegnato sulle misure esatte della tua scrivania.' },
+  { chip: 'var(--yellow)', t: 'Prototipi', e: 'Tenere in mano una forma prima di deciderne la versione definitiva.' },
+  { chip: 'var(--cyan)', t: 'Accessori funzionali', e: 'La staffa che il produttore non ha mai messo in catalogo.' },
+  { chip: 'var(--green)', t: 'Piccoli ricambi', e: 'La manopola della lavatrice che non si trova più da nessuna parte.' },
+  { chip: 'var(--blue)', t: 'Organizer', e: 'Divisori su misura per un cassetto, una valigetta, un ripiano.' },
+  { chip: 'var(--red)', t: 'Supporti', e: 'Un sostegno stabile per monitor, cuffie o utensili da banco.' },
+  { chip: 'var(--yellow)', t: 'Adattatori', e: 'Far combaciare due attacchi che non sono nati per stare insieme.' },
+  { chip: 'var(--cyan)', t: 'Oggetti intelligenti', e: 'Un tag NFC integrato che apre una pagina con un tocco.' },
 ];
 ---
 
@@ -35,29 +66,48 @@ const process = [
   <!-- HERO -->
   <section class="hero" aria-labelledby="titolo-hero">
     <div class="wrap">
-      <p class="label reveal" style="--d: 0ms">Portfolio · Progettazione &amp; stampa 3D</p>
-      <h1 id="titolo-hero" class="hero-title reveal" style="--d: 80ms">
-        Lorenzo<br />Arrigoni
+      <p class="hero-eyebrow"><span class="dot" aria-hidden="true"></span>Progettazione 3D · Prototipazione · Su misura</p>
+      <h1 class="hero-title" id="titolo-hero" style="margin-top:1.5rem">
+        <span class="c1">Oggetti</span>
+        <span class="c2">che</span>
+        <span class="c3">risolvono</span>
+        <span class="c4">problemi</span>
       </h1>
-      <p class="hero-tagline reveal" style="--d: 160ms">
-        Progettazione 3D&ensp;·&ensp;Prototipazione&ensp;·&ensp;Soluzioni su misura
+      <p class="hero-lead">
+        Non parto da <mark>«cosa posso stampare»</mark>, ma da <mark>«quale problema posso
+        risolvere»</mark>. Poi lo disegno, lo stampo, lo provo e lo rifaccio finché funziona.
       </p>
-      <p class="hero-lead reveal" style="--d: 240ms">
-        Progetto e realizzo oggetti che risolvono piccoli problemi reali.
-      </p>
-      <p class="hero-tools label reveal" style="--d: 320ms">
-        Bambu Lab X2D · Autodesk Fusion
-      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="#progetti">Guarda i progetti →</a>
+        <a class="btn accent" href="#contatto">Raccontami il problema</a>
+      </div>
+      <div class="hero-tools">
+        <div><span class="k">Stampante</span><span class="v">Bambu Lab X2D</span></div>
+        <div><span class="k">CAD</span><span class="v">Autodesk Fusion</span></div>
+        <div><span class="k">Metodo</span><span class="v">Problema → soluzione</span></div>
+        <div><span class="badge eco">PLA da fonti rinnovabili</span></div>
+      </div>
     </div>
+  </section>
 
-    <!-- striscia metodo: dal problema alla soluzione -->
-    <div class="wrap">
-      <ol class="process reveal" style="--d: 400ms" aria-label="Metodo di lavoro">
+  <div class="kerb" role="presentation"></div>
+
+  <!-- METODO -->
+  <section class="wrap section-pad" id="metodo" aria-labelledby="titolo-metodo">
+    <div class="section-head">
+      <div class="titles"><span class="section-num" aria-hidden="true">01</span><h2 id="titolo-metodo">Come nasce un pezzo</h2></div>
+      <p>Sei passaggi, sempre gli stessi. Se ne salta uno, il pezzo non funziona.</p>
+    </div>
+    <div class="section-body">
+      <ol class="process" aria-label="Metodo di lavoro">
         {
-          process.map((step, i) => (
+          metodo.map((m) => (
             <li>
-              <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
-              {step}
+              <span class="top">
+                <span class:list={['step-num', m.c]} aria-hidden="true">{m.n}</span>
+                <h3>{m.t}</h3>
+              </span>
+              <p>{m.d}</p>
             </li>
           ))
         }
@@ -65,24 +115,20 @@ const process = [
     </div>
   </section>
 
-  <!-- COSA PROGETTO -->
-  <section class="section" aria-labelledby="titolo-cosa">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="section-num" aria-hidden="true">01</span>
-        <h2 id="titolo-cosa">Cosa progetto</h2>
-      </div>
-      <p class="intro">
-        Non parto da «cosa posso stampare», ma da «quale problema posso risolvere».
-        Osservo un problema, ne capisco i vincoli, progetto una soluzione in Autodesk
-        Fusion, la prototipo, la testo e la miglioro finché funziona davvero.
-      </p>
+  <!-- PROBLEMI -->
+  <section class="wrap section-pad-b" id="problemi" aria-labelledby="titolo-problemi">
+    <div class="section-head">
+      <div class="titles"><span class="section-num" aria-hidden="true">02</span><h2 id="titolo-problemi">Cosa posso risolvere</h2></div>
+      <p>Otto famiglie di problemi ricorrenti. Se il tuo somiglia a uno di questi, siamo già a metà strada.</p>
+    </div>
+    <div class="section-body">
       <ul class="cap-grid" role="list">
         {
-          capabilities.map((cap, i) => (
+          problemi.map((p) => (
             <li>
-              <span class="cap-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              {cap}
+              <span class="cap-chip" style={`background:${p.chip}`} aria-hidden="true" />
+              <span class="cap-name">{p.t}</span>
+              <span class="cap-eg"><span class="cap-eg-key">Es.</span>{p.e}</span>
             </li>
           ))
         }
@@ -91,198 +137,100 @@ const process = [
   </section>
 
   <!-- PROGETTI -->
-  <section id="progetti" class="section" aria-labelledby="titolo-progetti">
-    <div class="wrap">
+  <section class="dark" id="progetti" aria-labelledby="titolo-progetti">
+    <div class="wrap section-pad">
       <div class="section-head">
-        <span class="section-num" aria-hidden="true">02</span>
-        <h2 id="titolo-progetti">Progetti</h2>
+        <div class="titles"><span class="section-num" aria-hidden="true">03</span><h2 id="titolo-progetti">Progetti originali</h2></div>
+        <p>Design miei, dal problema alla soluzione. Ogni progetto entra nel registro: stato, categoria e — con i case study — i dati di stampa.</p>
       </div>
-      <p class="intro">
-        Ogni progetto originale racconta un percorso: problema, vincoli, progettazione,
-        prototipo, test, iterazioni, soluzione. I design originali sono sempre distinti
-        dalle stampe di modelli di altri designer.
-      </p>
+
+      <div class="section-body">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-tab">Reg · {new Date().getFullYear()}</span>
+            <p class="panel-title">Registro progetti</p>
+            <p class="panel-meta">Aggiornato · {aggiornato}</p>
+          </div>
+          <div class="panel-kerb"></div>
+          <div class="rows">
+            {
+              registro.map((r, i) => (
+                <div class:list={['row', { lead: r.lead }]}>
+                  <span class="pos" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="who"><b>{r.title}</b></span>
+                  <span class="val">{r.category}</span>
+                  <span class:list={['st', r.st.cls]}><span class="led" aria-hidden="true"></span>{r.st.label}</span>
+                </div>
+              ))
+            }
+          </div>
+          <div class="panel-foot">
+            <span>Stampante · Bambu Lab X2D</span>
+            <span>CAD · Autodesk Fusion</span>
+            <span>Produzione · <b>on-demand</b></span>
+          </div>
+        </div>
+      </div>
+
       <div class="projects-grid">
         {projects.map((project) => <ProjectCard project={project} />)}
         <div class="placeholder-card" role="note">
-          <span class="label">In lavorazione</span>
-          <p>Altri case study sono in preparazione e verranno pubblicati qui.</p>
+          <span class="label">In coda</span>
+          <p>I prossimi progetti originali: SinkFit, Custom Lid System, DeskDock. Ogni case study arriverà qui con foto, iterazioni e dati di stampa.</p>
+        </div>
+        <div class="placeholder-card" role="note">
+          <span class="label">Print Lab · in arrivo</span>
+          <p>Le stampe realizzate da modelli di altri designer avranno una sezione dedicata, sempre con autore, fonte e licenza.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CONTATTO -->
-  <section id="contatto" class="section" aria-labelledby="titolo-contatto">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="section-num" aria-hidden="true">03</span>
-        <h2 id="titolo-contatto">Contatto</h2>
+  <div class="kerb yellow" role="presentation"></div>
+
+  <!-- IMPRONTA -->
+  <section class="wrap section-pad" id="impronta" aria-labelledby="titolo-impronta">
+    <div class="section-head">
+      <div class="titles"><span class="section-num" aria-hidden="true">04</span><h2 id="titolo-impronta">Impronta</h2></div>
+      <p>Stampare poco e stampare bene: un pezzo alla volta, materiali riciclabili, riparare invece di sostituire.</p>
+    </div>
+    <div class="impronta-grid">
+      <div class="panel eco-panel">
+        <div class="panel-head">
+          <span class="panel-tab">Eco</span>
+          <p class="panel-title">Come produco</p>
+        </div>
+        <div class="panel-kerb"></div>
+        <div class="rows">
+          <div class="row txt"><span class="pos" aria-hidden="true">01</span><span class="who"><b>Solo su richiesta</b> — niente magazzino: si stampa ciò che serve, quando serve.</span></div>
+          <div class="row txt"><span class="pos" aria-hidden="true">02</span><span class="who"><b>Principalmente PLA</b> — bioplastica prodotta a partire da fonti rinnovabili.</span></div>
+          <div class="row txt"><span class="pos" aria-hidden="true">03</span><span class="who"><b>Riparare batte sostituire</b> — ricambi non critici che allungano la vita degli oggetti.</span></div>
+          <div class="row txt"><span class="pos" aria-hidden="true">04</span><span class="who"><b>Sbagliare in piccolo</b> — prototipi ridotti prima del pezzo definitivo: meno tempo, meno scarti.</span></div>
+        </div>
+        <div class="panel-foot">
+          <span>Nessun magazzino: si stampa solo ciò che serve</span>
+          <span>Riparare &gt; <b>sostituire</b></span>
+        </div>
       </div>
-      <p class="cta">
-        Hai un problema che potrebbe essere risolto con un oggetto su&nbsp;misura?
+      <div class="figure">
+        <span class="big">Foto del laboratorio — in arrivo</span>
+        <span class="cap">Placeholder · Bambu Lab X2D al lavoro</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATTO -->
+  <section class="wrap section-pad-b" id="contatto" aria-labelledby="titolo-contatto">
+    <div class="contact">
+      <p class="cta" id="titolo-contatto">Hai un problema da risolvere?</p>
+      <p>
+        Un pezzo introvabile, un supporto che non esiste, un accessorio che «quasi» funziona:
+        raccontamelo e valutiamo insieme se si può progettare.
       </p>
-      <p class="intro">
-        Un pezzo introvabile, un supporto che non esiste, un accessorio che «quasi»
-        funziona: raccontamelo e valutiamo insieme se si può progettare una soluzione.
-      </p>
-      <div class="contact-placeholder" role="note">
+      <div class="placeholder-card" role="note">
         <span class="label">Placeholder · TODO</span>
-        <p>
-          Canale di contatto in configurazione — l'indirizzo email e i profili social
-          verranno pubblicati qui a breve.
-        </p>
+        <p>Canale di contatto in configurazione: email e profili social verranno pubblicati qui a breve.</p>
       </div>
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  /* ---------- hero ---------- */
-  .hero {
-    padding-top: clamp(3.5rem, 9vw, 6.5rem);
-    background-image: radial-gradient(var(--line) 1px, transparent 1px);
-    background-size: 26px 26px;
-    background-position: center top;
-  }
-
-  .hero-title {
-    font-size: clamp(3rem, 12vw, 7rem);
-    font-weight: 720;
-    text-transform: uppercase;
-    letter-spacing: -0.025em;
-    line-height: 0.95;
-    margin-top: 1.25rem;
-  }
-
-  .hero-tagline {
-    margin-top: 1.75rem;
-    font-family: var(--font-mono);
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    color: var(--accent);
-  }
-
-  .hero-lead {
-    margin-top: 1rem;
-    font-size: clamp(1.2rem, 3vw, 1.6rem);
-    font-weight: 460;
-    max-width: 34ch;
-    text-wrap: balance;
-  }
-
-  .hero-tools {
-    margin-top: 1.5rem;
-  }
-
-  .process {
-    list-style: none;
-    padding: 0.9rem 0;
-    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
-    border-top: 1px solid var(--line-strong);
-    border-bottom: 1px solid var(--line-strong);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 1.6rem;
-    background: var(--paper);
-  }
-
-  .process li {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .process li:not(:last-child)::after {
-    content: '→';
-    margin-left: 1.6rem;
-    color: var(--ink-soft);
-  }
-
-  .step-num {
-    color: var(--accent);
-    margin-right: 0.45rem;
-  }
-
-  /* ---------- sezioni ---------- */
-  .intro {
-    max-width: var(--measure);
-    color: var(--ink-soft);
-    font-size: 1.05rem;
-  }
-
-  /* cosa progetto */
-  .cap-grid {
-    list-style: none;
-    padding: 0;
-    margin-top: 2.25rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: 0;
-    border-top: 1px solid var(--line);
-    border-left: 1px solid var(--line);
-  }
-
-  .cap-grid li {
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 1.1rem 1.2rem;
-    font-weight: 500;
-    font-size: 0.98rem;
-    display: flex;
-    gap: 0.8rem;
-    align-items: baseline;
-    background: var(--paper-raised);
-  }
-
-  .cap-num {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--accent);
-  }
-
-  /* progetti */
-  .projects-grid {
-    margin-top: 2.25rem;
-    display: grid;
-    gap: 1.5rem;
-  }
-
-  .placeholder-card {
-    border: 1px dashed var(--line-strong);
-    padding: clamp(1.25rem, 3vw, 1.75rem);
-    color: var(--ink-soft);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  /* contatto */
-  .cta {
-    font-size: clamp(1.6rem, 4.5vw, 2.6rem);
-    font-weight: 640;
-    letter-spacing: -0.015em;
-    line-height: 1.15;
-    max-width: 24ch;
-    margin-bottom: 1.25rem;
-    text-wrap: balance;
-  }
-
-  .contact-placeholder {
-    margin-top: 2rem;
-    border: 1px dashed var(--accent);
-    padding: clamp(1.25rem, 3vw, 1.75rem);
-    max-width: var(--measure);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .contact-placeholder .label {
-    color: var(--accent);
-  }
-</style>

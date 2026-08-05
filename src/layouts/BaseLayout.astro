@@ -1,7 +1,10 @@
 ---
+import '@fontsource/titan-one';
 import '@fontsource-variable/archivo';
+import '@fontsource-variable/archivo/wght-italic.css';
 import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -12,8 +15,8 @@ interface Props {
 }
 
 const {
-  title = 'Lorenzo Arrigoni — Progettazione 3D, prototipazione, soluzioni su misura',
-  description = 'Progetto e realizzo oggetti che risolvono piccoli problemi reali: prototipi, accessori funzionali, ricambi non critici e oggetti intelligenti con NFC.',
+  title = 'Lorenzo Arrigoni — Oggetti che risolvono problemi',
+  description = 'Progettazione 3D, prototipazione e soluzioni su misura: non parto da «cosa posso stampare», ma da «quale problema posso risolvere».',
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -28,7 +31,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#f6f3ec" />
+    <meta name="theme-color" content="#f5c518" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Lorenzo Arrigoni" />

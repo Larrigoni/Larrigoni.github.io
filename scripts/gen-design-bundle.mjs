@@ -1,3 +1,8 @@
+// ⚠️ OBSOLETO (2026-08-05, vedi ADR-008): questo script replica il PRIMO
+// design (minimale) e il progetto Claude Design è ora più avanti (design
+// "racing pop"). NON rigenerare e ricaricare il bundle senza prima
+// aggiornare lo script, o si sovrascrive il lavoro fatto sulla piattaforma.
+//
 // Genera il bundle di card HTML per il progetto Claude Design
 // "Lorenzo Arrigoni — Portfolio". Ogni card è autonoma: font in data-URI,
 // CSS inline, prima riga marker <!-- @dsCard group="…" -->.
