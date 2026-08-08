@@ -140,6 +140,54 @@ resa dipende dal fallback. Polish futuro: convertire il testo in tracciato.
 progetto Claude Design superano il limite di lettura del tool (256 KiB), quindi
 la fonte per il sito sono SEMPRE gli originali locali ricompressi.
 
-**Dati:** tutti i contenuti della pagina Oleolí sono reali (scritti da Lorenzo
+**Dati:** tutti i contenuti della pagina sono reali (scritti da Lorenzo
 nel design). Le righe segnaposto del registro design ("Titolo progetto due…")
 e i gauge eco NON sono stati portati, come da ADR-008.
+
+## ADR-011 — Case study anonimizzato + regola sui contenuti di terzi (2026-08-09)
+
+**Contesto:** la prima versione del case study affermava che il cliente
+«produce saponette naturali con erbe e fiori dei suoi campi». Verifica sul loro
+profilo pubblico: producono tisane e insaporitori artigianali, non saponette.
+L'affermazione era inventata, non solo non verificabile.
+
+**Decisione — regola permanente:** sul sito si afferma solo (a) ciò che Lorenzo
+ha fatto o osservato di persona e (b) ciò che un terzo dichiara pubblicamente
+di sé. Mai attribuire a un cliente esigenze, problemi, richieste o processi che
+non ha dichiarato. Nel dubbio si scrive in prima persona o si toglie.
+
+**Applicazione:** il case study è stato anonimizzato su richiesta del cliente
+stesso (che ha invece autorizzato la pubblicazione delle immagini con il
+proprio logo):
+
+- pagina rinominata `/projects/scolatoio-da-lavello/`, con redirect dal vecchio
+  `/projects/scolatoio-oleoli` (in `astro.config.mjs`);
+- file di contenuto, componente pagina e immagini rinominati senza il nome del
+  cliente (`public/projects/scolatoio-*`); rimosso il campo `client`;
+- titolo, h1, meta e card home: "Scolatoio da lavello"; l'occhiello dice
+  "su commissione" senza nominare nessuno;
+- il testo è riscritto in prima persona (problema come osservazione generale,
+  "Il progetto" al posto di "La soluzione"), senza claim sul cliente.
+
+**Badge card:** la regola riproduce il design — badge origine ("Progetto
+originale" se `featured`, altrimenti "Originale"), categoria solo se non c'è un
+materiale da mostrare, stato solo se diverso da `completato`, materiale se
+presente.
+
+## ADR-012 — Provenienza delle immagini (2026-08-09) — APERTO
+
+**Fatto verificato:** cinque delle sette immagini del case study
+(`scolatoio-lavello`, `-ripiano`, `-piatto`, `-banco`, `-fallimenti`) hanno
+negli originali Content Credentials C2PA con marcatore `trainedAlgorithmicMedia`
+(pipeline Google) e il simbolo ✦ visibile: sono generate o ritoccate con AI.
+I due render CAD (`scolatoio-cad-01/02`) e gli altri 13 render Fusion in
+`SynologyDrive\DISEGNO 3D\Social\Pj1_Portaspugna\Immagini\render fusion` sono
+puliti.
+
+**Stato:** le didascalie attuali presentano tre di quelle immagini come
+fotografie. La sola etichettata correttamente è la scena sul lavello
+("Render di verifica"). Da decidere con Lorenzo: usare gli scatti originali
+della fotocamera, rifare le foto, sostituire con i render Fusion puliti, oppure
+etichettare le immagini come ritoccate. **Non** rimuovere i marcatori: sono
+firmati, SynthID resta comunque nei pixel, e togliere la dichiarazione su un
+portfolio che vende trasparenza di processo è controproducente.

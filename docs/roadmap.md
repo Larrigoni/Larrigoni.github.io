@@ -22,6 +22,7 @@ Aggiornare man mano che si raccolgono dati e feedback. Non è immutabile.
 - [x] Email di contatto definitiva pubblicata (2026-08-05)
 - [ ] Telefono / WhatsApp / LinkedIn sulla card `/card/lorenzo` (quando Lorenzo li fornirà)
 - [ ] Foto del laboratorio per la sezione Impronta (ancora placeholder)
+- [ ] Decidere la provenienza delle immagini del case study (vedi ADR-012): originali fotocamera, nuovi scatti, render Fusion puliti o didascalie che dichiarano il ritocco AI
 - [ ] Ottimizzare i PNG dei render CAD Oleolí (~567 KB l'uno)
 - [ ] Scheda tecnica con dati di stampa reali (componente pronto nel design system, entra col primo case study)
 - [ ] Aggiornare `scripts/gen-design-bundle.mjs` al nuovo design (vedi ADR-008)
