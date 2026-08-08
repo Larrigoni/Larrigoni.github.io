@@ -47,7 +47,7 @@ const aggiornato = new Date()
 const metodo = [
   { n: '01', c: 'n-red', t: 'Il problema', d: 'Qualcosa non esiste, non entra o si rompe sempre nello stesso punto.' },
   { n: '02', c: 'n-yellow', t: 'I vincoli', d: 'Misure reali, spazi stretti, materiali già presenti: si parte da lì.' },
-  { n: '03', c: 'n-cyan', t: 'Il progetto', d: 'Disegno in Fusion partendo dalle quote, non dall’idea di forma.' },
+  { n: '03', c: 'n-cyan', t: 'Il progetto', d: 'Disegno in CAD partendo dalle quote, non dall’idea di forma.' },
   { n: '04', c: 'n-green', t: 'Il prototipo', d: 'Prima versione stampata: serve per sbagliare presto e a poco.' },
   { n: '05', c: 'n-blue', t: 'Il test', d: 'Si monta, si carica, si usa per giorni. Se cede, si annota perché.' },
   { n: '06', c: 'n-plain', t: 'La soluzione', d: 'Versione finale, replicabile e documentata. Poi si ricomincia.' },
@@ -170,7 +170,6 @@ const problemi = [
           </div>
           <div class="panel-foot">
             <span>Stampante · Bambu Lab X2D</span>
-            <span>CAD · Autodesk Fusion</span>
             <span>Produzione · <b>on-demand</b></span>
           </div>
         </div>
@@ -178,13 +177,15 @@ const problemi = [
 
       <div class="projects-grid">
         {projects.map((project) => <ProjectCard project={project} />)}
-        <div class="placeholder-card" role="note">
-          <span class="label">In coda</span>
-          <p>I prossimi progetti originali: SinkFit, Custom Lid System, DeskDock. Ogni case study arriverà qui con foto, iterazioni e dati di stampa.</p>
-        </div>
-        <div class="placeholder-card" role="note">
-          <span class="label">Print Lab · in arrivo</span>
-          <p>Le stampe realizzate da modelli di altri designer avranno una sezione dedicata, sempre con autore, fonte e licenza.</p>
+        <div class="card-stack">
+          <div class="placeholder-card on-dark" role="note">
+            <span class="label">In coda</span>
+            <p>I prossimi progetti originali: SinkFit, Custom Lid System, DeskDock. Ogni case study arriverà qui con foto, iterazioni e dati di stampa.</p>
+          </div>
+          <div class="placeholder-card on-dark" role="note">
+            <span class="label">Print Lab · in arrivo</span>
+            <p>Le stampe realizzate da modelli di altri designer avranno una sezione dedicata, sempre con autore, fonte e licenza.</p>
+          </div>
         </div>
       </div>
     </div>

@@ -744,7 +744,7 @@ h1.hero-title .c4 { color: var(--green); }
 }
 
 .st.queue .led {
-  background: var(--carbon-soft);
+  background: rgba(255, 255, 255, 0.4);
   box-shadow: none;
 }
 
@@ -982,6 +982,28 @@ h1.hero-title .c4 { color: var(--green); }
 
 .placeholder-card.wide {
   max-width: none;
+}
+
+/* variante per sezioni scure */
+.placeholder-card.on-dark {
+  max-width: none;
+  border-color: var(--paper);
+  background: rgba(255, 253, 246, 0.06);
+}
+
+.placeholder-card.on-dark .label {
+  color: var(--yellow);
+}
+
+.placeholder-card.on-dark p {
+  color: var(--carbon-soft);
+}
+
+/* colonna di card impilate nella griglia progetti */
+.card-stack {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
 }
 
 .placeholder-card .label {
