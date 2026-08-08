@@ -117,3 +117,29 @@ email reale e dati reali (regola ADR-008).
 **Nota tecnica:** il testo "LA" in `logo.svg` usa `font-family: Archivo` con
 fallback `system-ui`; dentro `<img>` i font esterni non si caricano, quindi la
 resa dipende dal fallback. Polish futuro: convertire il testo in tracciato.
+
+## ADR-010 — Round-trip 3: primo case study (Scolatoio Oleolí) + pass mobile (2026-08-08)
+
+**Decisione:** portato a bordo il primo case study reale e completo:
+**Scolatoio Oleolí** (espositore scolante per saponette, cliente Oleolí, PETG,
+2 pezzi, consegnato dopo 2 stampe fallite documentate).
+
+- Nuova pagina `/projects/scolatoio-oleoli/` (porting fedele della pagina
+  design): problema, soluzione, scheda del pezzo, galleria, diario di stampa.
+- Collection estesa con `client`, `pieces`, `image`, `imageAlt`, `hasPage`;
+  le card progetto sono cliccabili quando `hasPage: true`.
+- Registro home: riga Oleolí in evidenza con dati reali; Maatbric non più
+  `featured`.
+- Pass di ottimizzazione mobile dal design system (header impilato con nav
+  scorrevole, CTA piene, pannelli compatti).
+
+**Pipeline immagini:** gli originali restano in
+`SynologyDrive\DISEGNO 3D\Social\Pj1_Portaspugna\Immagini` (e
+`...\crotti\porta spugna lavello\render`); sul sito vanno versioni compresse in
+`public/projects/` (foto → JPEG q85 max 1600px, render CAD → PNG). Le copie nel
+progetto Claude Design superano il limite di lettura del tool (256 KiB), quindi
+la fonte per il sito sono SEMPRE gli originali locali ricompressi.
+
+**Dati:** tutti i contenuti della pagina Oleolí sono reali (scritti da Lorenzo
+nel design). Le righe segnaposto del registro design ("Titolo progetto due…")
+e i gauge eco NON sono stati portati, come da ADR-008.

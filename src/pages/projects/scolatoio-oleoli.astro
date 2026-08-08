@@ -1,0 +1,232 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Scolatoio Oleolí — Lorenzo Arrigoni"
+  description="Case study: espositore scolante per saponette solide progettato per Oleolí. Problema, soluzione, galleria e diario di stampa."
+  image="/projects/oleoli-lavello.jpg"
+>
+  <!-- HERO PROGETTO -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="label back"><a href="/#progetti">← Tutti i progetti</a></p>
+      <p class="hero-eyebrow"><span class="dot" aria-hidden="true"></span>Progetto 01 · per Oleolí · 2026</p>
+      <h1 class="hero-title" style="margin-top:1.4rem">
+        <span class="c2">Scolatoio</span>
+        <span class="c3">Oleolí</span>
+      </h1>
+      <p class="hero-lead">
+        Le saponette solide si asciugano male: appoggiate su un piano restano umide e rovinano
+        il banco. Qui si asciugano <mark>in piedi</mark>, e l'acqua finisce <mark>nel lavello</mark>.
+      </p>
+      <div class="badges" style="margin-top:1.6rem">
+        <span class="badge accent">Originale</span>
+        <span class="badge">Su misura</span>
+        <span class="badge cyan">2 pezzi</span>
+        <span class="badge eco">PETG</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="kerb" role="presentation"></div>
+
+  <!-- PROBLEMA / SOLUZIONE / SCHEDA -->
+  <section class="wrap section-pad">
+    <figure class="fig">
+      <div class="figure wide169">
+        <img src="/projects/oleoli-lavello.jpg" alt="Render dello scolatoio giallo appoggiato sul bordo del lavello in marmo" />
+      </div>
+      <figcaption class="label">Render di verifica · il pezzo a sbalzo sul bordo vasca, lame inclinate verso lo scarico</figcaption>
+    </figure>
+
+    <div class="split">
+      <div class="texts">
+        <div>
+          <h3 class="case-h">Il problema</h3>
+          <p>
+            Oleolí produce saponette naturali con erbe e fiori dei suoi campi. Accanto al
+            lavello, però, le saponette restavano a mollo: si ammorbidivano, si consumavano in
+            fretta e il piano era sempre bagnato. Serviva un accessorio che le tenesse separate,
+            le facesse scolare e portasse il marchio.
+          </p>
+        </div>
+        <div>
+          <h3 class="case-h">La soluzione</h3>
+          <p>
+            Il primo accessorio della linea: un vassoio a sbalzo disegnato sulle quote del bordo
+            vasca. Ogni saponetta sta in piedi nella sua tasca tra due lame inclinate e l'acqua
+            drena dritta nel lavello, così le saponette durano di più. L'insegna è una targa
+            separata, stampata in piano per avere il logo multicolore pulito, che si innesta sul
+            bordo posteriore.
+          </p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="panel-tab">Rev. finale</span><p class="panel-title">Scheda del pezzo</p></div>
+        <div class="panel-kerb"></div>
+        <div class="rows">
+          <div class="row txt3"><span class="pos" aria-hidden="true">01</span><span class="who">Funzione</span><span class="val">Espositore scolante</span></div>
+          <div class="row txt3"><span class="pos" aria-hidden="true">02</span><span class="who">Materiale</span><span class="val">PETG</span></div>
+          <div class="row txt3"><span class="pos" aria-hidden="true">03</span><span class="who">Pezzi</span><span class="val">2 · vassoio + targa</span></div>
+          <div class="row txt3"><span class="pos" aria-hidden="true">04</span><span class="who">Stampante</span><span class="val">Bambu Lab X2D</span></div>
+        </div>
+        <div class="panel-foot"><span>Logo stampato in piano · multicolore</span><span>Appoggio <b>a sbalzo</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERIA -->
+  <section class="wrap section-pad-b">
+    <div class="section-head">
+      <div class="titles"><span class="section-num" aria-hidden="true">02</span><h2>Dalla stampa al banco</h2></div>
+      <p>Dal piatto di stampa all'espositore: supporti ad albero per lo sbalzo, torre di spurgo per i cambi colore della targa.</p>
+    </div>
+    <div class="gallery">
+      <figure class="fig">
+        <div class="figure wide169"><img src="/projects/oleoli-espositore.jpg" alt="Scolatoio giallo finito dentro l'espositore in legno" loading="lazy" /></div>
+        <figcaption class="label">Il pezzo finito nell'espositore in legno</figcaption>
+      </figure>
+      <figure class="fig">
+        <div class="figure wide169"><img src="/projects/oleoli-piatto.jpg" alt="Vassoio appena stampato in verticale sul piatto della stampante" loading="lazy" /></div>
+        <figcaption class="label">Appena finito, in verticale sul piatto · targa a parte</figcaption>
+      </figure>
+      <figure class="fig full">
+        <div class="figure wide219"><img src="/projects/oleoli-banco.jpg" alt="Pezzo sul banco di lavoro con supporti ad albero e torre di spurgo" loading="lazy" /></div>
+        <figcaption class="label">Sul banco · supporti ad albero e torre di spurgo appena rimossi</figcaption>
+      </figure>
+      <figure class="fig">
+        <div class="figure contain wide169"><img src="/projects/oleoli-cad-01.png" alt="Vista isometrica CAD del vassoio da davanti sinistra" loading="lazy" /></div>
+        <figcaption class="label">Modello 3D · iso da davanti sinistra</figcaption>
+      </figure>
+      <figure class="fig">
+        <div class="figure contain wide169"><img src="/projects/oleoli-cad-02.png" alt="Vista isometrica CAD del vassoio da davanti destra" loading="lazy" /></div>
+        <figcaption class="label">Modello 3D · iso da davanti destra</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- DIARIO DI STAMPA -->
+  <section class="dark">
+    <div class="wrap section-pad">
+      <div class="section-head">
+        <div class="titles"><span class="section-num" aria-hidden="true">03</span><h2>Diario di stampa</h2></div>
+        <p>I fallimenti restano nel registro: è lì che si impara. Due stampe perse prima di quella buona.</p>
+      </div>
+      <div class="diary">
+        <figure class="fig">
+          <div class="figure wide169"><img src="/projects/oleoli-fallimenti.jpg" alt="Banco con i pezzi delle due stampe fallite: cedimento dei supporti e warping del PETG" loading="lazy" /></div>
+          <figcaption class="label dim">Le prove fallite, etichettate e conservate</figcaption>
+        </figure>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-tab">Log</span><p class="panel-title">Registro stampe</p></div>
+          <div class="panel-kerb"></div>
+          <div class="rows">
+            <div class="row"><span class="pos" aria-hidden="true">01</span><span class="who">Prima <b>prova</b></span><span class="val">Fallita</span><span class="st hot"><span class="led" aria-hidden="true"></span>Supporti</span></div>
+            <div class="row"><span class="pos" aria-hidden="true">02</span><span class="who">Seconda <b>prova</b></span><span class="val">Fallita</span><span class="st hot"><span class="led" aria-hidden="true"></span>Warping PETG</span></div>
+            <div class="row lead"><span class="pos" aria-hidden="true">03</span><span class="who">Terza <b>prova</b></span><span class="val">Completata</span><span class="st"><span class="led" aria-hidden="true"></span>Validata</span></div>
+          </div>
+          <div class="panel-foot"><span>2 fallimenti documentati</span><span>1 pezzo <b>consegnato</b></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="wrap section-pad">
+    <div class="contact">
+      <p class="cta">Hai un problema simile?</p>
+      <p>Un appoggio che non esiste, un espositore su misura, un pezzo che deve stare esattamente lì: raccontamelo.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="/#contatto">Scrivimi →</a>
+        <a class="btn" href="/#progetti">Altri progetti</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .back {
+    margin-bottom: 1.1rem;
+  }
+
+  .back a {
+    color: inherit;
+  }
+
+  .case-h {
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+  }
+
+  .case-h + p {
+    margin-top: 0.5rem;
+    color: var(--ink-soft);
+  }
+
+  .fig {
+    margin: 0;
+  }
+
+  .fig .label {
+    display: block;
+    margin-top: 0.6rem;
+  }
+
+  .fig .label.dim {
+    color: var(--carbon-soft);
+  }
+
+  .wide169 {
+    aspect-ratio: 16 / 9;
+  }
+
+  .wide219 {
+    aspect-ratio: 21 / 9;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+    align-items: start;
+  }
+
+  .texts {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .gallery .full {
+    grid-column: 1 / -1;
+  }
+
+  .diary {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 64rem) {
+    .split,
+    .gallery,
+    .diary {
+      grid-template-columns: 1fr;
+    }
+
+    .gallery .full .wide219 {
+      aspect-ratio: 16 / 9;
+    }
+  }
+</style>

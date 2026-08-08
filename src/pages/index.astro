@@ -9,7 +9,7 @@ const projects = (await getCollection('projects')).sort(
 
 const categoryLabels: Record<string, string> = {
   'smart-objects': 'Smart Objects',
-  'custom-fit': 'Custom Fit',
+  'custom-fit': 'Su misura',
   'process-tools': 'Process Tools',
   'print-lab': 'Print Lab',
 };
@@ -26,14 +26,17 @@ const statusInfo: Record<string, { cls: string; label: string }> = {
 const registro = [
   ...projects.map((p) => ({
     title: p.data.title,
-    category: categoryLabels[p.data.category],
+    val:
+      p.data.pieces && p.data.materials.length > 0
+        ? `${p.data.pieces} pezzi · ${p.data.materials[0]}`
+        : categoryLabels[p.data.category],
     st: statusInfo[p.data.status],
     lead: p.data.featured,
   })),
-  { title: 'SinkFit', category: 'Custom Fit', st: statusInfo.concept, lead: false },
-  { title: 'Custom Lid System', category: 'Custom Fit', st: statusInfo.concept, lead: false },
-  { title: 'DeskDock', category: 'Custom Fit', st: statusInfo.concept, lead: false },
-  { title: 'ProcessAid', category: 'Process Tools', st: statusInfo.concept, lead: false },
+  { title: 'SinkFit', val: 'Su misura', st: statusInfo.concept, lead: false },
+  { title: 'Custom Lid System', val: 'Su misura', st: statusInfo.concept, lead: false },
+  { title: 'DeskDock', val: 'Su misura', st: statusInfo.concept, lead: false },
+  { title: 'ProcessAid', val: 'Process Tools', st: statusInfo.concept, lead: false },
 ];
 
 const aggiornato = new Date()
@@ -159,7 +162,7 @@ const problemi = [
                 <div class:list={['row', { lead: r.lead }]}>
                   <span class="pos" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                   <span class="who"><b>{r.title}</b></span>
-                  <span class="val">{r.category}</span>
+                  <span class="val">{r.val}</span>
                   <span class:list={['st', r.st.cls]}><span class="led" aria-hidden="true"></span>{r.st.label}</span>
                 </div>
               ))
