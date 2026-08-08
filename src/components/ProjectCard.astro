@@ -50,9 +50,9 @@ const categoryLabels: Record<string, string> = {
   <div class="body">
     <div class="badges">
       <span class:list={['badge', originalDesign ? (featured ? 'accent' : 'cyan') : '']}>
-        {originalDesign ? 'Originale' : 'Print Lab'}
+        {originalDesign ? (featured ? 'Progetto originale' : 'Originale') : 'Print Lab'}
       </span>
-      <span class="badge">{categoryLabels[category]}</span>
+      {materials.length === 0 && <span class="badge">{categoryLabels[category]}</span>}
       {status !== 'completato' && <span class="badge accent">{statusLabels[status]}</span>}
       {materials.length > 0 && <span class="badge eco">{materials[0]}</span>}
     </div>
