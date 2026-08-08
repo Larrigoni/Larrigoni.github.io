@@ -27,6 +27,11 @@ const projects = defineCollection({
       materials: z.array(z.string()).default([]),
       printer: z.string().default('Bambu Lab X2D'),
       software: z.array(z.string()).default(['Autodesk Fusion']),
+      client: z.string().optional(),
+      pieces: z.number().int().positive().optional(),
+      image: z.string().optional(),
+      imageAlt: z.string().optional(),
+      hasPage: z.boolean().default(false),
       external: z
         .object({
           url: z.string().url(),

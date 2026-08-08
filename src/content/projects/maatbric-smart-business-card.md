@@ -4,7 +4,7 @@ status: 'in-sviluppo'
 category: 'smart-objects'
 date: 2026-08-04
 summary: 'Biglietto da visita stampato in 3D con tag NFC integrato: avvicinando il telefono si apre una pagina contatto digitale, aggiornabile nel tempo senza ristampare il biglietto.'
-featured: true
+featured: false
 originalDesign: true
 problem: 'I biglietti da visita cartacei si perdono e i dati stampati diventano obsoleti appena qualcosa cambia.'
 solution: 'Un biglietto stampato in 3D con tag NFC incorporato che punta a una pagina contatto sempre aggiornabile.'
