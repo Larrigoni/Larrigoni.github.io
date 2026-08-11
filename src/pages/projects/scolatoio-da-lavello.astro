@@ -35,9 +35,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <section class="wrap section-pad">
     <figure class="fig">
       <div class="figure wide169">
-        <img src="/projects/scolatoio-lavello.jpg" alt="Render dello scolatoio giallo appoggiato sul bordo del lavello in marmo" />
+        <img src="/projects/scolatoio-lavello.jpg" alt="Render dello scolatoio giallo a sbalzo sul bordo del lavello in marmo" />
       </div>
-      <figcaption class="label">Render di verifica · il vassoio a sbalzo sul bordo della vasca, con il logo montato sul lato posteriore</figcaption>
+      <figcaption class="label">Render di verifica · il vassoio a sbalzo sul bordo della vasca, con il medaglione montato sul bordo posteriore</figcaption>
     </figure>
 
     <div class="split">
@@ -84,26 +84,30 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     </div>
     <div class="gallery">
       <figure class="fig">
-        <div class="figure wide169"><img src="/projects/scolatoio-ripiano.jpg" alt="Scolatoio giallo finito su un ripiano in legno" loading="lazy" /></div>
-        <figcaption class="label">Il pezzo finito, appoggiato su un ripiano in legno per la foto</figcaption>
+        <div class="figure wide169"><img src="/projects/scolatoio-ripiano.jpg" alt="Scolatoio giallo finito, esposto in una nicchia in legno" loading="lazy" /></div>
+        <figcaption class="label">Il pezzo finito, esposto nella nicchia in legno</figcaption>
       </figure>
       <figure class="fig">
-        <div class="figure wide169"><img src="/projects/scolatoio-piatto.jpg" alt="Vassoio appena stampato in verticale sul piatto della stampante" loading="lazy" /></div>
-        <figcaption class="label">Fine stampa · il vassoio orientato in verticale sul piatto e il logo stampato a parte</figcaption>
+        <div class="figure wide169"><img src="/projects/scolatoio-piatto.jpg" alt="Vassoio appena stampato in verticale sul piatto della stampante, con il medaglione a parte" loading="lazy" /></div>
+        <figcaption class="label">Fine stampa · il vassoio in verticale sul piatto e il medaglione stampato a parte</figcaption>
       </figure>
       <figure class="fig full">
         <div class="figure wide219"><img src="/projects/scolatoio-banco.jpg" alt="Pezzo sul banco di lavoro con supporti ad albero e torre di spurgo" loading="lazy" /></div>
         <figcaption class="label">Sul banco dopo la stampa · il vassoio con i supporti ad albero e la torre di spurgo dei cambi colore, appena staccati</figcaption>
       </figure>
       <figure class="fig">
-        <div class="figure contain wide169"><img src="/projects/scolatoio-cad-01.png" alt="Vista isometrica CAD del vassoio da davanti sinistra" loading="lazy" /></div>
+        <div class="figure contain wide169"><img src="/projects/scolatoio-cad-01.jpg" alt="Vista isometrica CAD del vassoio da davanti sinistra" loading="lazy" /></div>
         <figcaption class="label">Modello 3D · vista isometrica da davanti a sinistra: nervature del fondo e sponde</figcaption>
       </figure>
       <figure class="fig">
-        <div class="figure contain wide169"><img src="/projects/scolatoio-cad-02.png" alt="Vista isometrica CAD del vassoio da davanti destra" loading="lazy" /></div>
-        <figcaption class="label">Modello 3D · vista isometrica da davanti a destra: sede del logo sul bordo posteriore</figcaption>
+        <div class="figure contain wide169"><img src="/projects/scolatoio-cad-02.jpg" alt="Vista isometrica CAD del vassoio da davanti destra" loading="lazy" /></div>
+        <figcaption class="label">Modello 3D · vista isometrica da davanti a destra: sede del medaglione sul bordo posteriore</figcaption>
       </figure>
     </div>
+    <p class="label brand-note">
+      Il marchio visibile nelle immagini è sostituito con uno fittizio: il committente ha chiesto
+      di non essere identificato.
+    </p>
   </section>
 
   <!-- DIARIO DI STAMPA -->
@@ -176,6 +180,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   .fig .label.dim {
     color: var(--carbon-soft);
+  }
+
+  .brand-note {
+    display: block;
+    margin-top: 1.4rem;
+    max-width: 52ch;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
   }
 
   .wide169 {
