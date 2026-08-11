@@ -191,3 +191,26 @@ della fotocamera, rifare le foto, sostituire con i render Fusion puliti, oppure
 etichettare le immagini come ritoccate. **Non** rimuovere i marcatori: sono
 firmati, SynthID resta comunque nei pixel, e togliere la dichiarazione su un
 portfolio che vende trasparenza di processo è controproducente.
+
+## ADR-013 — Marchio sostituito su richiesta del committente (2026-08-11)
+
+**Contesto:** il committente ha **ritirato l'autorizzazione** a comparire e ha
+chiesto di rimuovere il proprio marchio dalle immagini del case study.
+
+**Decisione:** le immagini pubblicate usano un marchio fittizio ("Floria") al
+posto di quello reale, ottenuto sostituendo la scritta sul medaglione. Il set
+sorgente è `SynologyDrive\DISEGNO 3D\Social\Pj1_Portaspugna\Immagini\FLORIA`;
+la cartella `OLEOLì` (marchio reale) **non va pubblicata**.
+
+**Vincoli applicati per non affermare il falso:**
+
+- nessuna didascalia dice che è stato stampato un pezzo con quel marchio: si
+  parla di "medaglione", mai del nome fittizio;
+- la pagina porta una nota esplicita sotto la galleria — *"Il marchio visibile
+  nelle immagini è sostituito con uno fittizio: il committente ha chiesto di
+  non essere identificato"* — così il lettore sa cosa sta guardando;
+- il titolo era già anonimo (ADR-011) e nel testo non compare alcun cliente.
+
+**Nota:** i file della cartella `OLEOLì` hanno i Content Credentials rimossi ma
+conservano il watermark ✦ visibile. Rimuovere i marcatori non rende
+un'immagine non-AI: la dichiarazione va fatta nel testo, come sopra.
