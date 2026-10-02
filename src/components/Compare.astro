@@ -1,0 +1,70 @@
+---
+/**
+ * La domanda giusta (brief §6.14): il confronto fra un file scaricato e un
+ * pezzo su misura.
+ *
+ * Testata di sezione → un solo contenitore a due colonne divise da un filo →
+ * verdetto sotto. Colonna A neutra (`.tag`, marcatori « · »), colonna B
+ * evidenziata (`.tag.accent`, marcatori « + » in --accent-text, verbo in
+ * grassetto): un gruppo, un tocco. Nessuno stato. Testi da `home.ts`, sezione
+ * `domanda`: `pills` sono i tag delle colonne, nell'ordine headA / headB.
+ * Stili in `styles/components/argument.css`.
+ */
+import ItemText from './ItemText.astro';
+import Rich from './Rich.astro';
+import SectionHead from './SectionHead.astro';
+import type { Section } from '../data/home.ts';
+
+interface Props {
+  /** La sezione `domanda` di home.ts: eyebrow, title, lead, headA + items, headB + itemsB, pills [tagA, tagB], verdict. */
+  section: Section;
+  /** id della sezione. Di norma è `section.id`. */
+  id?: string;
+}
+
+const { section, id = section.id } = Astro.props;
+const { eyebrow, title, lead, headA, items = [], headB, itemsB = [], pills = [], verdict } = section;
+const titleId = `${id}-titolo`;
+const [tagA, tagB] = pills;
+
+
+const columns = [
+  { key: 'a', head: headA, tag: tagA, items: items, mark: '·' },
+  { key: 'b', head: headB, tag: tagB, items: itemsB, mark: '+' },
+].filter((col) => col.head && col.items.length > 0);
+---
+
+<section class="section compare" id={id} aria-labelledby={titleId}>
+  <div class="wrap">
+    <SectionHead eyebrow={eyebrow} title={title} lead={lead} titleId={titleId} />
+
+    {
+      columns.length > 0 && (
+        <div class="compare__table">
+          {columns.map((col) => (
+            <div class:list={['compare__col', `compare__col--${col.key}`]}>
+              <div class="compare__head">
+                <h3>{col.head}</h3>
+                {col.tag && <span class:list={['tag', col.key === 'b' && 'accent']}>{col.tag}</span>}
+              </div>
+              <ul class="compare__list" role="list">
+                {col.items.map((item) => (
+                  <li>
+                    <span class="compare__mark" aria-hidden="true">
+                      {col.mark}
+                    </span>
+                    <span>
+                      <ItemText item={item} />
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    {verdict && <p class="compare__verdict"><Rich text={verdict} /></p>}
+  </div>
+</section>

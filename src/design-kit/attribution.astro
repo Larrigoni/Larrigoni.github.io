@@ -1,0 +1,59 @@
+---
+/**
+ * Kit · Attribution (brief §6.16). I modelli di terzi sono voci reali del
+ * repository (in bozza: il build di design le mostra); il derivato è una
+ * FIXTURE, perché oggi nessun progetto lo è. Le colonne sono larghe quanto la
+ * colonna della galleria nella pagina progetto (7fr a 1120px, circa 39rem).
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Attribution from '../components/Attribution.astro';
+import { getPublishedProjects } from '../lib/content.ts';
+import { derivatoFixture } from './fixtures-contact.ts';
+
+const projects = await getPublishedProjects();
+const terzi = projects.filter((project) => project.data.origin === 'terzi');
+const originale = projects.find((project) => project.data.origin === 'originale' && project.data.depth !== 'card');
+---
+
+<KitLayout
+  title="Attribution"
+  note="Autore, fonte e licenza di un modello che non è mio. Sta accanto alle immagini, mai nel footer: un pannello neutro, nessun LED, nessun bordo rosso. Ogni riga esiste solo se il dato esiste."
+>
+  {
+    terzi.map((project) => (
+      <Specimen label={`modello di terzi · dati reali · ${project.id}`}>
+        <div class="kit-col">
+          <Attribution project={project} />
+        </div>
+      </Specimen>
+    ))
+  }
+
+  <Specimen label="modello derivato · riga «Modifiche apportate»; uso commerciale non dichiarato, quindi una riga in meno" fixture>
+    <div class="kit-col">
+      <Attribution project={derivatoFixture} />
+    </div>
+  </Specimen>
+
+  {
+    originale && (
+      <Specimen label={`originale · nessun blocco · ${originale.id}`}>
+        <div class="kit-col">
+          <Attribution project={originale} />
+          <p class="faint kit-empty">Qui il componente non rende nulla: l'origine è «Originale». Se la geometria l'ha generata un assistente AI, lo dice il testo della scheda, senza etichette né pannelli.</p>
+        </div>
+      </Specimen>
+    )
+  }
+</KitLayout>
+
+<style>
+  .kit-col {
+    max-width: 39rem;
+  }
+
+  .kit-empty {
+    font-size: var(--fs-sm);
+  }
+</style>

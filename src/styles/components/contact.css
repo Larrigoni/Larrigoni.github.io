@@ -1,0 +1,206 @@
+/*
+ * Componenti: ContactPanel, Attribution.
+ *
+ * File con un solo proprietario: chi scrive questi componenti scrive solo qui.
+ * Consuma i token di tokens.css e le primitive di base.css, senza ridefinirle.
+ */
+
+/* --- ContactPanel (brief §6.18) ------------------------------------------- */
+
+/*
+ * La sezione è un `.section.alt` (--surface con i filetti). Se la sezione prima
+ * è anch'essa su --surface (Print Lab, §11.1), le due condividono un filetto solo.
+ */
+.section.alt + .contact {
+  border-top: 0;
+}
+
+/*
+ * Il pannello `.intent`: l'unico del sito che brilla. Bordo tinto, cima tinta
+ * che si spegne al 40% dell'altezza, alone fermo (--glow). Niente cordolo
+ * attorno: il cordolo non incornicia nulla (§3.A). In colori forzati il browser
+ * toglie alone e sfumatura, il bordo resta (§10.8).
+ */
+.intent {
+  display: grid;
+  gap: var(--s-600);
+  padding: var(--s-300);
+  border: var(--bd-accent);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--accent-soft), transparent 40%), var(--surface-2);
+  box-shadow: var(--glow);
+}
+
+/* h3 a 20/28 (la misura dell'h4): «Cosa mi serve per risponderti», «Come prosegue». */
+.intent h3 {
+  font-size: var(--fs-h4);
+  line-height: 1.4;
+}
+
+.intent__block {
+  display: grid;
+  gap: var(--s-200);
+}
+
+.intent__block + .intent__block {
+  margin-top: var(--s-500);
+}
+
+/*
+ * «Cosa mi serve»: lista numerata col marcatore di default. È una lista, non
+ * numerazione di sistema: del numero cambia solo il colore (Sans 400, --faint).
+ */
+.intent__needs {
+  padding-left: 1.2em;
+  color: var(--muted);
+}
+
+.intent__needs li + li {
+  margin-top: var(--s-75);
+}
+
+.intent__needs li::marker {
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* «Come prosegue»: tre righe in sequenza, senza marcatori (ol role="list"). */
+.intent__next {
+  display: grid;
+  gap: var(--s-75);
+  color: var(--muted);
+}
+
+.intent__note {
+  font-size: var(--fs-note);
+  line-height: 1.5;
+  color: var(--faint);
+}
+
+/*
+ * Colonna d'azione: indirizzo in chiaro → CTA piena → nota. In colonna singola
+ * un filetto la stacca dalle liste; da 960px sta accanto, centrata in verticale,
+ * così la CTA non entra mai nel primo 40% del pannello, dove c'è la tinta e
+ * l'anello di focus in hover scenderebbe a 2.93:1 (§4.3).
+ */
+.intent__reach {
+  display: grid;
+  gap: var(--s-300);
+  align-content: start;
+  padding-top: var(--s-500);
+  border-top: var(--bd);
+}
+
+/*
+ * L'indirizzo è testo selezionabile che punta a un mailto semplice, di riserva
+ * se il precompilato non apre nulla. 20/28 sotto 760px: nei 277px utili a 375
+ * entra appena; il markup lo lascia andare a capo solo prima della chiocciola,
+ * `overflow-wrap: anywhere` è la rete.
+ */
+.intent__email {
+  font-size: var(--fs-h4);
+  line-height: 1.4;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.intent__act {
+  display: grid;
+  gap: var(--s-100);
+}
+
+/* La CTA è larga quanto la colonna, a ogni larghezza. */
+.intent__cta {
+  width: 100%;
+}
+
+@media (min-width: 47.5rem) {
+  .intent {
+    padding: var(--s-400);
+  }
+
+  .intent__email {
+    font-size: var(--fs-h3);
+    line-height: 1.333;
+  }
+}
+
+@media (min-width: 60rem) {
+  .intent {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    padding: var(--s-700);
+  }
+
+  .intent__reach {
+    align-self: center;
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+/* --- Attribution (brief §6.16) -------------------------------------------- */
+
+/*
+ * Autore, fonte e licenza di un modello che non è di Lorenzo. Sta accanto alle
+ * immagini, mai nel footer. Nessun LED, nessun bordo rosso: è un dato, non uno
+ * stato. Il corpo è un `dl` come nei pannelli di telemetria.
+ */
+.attribution {
+  padding: var(--s-200) var(--s-300);
+  border: var(--bd-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* La testata usa `.eyebrow.bare` (Mono 500 12, steel): qui solo lo spazio sotto. */
+.attribution__head {
+  margin-bottom: var(--s-100);
+}
+
+.attribution__rows {
+  display: grid;
+}
+
+/* Sotto 480px `dt` sopra `dd`; un filetto 1px apre ogni riga. */
+.attribution__row {
+  display: grid;
+  row-gap: var(--s-50);
+  padding-block: 10px;
+  border-top: var(--bd);
+}
+
+.attribution__row:last-child {
+  padding-bottom: 0;
+}
+
+.attribution dt {
+  font: 400 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.attribution dd {
+  font: 500 var(--fs-body) / 1.5 var(--font-sans);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Da 480px le chiavi stanno in colonna, allineate su tutte le righe: ogni riga
+ * eredita le colonne del `dl` (`subgrid`), quindi la colonna delle chiavi è una
+ * sola e la misura la chiave più lunga. Senza `subgrid` la riga resta a una
+ * colonna, `dt` sopra `dd`: la resa dei 375px, mai un disallineamento.
+ */
+@media (min-width: 30rem) {
+  .attribution__rows {
+    grid-template-columns: minmax(9rem, max-content) minmax(0, 1fr);
+    column-gap: var(--s-200);
+  }
+
+  .attribution__row {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+}

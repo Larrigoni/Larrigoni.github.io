@@ -1,0 +1,282 @@
+/*
+ * Componenti: Case, Giri, Timeline (brief §6.9, §6.11, §6.12).
+ *
+ * File con un solo proprietario: chi scrive questi componenti scrive solo qui.
+ * Consuma i token di tokens.css e le primitive di base.css, senza ridefinirle.
+ * Mobile-first: le media query sono solo `min-width`, con i breakpoint del
+ * brief §10.9 (720, 760, 860, 960, 1200).
+ */
+
+/* --- Case (§6.9) ---------------------------------------------------------- */
+
+/* I case si impilano, uno per progetto in vetrina: mai affiancati, mai alternati. */
+.cases {
+  display: grid;
+  gap: var(--s-400);
+}
+
+.case {
+  display: grid;
+  gap: var(--s-300);
+  padding: var(--s-300);
+  border: var(--bd-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+
+.case__body {
+  display: grid;
+  gap: var(--s-200);
+  align-content: start;
+  min-width: 0;
+}
+
+/* Il paragrafo di prova: 16/26 muted, con un solo grassetto (campo `proof`). */
+.case__proof {
+  color: var(--muted);
+  line-height: 1.625;
+}
+
+/* «Cosa non fa:», il limite dichiarato. Filetto sinistro 2px: uno degli usi ammessi (§3.E, punto 2). */
+.case__boundary {
+  padding-left: var(--s-200);
+  border-left: 2px solid var(--line-strong);
+  color: var(--faint);
+  font-size: var(--fs-sm);
+}
+
+/*
+ * Sotto 860px la tile viene prima del testo: nei primi secondi si vede
+ * l'oggetto. La tile non contiene elementi focalizzabili, quindi l'ordine di
+ * tabulazione non cambia. Qui resta 4:3, come in media.css.
+ */
+.case .case__tile {
+  order: -1;
+}
+
+@media (min-width: 53.75rem) {
+  .case {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    gap: var(--s-400);
+    padding: var(--s-400);
+  }
+
+  /*
+   * Testo a sinistra, tile a destra, a piena altezza della card (condizione
+   * del 55% di §8). `contain: size` toglie all'immagine il diritto di dettare
+   * l'altezza della riga col suo rapporto: l'altezza la decide il testo, con
+   * un minimo di 320px.
+   */
+  .case .case__tile {
+    order: 0;
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 320px;
+    contain: size;
+  }
+}
+
+/* Chiusura della sezione Progetti: `closing` di home.ts (con il link a /projects/) + ghost. */
+.cases__foot {
+  display: grid;
+  gap: var(--s-200);
+  justify-items: start;
+  margin-top: var(--s-600);
+}
+
+.cases__closing {
+  max-width: var(--measure);
+  color: var(--faint);
+  font-size: var(--fs-sm);
+}
+
+/* --- Giri (§6.11) --------------------------------------------------------- */
+
+/* Sei tappe: 1 → 2 (720) → 3 (960) → 6 colonne (1200). */
+.giri {
+  display: grid;
+  gap: var(--s-100);
+}
+
+@media (min-width: 45rem) {
+  .giri {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-200);
+  }
+}
+
+@media (min-width: 60rem) {
+  .giri {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 75rem) {
+  .giri {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* Non sono link: nessun hover, nessun sollevamento. */
+.giro {
+  display: grid;
+  gap: var(--s-75);
+  align-content: start;
+  padding: var(--s-200);
+  border: var(--bd);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.giro h3 {
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+.giro p {
+  color: var(--faint);
+  font-size: var(--fs-sm);
+}
+
+/*
+ * Una sola tappa evidenziata («Il progetto», GIRO 3/6). Il segnale è il bordo
+ * --accent (3.96:1 su --surface-2): il numero in --accent-text da solo ha la
+ * stessa luminanza dello steel degli altri giri (1.03:1) e non basta.
+ */
+.giro--now {
+  border-color: var(--accent);
+}
+
+.giro--now .eyebrow {
+  color: var(--accent-text);
+}
+
+.giri__closing {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-75);
+  max-width: var(--measure);
+  margin-top: var(--s-300);
+  color: var(--faint);
+  font-size: var(--fs-sm);
+}
+
+/* Icona di ritorno: lineare, steel, centrata sulla prima riga (14px × 1.6). */
+.giri__closing svg {
+  flex: none;
+  margin-top: calc(0.8em - 8px);
+  color: var(--steel);
+}
+
+/* --- Timeline (§6.12) ----------------------------------------------------- */
+
+/*
+ * Binario a 11px dal bordo sinistro, largo 2 (asse a 12px); nodi da 16px
+ * centrati sull'asse. Rientro e passo fra le tappe sono 32 a 375px e 40 da
+ * 760px: le due misure servono anche a disegnare binario e nodi.
+ * `ol.track` e non `.track`: il reset `ol[role='list']` di base.css azzera il
+ * padding e ha una specificità più alta di una sola classe.
+ */
+ol.track {
+  --track-pad: var(--s-400);
+  --track-gap: var(--s-400);
+  display: grid;
+  gap: var(--track-gap);
+  max-width: var(--measure);
+  padding-left: var(--track-pad);
+}
+
+@media (min-width: 47.5rem) {
+  ol.track {
+    --track-pad: var(--s-500);
+    --track-gap: var(--s-500);
+  }
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  gap: var(--s-75);
+}
+
+/* Nodo: 16px, bordo 2px steel, fondo --bg, allineato alla riga dell'occhiello (12 × 1.33 ≈ 16px). */
+.stage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(4px - var(--track-pad));
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--steel);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+/*
+ * Binario: 2px --line-strong, da un nodo al successivo, così non prosegue
+ * oltre il TRAGUARDO. È un bordo e non un fondo: in colori forzati resta
+ * visibile. Nessun riempimento, nessuna animazione.
+ */
+.stage:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  bottom: calc(-1 * var(--track-gap));
+  left: calc(11px - var(--track-pad));
+  border-left: 2px solid var(--line-strong);
+}
+
+.stage__text {
+  color: var(--muted);
+}
+
+/* L'esito: 14px --text, «Ricevi:» in grassetto e senza colore. */
+.stage__outcome {
+  color: var(--text);
+  font-size: var(--fs-sm);
+}
+
+/* TRAGUARDO: nodo pieno steel e occhiello in --accent-text. L'unico tocco rosso della sezione, e non è pieno. */
+.stage--end::before {
+  background: var(--steel);
+}
+
+.stage--end .eyebrow {
+  color: var(--accent-text);
+}
+
+.timeline__foot {
+  display: grid;
+  gap: var(--s-200);
+  justify-items: start;
+  max-width: var(--measure);
+  margin-top: var(--s-600);
+}
+
+.timeline__note {
+  color: var(--faint);
+  font-size: var(--fs-note);
+}
+
+/* --- Colori forzati ------------------------------------------------------- */
+
+/*
+ * Il sistema sostituisce i colori: il giro evidenziato tiene un bordo diverso
+ * dagli altri, e il nodo del TRAGUARDO resta pieno (il suo fondo verrebbe
+ * azzerato), come previsto per i LED in §3.A.
+ */
+@media (forced-colors: active) {
+  .giro--now {
+    border-color: Highlight;
+  }
+
+  .stage::before {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+    background: Canvas;
+  }
+
+  .stage--end::before {
+    background: CanvasText;
+  }
+}

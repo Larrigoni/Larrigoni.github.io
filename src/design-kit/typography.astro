@@ -1,0 +1,54 @@
+---
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+---
+
+<KitLayout title="Tipografia" note="IBM Plex Sans per tutto il testo, IBM Plex Mono per occhielli, etichette e dati. Nessun font display: i titoli sono il font del testo.">
+  <Specimen label="h1 · titolo in due frasi · 36→60px 700 / seconda riga 400 steel">
+    <h1>Pezzi che non esistono in commercio.<span class="t-soft">Disegnati in CAD sulle tue misure, stampati, provati.</span></h1>
+  </Specimen>
+
+  <Specimen label="h2 · titolo di sezione · 30→36px 600, cordolo 32×3px sotto">
+    <div class="section-head">
+      <h2>Non render da vetrina.<span class="t-soft">Pezzi disegnati, stampati e in uso.</span></h2>
+    </div>
+  </Specimen>
+
+  <Specimen label="h2 d'azione · una frase sola">
+    <h2>Raccontami il problema.</h2>
+  </Specimen>
+
+  <Specimen label="h3 · 24px 600 · titolo di una card caso">
+    <h3>Spugne asciutte, acqua che torna nella vasca</h3>
+  </Specimen>
+
+  <Specimen label="h4 · 20px 600 · tappe e pannelli">
+    <h4>Il progetto</h4>
+  </Specimen>
+
+  <Specimen label="lead · 18px muted · con un solo grassetto">
+    <p class="lead">Progetto in CAD e stampo in 3D oggetti su misura per <strong>privati e piccole aziende</strong>: ricambi non critici, supporti, organizer, prototipi.</p>
+  </Specimen>
+
+  <Specimen label="body · 16px / 1.6">
+    <p class="muted">Un vassoio a sbalzo, disegnato sulle quote rilevate direttamente dal bordo della vasca, che ci si aggancia sopra. Il fondo è a nervature parallele: gli oggetti poggiano sulle creste, sollevati dal piano.</p>
+  </Specimen>
+
+  <Specimen label="occhiello · mono 12px maiuscolo, tracking .14em, trattino steel">
+    <p class="eyebrow">Progetto 04 · Su commissione</p>
+    <p class="eyebrow">Il metodo · Un giro, sempre lo stesso</p>
+  </Specimen>
+
+  <Specimen label="etichetta · mono 10px maiuscolo, faint">
+    <p class="label">PETG · 2 pezzi</p>
+  </Specimen>
+
+  <Specimen label="case study · la numerazione GIRO n/6 è CSS puro sui ##">
+    <div class="prose prose--case">
+      <h2>Il problema</h2>
+      <p>Spugne e saponi appoggiati sul bordo del lavello restano bagnati e lasciano aloni.</p>
+      <h2>I vincoli</h2>
+      <p>Il pezzo deve agganciarsi al bordo esistente e scaricare l'acqua nella vasca.</p>
+    </div>
+  </Specimen>
+</KitLayout>

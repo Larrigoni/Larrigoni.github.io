@@ -1,0 +1,47 @@
+---
+/**
+ * Icone lineari del sito (brief §5.6): SVG inline 20px, tratto 1.5 in
+ * currentColor (steel dal CSS), mai riempite, sempre `aria-hidden`.
+ * Usate dalle micro-prove dell'hero e dalle step-card.
+ */
+interface Props {
+  name: keyof typeof PATHS;
+  size?: 16 | 20;
+  class?: string;
+}
+
+const PATHS = {
+  // CAD: un pezzo in assonometria.
+  cad: ['M12 3 20 7.5v9L12 21l-8-4.5v-9L12 3Z', 'M4 7.5 12 12l8-4.5', 'M12 12v9'],
+  // Stampante: l'ugello sopra gli strati.
+  print: ['M9 3h6v5l-3 3-3-3V3Z', 'M5 15h14', 'M4 18.5h16', 'M6 21h12'],
+  // Piccola serie: tre pezzi uguali.
+  series: ['M4 9h7v7H4z', 'M13 9h7v7h-7z', 'M8.5 4h7v3'],
+  // Foto con un righello.
+  photo: ['M4 7h3l1.5-2h7L17 7h3v11H4V7Z', 'M12 15.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z', 'M3 21h18', 'M6 21v-1.5M10 21v-1.5M14 21v-1.5M18 21v-1.5'],
+  // Pezzo rotto.
+  broken: ['M4 5h7l-1.5 4 2 3-1.5 7H4V5Z', 'M20 5h-5.5L13 9l2 3-1.5 7H20V5Z'],
+  // Disegno a mano.
+  sketch: ['M4 20h4L19 9l-4-4L4 16v4Z', 'M13 7l4 4'],
+  // File da correggere.
+  file: ['M6 3h8l4 4v14H6V3Z', 'M14 3v4h4', 'M9 13h6M9 17h4'],
+} satisfies Record<string, string[]>;
+
+const { name, size = 20, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icon', className]}
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  {PATHS[name].map((d) => <path d={d} />)}
+</svg>

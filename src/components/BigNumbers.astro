@@ -1,0 +1,53 @@
+---
+/**
+ * BigNumbers: le sole cifre grandi del sito (brief §3.B, §6.10). Sono dati,
+ * non numerazione: solo valori letti dallo slicer, dalla bilancia o dal
+ * registro stampe. Peso e tempo macchina non esistono finché non sono misurati.
+ *
+ * Al massimo 4 per pagina: oltre, il build si ferma. Una voce senza valore
+ * non si genera; senza voci il componente non rende nulla. Con due voci le
+ * altre colonne restano vuote: niente celle da riempire.
+ *
+ * `dl`: lo screen reader legge etichetta e cifra; a schermo la cifra sta sopra.
+ */
+export interface BigNumber {
+  /** La misura, in numero: il componente la scrive all'italiana (3,5). */
+  value?: number | null;
+  /** Unità sulla stessa linea di base: g, h, mm. */
+  unit?: string;
+  /** Cosa misura, scritto normale: il maiuscolo lo fa il CSS. */
+  label: string;
+}
+
+interface Props {
+  items: BigNumber[];
+  class?: string;
+}
+
+const MAX = 4;
+const { items, class: className } = Astro.props;
+
+const shown = items.filter((item): item is BigNumber & { value: number } => typeof item.value === 'number' && Number.isFinite(item.value));
+
+if (shown.length > MAX) {
+  throw new Error(`BigNumbers: al massimo ${MAX} cifre grandi per pagina (brief §6.10), ricevute ${shown.length}.`);
+}
+---
+
+{
+  shown.length > 0 && (
+    <div class:list={['cifre', className]}>
+      <dl class="cifre__list">
+        {shown.map((item) => (
+          <div class="cifre__item">
+            <dt class="cifre__label">{item.label}</dt>
+            <dd class="cifre__value">
+              <span class="cifre__num">{item.value.toLocaleString('it-IT')}</span>
+              {item.unit && <span class="cifre__unit">{item.unit}</span>}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  )
+}

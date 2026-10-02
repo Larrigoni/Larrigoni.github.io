@@ -1,0 +1,20 @@
+---
+/**
+ * Cordolo (brief §3.A): un filo da 3px a strisce rosse e bone, che delimita e
+ * non decora. Nessuno stato: non reagisce, non si anima, non cambia allo scroll.
+ *
+ * Gli usi sono un elenco chiuso e solo due passano da qui:
+ * - `top`: in cima a ogni pagina, fisso sopra la nav (uso 1);
+ * - `end`: chiusura di /card/lorenzo, ultimo figlio del `body`, a tutta
+ *   larghezza della viewport e fuori dal pannello (uso 4).
+ * Il bordo del footer (uso 2) è `.site-footer::before` in chrome.css; il
+ * trattino sotto l'h2 (uso 3) è `.section-head h2::after` in base.css.
+ */
+interface Props {
+  pos: 'top' | 'end';
+}
+
+const { pos } = Astro.props;
+---
+
+<div class:list={['kerb', `kerb--${pos}`]} aria-hidden="true"></div>

@@ -1,0 +1,191 @@
+/*
+ * Componenti: Tile, Gallery.
+ *
+ * File con un solo proprietario: chi scrive questi componenti scrive solo qui.
+ * Consuma i token di tokens.css e le primitive di base.css, senza ridefinirle.
+ *
+ * Brief §6.7 (tile), §6.19 (galleria), §7 (immagini). Selettori a una classe
+ * dove si può: i contesti (case, card, hero) li sovrascrivono dal proprio file
+ * senza gare di specificità.
+ */
+
+/* --- Tile ------------------------------------------------------------------ */
+
+/*
+ * La cornice. Il radiale in basso è il pavimento: una pozza di luce fredda su
+ * cui il PNG trasparente si posa. Su un'immagine al vivo resta sotto, invisibile,
+ * e fa da fondo durante il caricamento.
+ */
+.tile {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: var(--bd-strong);
+  border-radius: var(--radius);
+  background: var(--raised) radial-gradient(ellipse 70% 45% at 50% 82%, var(--steel-soft), transparent 70%);
+  transition: border-color var(--t-hover) var(--ease);
+}
+
+/* Rapporti: li sceglie il contesto, uno per griglia (§6.7). */
+.tile--3-2 {
+  aspect-ratio: 3 / 2;
+}
+
+.tile--1-1 {
+  aspect-ratio: 1;
+}
+
+/*
+ * L'immagine riempie la cornice qualunque cosa ne fissi l'altezza: il rapporto
+ * qui sopra, oppure il contesto (il case la allunga a tutta colonna, §6.9).
+ */
+.tile img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Render su scuro (§7.1): il pezzo occupa circa l'80% del lato corto e non
+ * tocca mai il bordo. --lift è l'ombra di contatto più il filo chiaro di 1px
+ * che stacca i pezzi scuri da --raised: nel CSS, mai nel PNG.
+ */
+.tile--render img {
+  object-fit: contain;
+  padding: 8%;
+  filter: var(--lift);
+}
+
+/* Foto, schermate, render di scena a tutta cornice: al vivo (§7.3). */
+.tile--foto img {
+  object-fit: cover;
+}
+
+/*
+ * Il badge: un .tag su fondo OPACO --bg (7.98:1 sopra qualsiasi immagine; un
+ * vetro scendeva sotto 3.3:1 sopra una foto chiara). L'unico testo ammesso
+ * sopra un'immagine (§7.2).
+ */
+.tile__kind {
+  position: absolute;
+  right: var(--s-100);
+  bottom: var(--s-100);
+  z-index: 1;
+  background: var(--bg);
+}
+
+/*
+ * Tile dentro un link (galleria): il link è un blocco con il raggio della
+ * cornice, così l'anello globale di focus (2px --accent, 3px di distanza) la
+ * segue invece di disegnare un rettangolo. In hover cambia solo il bordo:
+ * nessuno zoom, nessuna ombra in più, nessuno spostamento.
+ */
+.tile-link {
+  display: block;
+  border-radius: var(--radius);
+  color: inherit;
+  text-decoration: none;
+}
+
+.tile-link:hover > .tile {
+  border-color: var(--steel);
+}
+
+/* --- Gallery --------------------------------------------------------------- */
+
+/*
+ * Sotto 768px: una striscia a scorrimento orizzontale. Il seguito lo segnala la
+ * figura successiva che sporge dal bordo (circa 40px a 375), non una
+ * dissolvenza: niente mask-image. Padding e margine di 6px lasciano spazio
+ * all'anello di focus delle tile-link (2px + 3px di distanza), che altrimenti
+ * il contenitore a scorrimento ritaglierebbe.
+ *
+ * `ul.gallery` e non `.gallery`: deve battere `ul[role='list']` di base.css,
+ * che azzera il padding.
+ *
+ * `contain: inline-size`: la larghezza della galleria la dà la colonna, mai il
+ * contenuto. Senza, la larghezza minima di una flex a riga singola è la somma
+ * delle sue figure, e dentro una colonna di griglia (min-width: auto) la
+ * striscia allargherebbe la colonna e la pagina scorrerebbe di lato a 375px.
+ */
+ul.gallery {
+  contain: inline-size;
+  display: flex;
+  gap: var(--s-100);
+  margin: -6px;
+  padding: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 6px;
+  scrollbar-width: thin;
+}
+
+/*
+ * Senza JavaScript la striscia non scorre da sola sulla voce con il focus: a
+ * 320-480px la voce restava fuori vista e l'anello ritagliato (WCAG 2.4.7,
+ * 2.4.11; review finale E). Finché il focus è dentro, la striscia va a capo.
+ */
+ul.gallery:has(a:focus-visible) {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  contain: none;
+}
+
+.gallery__item {
+  flex: 0 0 min(85%, 420px);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+/* Una sola immagine: niente da far sporgere, la tile va da margine a margine. */
+.gallery__item:only-child {
+  flex-basis: 100%;
+}
+
+/*
+ * Didascalia (§7.5): sempre sotto, allineata a sinistra, larga al massimo
+ * --measure. «PREFISSO — frase.»: il prefisso ripete il badge, così nessuna
+ * informazione esiste solo sopra l'immagine.
+ */
+.gallery__caption {
+  max-width: var(--measure);
+  margin-top: var(--s-100);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.gallery__kind {
+  color: var(--steel);
+  font: 400 var(--fs-eyebrow) / 1 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+/*
+ * Da 768px: griglia a due colonne; la prima immagine (la copertina) è promossa
+ * a tutta larghezza e a 3:2. Le altre restano 4:3: un solo rapporto per griglia.
+ */
+@media (min-width: 48rem) {
+  ul.gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-200);
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .gallery__item:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .gallery__item:first-child .tile {
+    aspect-ratio: 3 / 2;
+  }
+}

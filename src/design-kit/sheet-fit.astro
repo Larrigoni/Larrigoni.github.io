@@ -1,0 +1,27 @@
+---
+/**
+ * Kit: Tavola 01 · Per chi è (brief §6.13), resa con i testi veri di home.ts.
+ * La resa a 375px (colonne impilate, righello nascosto) scatta con la
+ * viewport: si vede restringendo la finestra o nella card home-mobile.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Sheet from '../components/Sheet.astro';
+import { home } from '../data/home.ts';
+
+const perchi = home.sections.find((s) => s.id === 'perchi');
+if (!perchi) throw new Error('home.ts: manca la sezione «perchi»');
+---
+
+<KitLayout
+  title="Tavola 01 · Per chi è"
+  note="L'unica texture del sito: punti ogni 24px e linee steel ogni 96px su --sheet, con il righello a tacche sul bordo sinistro da 760px. Chip al posto dell'occhiello, titolo a una frase, due colonne velate. Nessuno stato: non c'è nulla da cliccare."
+>
+  <Specimen label="sezione intera · testi di home.ts (perchi) · rosso pieno: nessuno · tocchi rossi: h3 «sì», filetto della nota">
+    <Sheet section={perchi} />
+  </Specimen>
+
+  <Specimen label="sotto 760px · colonne impilate (gap 16), righello nascosto, reticolo di fondo mantenuto">
+    <p class="muted">La variante scatta sulla larghezza della finestra, non del campione: si vede nella card home-mobile, o restringendo questa pagina sotto 760px.</p>
+  </Specimen>
+</KitLayout>

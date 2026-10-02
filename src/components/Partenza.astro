@@ -1,0 +1,43 @@
+---
+/**
+ * Da dove si parte (brief §6.19, step-card): cinque card come quelle dei
+ * Giri, con un'icona steel al posto del numero. Una sola è evidenziata, quella
+ * con il tag (CONSIGLIATO): bordo --accent-line e `.tag.accent`.
+ * Da 760px le prime due occupano mezza riga, le altre tre un terzo.
+ */
+import Icon from './Icon.astro';
+import SectionHead from './SectionHead.astro';
+import type { Section } from '../data/home.ts';
+
+interface Props {
+  section: Section;
+}
+
+const { section } = Astro.props;
+const { id, eyebrow, title, lead, items = [], note } = section;
+const titleId = `${id}-titolo`;
+
+// Nell'ordine delle voci di home.ts: foto, pezzo rotto, disegno, file, serie.
+const ICONS = ['photo', 'broken', 'sketch', 'file', 'series'] as const;
+---
+
+<section class="section alt" id={id} aria-labelledby={titleId}>
+  <div class="wrap">
+    <SectionHead eyebrow={eyebrow} title={title} lead={lead} titleId={titleId} />
+    <ul class="steps" role="list">
+      {
+        items.map((item, i) => (
+          <li class:list={['step', item.tag && 'step--now']}>
+            <div class="step__top">
+              <Icon name={ICONS[i % ICONS.length]} class="step__icon" />
+              {item.tag && <span class="tag accent">{item.tag}</span>}
+            </div>
+            {item.strong && <h3>{item.strong}</h3>}
+            <p>{item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    {note && <p class="steps__note">{note}</p>}
+  </div>
+</section>

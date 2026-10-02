@@ -1,0 +1,87 @@
+---
+/**
+ * Barra dei filtri dell'indice (brief §6.17): link a pagine statiche, niente
+ * JavaScript. Ordine fisso in ogni vista (WCAG 3.2.3): Tutti → categorie →
+ * tag, nell'ordine di taxonomy.ts. Il filtro corrente ha `aria-current` e non
+ * si sposta mai; sopra la barra, nelle viste filtrate, una riga dice quale.
+ *
+ * Un filtro esiste solo se esiste la sua rotta, con le regole di
+ * src/pages/projects/: una categoria con almeno un progetto, un tag con almeno
+ * due. I conteggi sono veri, contati qui dall'elenco completo. Se ogni filtro
+ * darebbe lo stesso elenco di «Tutti», la barra non compare.
+ *
+ * Stili in src/styles/components/grid.css.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import { CATEGORIES, TAGS, categoryLabels, tagLabels } from '../lib/taxonomy.ts';
+import type { Category, Tag } from '../lib/taxonomy.ts';
+
+/** Il filtro di una vista: la categoria di /projects/categoria/<slug>/ o il tag di /projects/tag/<slug>/. */
+type FilterKey = { kind: 'categoria'; slug: Category } | { kind: 'tag'; slug: Tag };
+
+interface Props {
+  /** Tutti i progetti pubblicati: l'elenco di «Tutti», non quello già filtrato. */
+  projects: CollectionEntry<'projects'>[];
+  /** Il filtro della pagina corrente; assente su /projects/, dove è corrente «Tutti». */
+  current?: FilterKey;
+}
+
+interface Filter {
+  label: string;
+  href: string;
+  count: number;
+  current: boolean;
+}
+
+const { projects, current } = Astro.props;
+const total = projects.length;
+
+const categories: Filter[] = CATEGORIES.map((slug) => ({
+  label: categoryLabels[slug],
+  href: `/projects/categoria/${slug}/`,
+  count: projects.filter((p) => p.data.category === slug).length,
+  current: current?.kind === 'categoria' && current.slug === slug,
+})).filter((f) => f.count >= 1);
+
+const tags: Filter[] = TAGS.map((slug) => ({
+  label: tagLabels[slug],
+  href: `/projects/tag/${slug}/`,
+  count: projects.filter((p) => p.data.tags.includes(slug)).length,
+  current: current?.kind === 'tag' && current.slug === slug,
+})).filter((f) => f.count >= 2);
+
+const narrowing = [...categories, ...tags];
+const all: Filter = { label: 'Tutti', href: '/projects/', count: total, current: current === undefined };
+
+// Un filtro che conta quanto «Tutti» ne ripete l'elenco: se lo fanno tutti, la barra non serve.
+const visible = narrowing.some((f) => f.count < total);
+const filters = [all, ...narrowing];
+const active = narrowing.find((f) => f.current);
+
+const progetti = (n: number) => (n === 1 ? 'progetto' : 'progetti');
+---
+
+{
+  visible && (
+    <div class="filters">
+      {active && (
+        <p class="filters__active">{`Filtro attivo: ${active.label} — ${active.count} ${progetti(active.count)}`}</p>
+      )}
+      <nav aria-label="Filtra i progetti">
+        <ul class="filters__list" role="list">
+          {filters.map((f) => (
+            <li>
+              <a class="filters__link" href={f.href} aria-current={f.current ? 'page' : undefined}>
+                <span>
+                  {f.label}{' '}
+                  <span class="filters__count">{`(${f.count})`}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  )
+}

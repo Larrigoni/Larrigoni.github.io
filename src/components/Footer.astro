@@ -1,17 +1,81 @@
 ---
+/**
+ * Footer (brief §6.2): cordolo in cima, fondo --bg, tre colonne da 760px.
+ *
+ * (1) monogramma 40px, nome, tagline · (2) PAGINE · (3) CONTATTO: email,
+ * GitHub, meta `PORTFOLIO · AGG. AAAA-MM`. Sotto un filetto, il ©.
+ * Tagline, pagine, email e GitHub vengono da `home.footer` (src/data/home.ts).
+ *
+ * La data del meta è quella dell'ultimo progetto pubblicato, mai del build:
+ * se non c'è un progetto pubblicato la riga non c'è (una riga in meno, non
+ * una riga finta).
+ */
+import Logo from './Logo.astro';
+import { home } from '../data/home.ts';
+import type { HomeContent } from '../data/home.ts';
+import { getPublishedProjects } from '../lib/content.ts';
+import { collectionStats } from '../lib/projects.ts';
+
+interface Props {
+  /** Tagline, pagine, email, GitHub. Di default `home.footer`. */
+  footer?: HomeContent['footer'];
+  /**
+   * Data dell'ultimo progetto pubblicato. Se manca si ricava dalla collection;
+   * `null` dice che non ce n'è uno, e la riga del meta non compare.
+   */
+  updated?: Date | null;
+}
+
+const { footer = home.footer } = Astro.props;
+const updated =
+  Astro.props.updated === undefined ? collectionStats(await getPublishedProjects()).lastDate : Astro.props.updated;
+
+// Testo del brief (§6.2) che home.ts non porta.
+const NAME = 'Lorenzo Arrigoni';
+
+// Le date dei progetti sono giorni senza ora (mezzanotte UTC): il mese si legge in UTC.
+const month = updated ? updated.toISOString().slice(0, 7) : undefined;
 const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
-  <div class="wrap grid">
-    <p>
-      © {year} Lorenzo Arrigoni<br />
-      Progettazione 3D · Prototipazione · Soluzioni su misura
-    </p>
-    <p class="label">
-      <a href="mailto:lore.larrigoni@gmail.com">lore.larrigoni@gmail.com</a><br />
-      Social — in arrivo<br />
-      <a href="https://github.com/Larrigoni/Larrigoni.github.io">Codice sorgente su GitHub</a>
-    </p>
+  <div class="wrap footer__body">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <Logo size={40} decorative />
+        <p class="footer__name">{NAME}</p>
+        <p class="footer__tagline">{footer.tagline}</p>
+      </div>
+
+      <nav class="footer__col" aria-label="Pagine">
+        <p class="label">Pagine</p>
+        <ul class="footer__links" role="list">
+          {
+            footer.links.map((link) => (
+              <li>
+                <a href={link.href}>{link.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="footer__col">
+        <p class="label">Contatto</p>
+        <ul class="footer__links" role="list">
+          <li><a class="footer__email" href={`mailto:${footer.email}`}>{footer.email}</a></li>
+          <li><a href={footer.github}>GitHub ↗</a></li>
+        </ul>
+        {
+          month && (
+            <p class="mono footer__meta">
+              Portfolio&nbsp;· Agg. <time datetime={month}>{month}</time>
+            </p>
+          )
+        }
+      </div>
+    </div>
+
+    <p class="footer__legal">© {year} {NAME}</p>
   </div>
 </footer>

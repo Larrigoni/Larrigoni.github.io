@@ -1,0 +1,159 @@
+---
+/**
+ * Kit · Nav a pillola (brief §6.1). Ogni campione è il componente vero dentro
+ * una cornice: la nav risponde alla larghezza della cornice (container query),
+ * quindi le cornici da 375 e 320 mostrano la resa del telefono.
+ */
+import { Image } from 'astro:assets';
+
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Nav from '../components/Nav.astro';
+import { renderShot } from './fixtures.ts';
+---
+
+<KitLayout
+  title="Nav a pillola"
+  note="Sempre visibile, zero JavaScript: niente hamburger, niente nascondimento allo scroll. Vetro a .90, voci neutre, una sola CTA tinta. «Corrente» vuol dire sottolineato."
+>
+  <Specimen label="Home · riposo · le voci sono ancore della pagina, nessuna è corrente">
+    <div class="frame"><Nav current="/" /></div>
+  </Specimen>
+
+  <Specimen label="/projects/ e le sue viste · «Progetti» corrente: testo accent-text sottolineato + aria-current">
+    <div class="frame"><Nav current="/projects/" /></div>
+  </Specimen>
+
+  <Specimen label="/preventivo/ · «Preventivo» corrente">
+    <div class="frame"><Nav current="/preventivo/" /></div>
+  </Specimen>
+
+  <Specimen label="Scheda di un progetto · nessuna voce corrente: la scheda non è l'indice">
+    <div class="frame"><Nav current="/projects/porta-ciuccio/" /></div>
+  </Specimen>
+
+  <Specimen label="Hover su una voce · fondo steel-soft, testo bone (stato fermato per la card)">
+    <div class="frame hold-hover-item"><Nav current="/" /></div>
+  </Specimen>
+
+  <Specimen label="Hover sulla voce corrente · testo bone, la sottolineatura resta (stato fermato)">
+    <div class="frame hold-hover-current"><Nav current="/projects/" /></div>
+  </Specimen>
+
+  <Specimen label="Hover sulla CTA · bordo accent pieno, fondo e testo invariati (stato fermato)">
+    <div class="frame hold-hover-cta"><Nav current="/" /></div>
+  </Specimen>
+
+  <Specimen label="Focus su una voce · anello interno, nessun fondo di hover: 3.43:1 sul vetro (stato fermato)">
+    <div class="frame hold-focus-item"><Nav current="/" /></div>
+  </Specimen>
+
+  <Specimen label="Focus sulla CTA · anello globale a 3px di distanza (stato fermato)">
+    <div class="frame hold-focus-cta"><Nav current="/" /></div>
+  </Specimen>
+
+  <Specimen label="Sopra un render · il vetro tiene le voci leggibili">
+    <div class="frame frame--over">
+      <Image class="under" src={renderShot.src} alt="" widths={[800, 1200]} sizes="70rem" />
+      <Nav current="/" />
+    </div>
+  </Specimen>
+
+  <Specimen label="Sopra un'immagine bianca · il caso peggiore di §4.3 (faint 4.71, anello 3.43)" fixture>
+    <div class="frame frame--over frame--white"><Nav current="/projects/" /></div>
+  </Specimen>
+
+  <div class="phones">
+    <Specimen label="375px · home · lista a inizio corsa, «Per chi è» sparisce, il brand è il solo monogramma">
+      <div class="frame phone"><Nav current="/" /></div>
+    </Specimen>
+
+    <Specimen label="375px · /preventivo/ · la voce corrente è fuori vista al caricamento; aria-current resta">
+      <div class="frame phone"><Nav current="/preventivo/" /></div>
+    </Specimen>
+
+    <Specimen label="390px · ogni voce è larga due terzi della lista: il bordo taglia sempre la seconda a metà">
+      <div class="frame phone phone--390"><Nav current="/" /></div>
+    </Specimen>
+
+    <Specimen label="320px · zoom al 400% · nessuno scorrimento orizzontale della pagina; il taglio cade dopo «Progetti»">
+      <div class="frame phone phone--320"><Nav current="/" /></div>
+    </Specimen>
+  </div>
+</KitLayout>
+
+<style>
+  /*
+   * Cornice = una viewport: contenimento di layout (la nav risponde alla sua
+   * larghezza), overflow nascosto (la testata sticky resta ferma), spigoli vivi.
+   */
+  .frame {
+    position: relative;
+    contain: layout paint;
+    overflow: hidden;
+    padding-bottom: var(--s-200);
+    border: var(--bd-strong);
+    background: var(--bg);
+  }
+
+  .frame--over {
+    min-height: 180px;
+  }
+
+  .frame--over :global(.under) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* FIXTURE: il bianco è solo il banco di prova del caso peggiore, mai un fondo del sito. */
+  .frame--white {
+    background: #fff;
+  }
+
+  .phones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--s-500);
+  }
+
+  .phone {
+    width: 375px;
+    max-width: 100%;
+  }
+
+  .phone--390 {
+    width: 390px;
+  }
+
+  .phone--320 {
+    width: 320px;
+  }
+
+  /*
+   * Stati fermati: le stesse dichiarazioni di chrome.css, applicate senza
+   * puntatore né tastiera perché la card le mostri. Se cambiano lì, cambiano qui.
+   */
+  .hold-hover-item :global(.nav__list li:nth-child(2) a),
+  .hold-hover-current :global(.nav__list a[aria-current='page']) {
+    background: var(--steel-soft);
+    color: var(--text);
+  }
+
+  .hold-hover-cta :global(.nav__cta) {
+    border-color: var(--accent);
+  }
+
+  .hold-focus-item :global(.nav__list li:nth-child(4) a) {
+    outline: var(--focus);
+    outline-offset: -2px;
+    background: transparent;
+  }
+
+  .hold-focus-cta :global(.nav__cta) {
+    outline: var(--focus);
+    outline-offset: 3px;
+  }
+</style>

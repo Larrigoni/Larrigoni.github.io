@@ -1,291 +1,72 @@
 ---
-import { getCollection } from 'astro:content';
+/**
+ * Home: pagina lunga ad ancore, 12 sezioni nell'ordine del brief §11.1. Tutti
+ * i testi vengono da src/data/home.ts; i progetti dalla collection. Una
+ * sezione che non ha dati non c'è (Print Lab), un blocco senza dati neppure
+ * (i case, il visual dell'hero): mai segnaposto.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import Compare from '../components/Compare.astro';
+import ContactPanel from '../components/ContactPanel.astro';
+import Giri from '../components/Giri.astro';
+import Hero from '../components/Hero.astro';
+import Manifesto from '../components/Manifesto.astro';
+import Partenza from '../components/Partenza.astro';
+import PrintLabBand from '../components/PrintLabBand.astro';
+import Progetti from '../components/Progetti.astro';
+import Ricevi from '../components/Ricevi.astro';
+import Scraps from '../components/Scraps.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Sheet from '../components/Sheet.astro';
+import Timeline from '../components/Timeline.astro';
+import { home } from '../data/home.ts';
+import type { Section } from '../data/home.ts';
+import { getPublishedProjects } from '../lib/content.ts';
+import { homeCases, showsPrintLab } from '../lib/projects.ts';
 
-const projects = (await getCollection('projects')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
-
-const categoryLabels: Record<string, string> = {
-  'smart-objects': 'Smart Objects',
-  'custom-fit': 'Su misura',
-  'process-tools': 'Process Tools',
-  'print-lab': 'Print Lab',
+const section = (id: Section['id']) => {
+  const found = home.sections.find((s) => s.id === id);
+  if (!found) throw new Error(`home.ts: manca la sezione «${id}».`);
+  return found;
 };
 
-// LED di stato del registro: classe CSS + etichetta
-const statusInfo: Record<string, { cls: string; label: string }> = {
-  completato: { cls: '', label: 'Validato' },
-  prototipo: { cls: 'warn', label: 'In prova' },
-  'in-sviluppo': { cls: 'warn', label: 'In sviluppo' },
-  concept: { cls: 'queue', label: 'In coda' },
-};
+const projects = await getPublishedProjects();
+const cases = homeCases(projects);
 
-// Registro: progetti reali dalla collection + progetti in coda dalla roadmap
-const registro = [
-  ...projects.map((p) => ({
-    title: p.data.title,
-    val:
-      p.data.pieces && p.data.materials.length > 0
-        ? `${p.data.pieces} pezzi · ${p.data.materials[0]}`
-        : categoryLabels[p.data.category],
-    st: statusInfo[p.data.status],
-    lead: p.data.featured,
-  })),
-  { title: 'SinkFit', val: 'Su misura', st: statusInfo.concept, lead: false },
-  { title: 'Custom Lid System', val: 'Su misura', st: statusInfo.concept, lead: false },
-  { title: 'DeskDock', val: 'Su misura', st: statusInfo.concept, lead: false },
-  { title: 'ProcessAid', val: 'Process Tools', st: statusInfo.concept, lead: false },
-];
+// Il visual dell'hero è la copertina del primo progetto in vetrina (brief §6.19, Appendice C.4).
+const heroCase = cases[0];
+const visual = heroCase?.data.cover ? { shot: heroCase.data.cover, project: heroCase.data.title } : undefined;
 
-const aggiornato = new Date()
-  .toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  .replaceAll('/', '.');
-
-// Copy provvisorio: modificabile qui sotto
-const metodo = [
-  { n: '01', c: 'n-red', t: 'Il problema', d: 'Qualcosa non esiste, non entra o si rompe sempre nello stesso punto.' },
-  { n: '02', c: 'n-yellow', t: 'I vincoli', d: 'Misure reali, spazi stretti, materiali già presenti: si parte da lì.' },
-  { n: '03', c: 'n-cyan', t: 'Il progetto', d: 'Disegno in CAD partendo dalle quote, non dall’idea di forma.' },
-  { n: '04', c: 'n-green', t: 'Il prototipo', d: 'Prima versione stampata: serve per sbagliare presto e a poco.' },
-  { n: '05', c: 'n-blue', t: 'Il test', d: 'Si monta, si carica, si usa per giorni. Se cede, si annota perché.' },
-  { n: '06', c: 'n-plain', t: 'La soluzione', d: 'Versione finale, replicabile e documentata. Poi si ricomincia.' },
-];
-
-const preventivo = [
-  { n: '01', c: 'n-cyan', t: 'Invio del modello', d: 'Un file 3D (STL, STEP, OBJ, 3MF) oppure il pezzo da rifare, anche solo una foto quotata.' },
-  { n: '02', c: 'n-yellow', t: 'Analisi del pezzo', d: 'Il modello viene elaborato: tempo macchina e grammi di materiale calcolati sul pezzo reale, non a occhio.' },
-  { n: '03', c: 'n-red', t: 'Costi reali', d: 'Materiale, tempo di stampa, energia e usura, più eventuali extra: inserti, tag NFC, spedizione.' },
-  { n: '04', c: 'n-green', t: 'Preventivo in PDF', d: 'Prezzo chiaro, voci separate, nessuna sorpresa. Se cambi quantità o materiale, si ricalcola.' },
-];
-
-const problemi = [
-  { chip: 'var(--red)', t: 'Oggetti personalizzati', e: 'Un portapenne disegnato sulle misure esatte della tua scrivania.' },
-  { chip: 'var(--yellow)', t: 'Prototipi', e: 'Tenere in mano una forma prima di deciderne la versione definitiva.' },
-  { chip: 'var(--cyan)', t: 'Accessori funzionali', e: 'La staffa che il produttore non ha mai messo in catalogo.' },
-  { chip: 'var(--green)', t: 'Piccoli ricambi', e: 'La manopola della lavatrice che non si trova più da nessuna parte.' },
-  { chip: 'var(--blue)', t: 'Organizer', e: 'Divisori su misura per un cassetto, una valigetta, un ripiano.' },
-  { chip: 'var(--red)', t: 'Supporti', e: 'Un sostegno stabile per monitor, cuffie o utensili da banco.' },
-  { chip: 'var(--yellow)', t: 'Adattatori', e: 'Far combaciare due attacchi che non sono nati per stare insieme.' },
-  { chip: 'var(--cyan)', t: 'Oggetti intelligenti', e: 'Un tag NFC integrato che apre una pagina con un tocco.' },
-];
+const metodo = section('metodo');
+const prosegue = section('prosegue');
 ---
 
 <BaseLayout>
-  <!-- HERO -->
-  <section class="hero" aria-labelledby="titolo-hero">
+  <Hero section={section('hero')} visual={visual} />
+  <Ricevi section={section('ricevi')} />
+  <Scraps section={section('problema')} />
+
+  <Progetti section={section('progetti')} cases={cases} />
+
+  <Partenza section={section('partenza')} />
+  <Manifesto section={section('manifesto')} />
+
+  <section class="section alt" id={metodo.id} aria-labelledby={`${metodo.id}-titolo`}>
     <div class="wrap">
-      <p class="hero-eyebrow"><span class="dot" aria-hidden="true"></span>Progettazione 3D · Prototipazione · Su misura</p>
-      <h1 class="hero-title" id="titolo-hero" style="margin-top:1.5rem">
-        <span class="c1">Oggetti</span>
-        <span class="c2">che</span>
-        <span class="c3">risolvono</span>
-        <span class="c4">problemi</span>
-      </h1>
-      <p class="hero-lead">
-        Non parto da <mark>«cosa posso stampare»</mark>, ma da <mark>«quale problema posso
-        risolvere»</mark>. Poi lo disegno, lo stampo, lo provo e lo rifaccio finché funziona.
-      </p>
-      <div class="cta-row">
-        <a class="btn primary" href="#progetti">Guarda i progetti →</a>
-        <a class="btn accent" href="#contatto">Raccontami il problema</a>
-      </div>
+      <SectionHead eyebrow={metodo.eyebrow} title={metodo.title} lead={metodo.lead} titleId={`${metodo.id}-titolo`} />
+      <Giri items={metodo.items ?? []} closing={metodo.closing} />
     </div>
   </section>
 
-  <div class="kerb" role="presentation"></div>
-
-  <!-- METODO -->
-  <section class="wrap section-pad" id="metodo" aria-labelledby="titolo-metodo">
-    <div class="section-head">
-      <div class="titles"><span class="section-num" aria-hidden="true">01</span><h2 id="titolo-metodo">Come nasce un pezzo</h2></div>
-      <p>Sei passaggi, sempre gli stessi. Se ne salta uno, il pezzo non funziona.</p>
-    </div>
-    <div class="section-body">
-      <ol class="process" aria-label="Metodo di lavoro">
-        {
-          metodo.map((m) => (
-            <li>
-              <span class="top">
-                <span class:list={['step-num', m.c]} aria-hidden="true">{m.n}</span>
-                <h3>{m.t}</h3>
-              </span>
-              <p>{m.d}</p>
-            </li>
-          ))
-        }
-      </ol>
+  <section class="section" id={prosegue.id} aria-labelledby={`${prosegue.id}-titolo`}>
+    <div class="wrap">
+      <SectionHead eyebrow={prosegue.eyebrow} title={prosegue.title} lead={prosegue.lead} titleId={`${prosegue.id}-titolo`} />
+      <Timeline items={prosegue.items ?? []} note={prosegue.note} cta={prosegue.cta?.ghost} />
     </div>
   </section>
 
-  <!-- PROBLEMI -->
-  <section class="wrap section-pad-b" id="problemi" aria-labelledby="titolo-problemi">
-    <div class="section-head">
-      <div class="titles"><span class="section-num" aria-hidden="true">02</span><h2 id="titolo-problemi">Cosa posso risolvere</h2></div>
-      <p>Otto famiglie di problemi ricorrenti. Se il tuo somiglia a uno di questi, siamo già a metà strada.</p>
-    </div>
-    <div class="section-body">
-      <ul class="cap-grid" role="list">
-        {
-          problemi.map((p) => (
-            <li>
-              <span class="cap-chip" style={`background:${p.chip}`} aria-hidden="true" />
-              <span class="cap-name">{p.t}</span>
-              <span class="cap-eg"><span class="cap-eg-key">Es.</span>{p.e}</span>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- PROGETTI -->
-  <section class="dark" id="progetti" aria-labelledby="titolo-progetti">
-    <div class="wrap section-pad">
-      <div class="section-head">
-        <div class="titles"><span class="section-num" aria-hidden="true">03</span><h2 id="titolo-progetti">Progetti originali</h2></div>
-        <p>Design miei, dal problema alla soluzione. Ogni progetto entra nel registro: stato, categoria e — con i case study — i dati di stampa.</p>
-      </div>
-
-      <div class="section-body">
-        <div class="panel">
-          <div class="panel-head">
-            <span class="panel-tab">Reg · {new Date().getFullYear()}</span>
-            <p class="panel-title">Registro progetti</p>
-            <p class="panel-meta">Aggiornato · {aggiornato}</p>
-          </div>
-          <div class="panel-kerb"></div>
-          <div class="rows">
-            {
-              registro.map((r, i) => (
-                <div class:list={['row', { lead: r.lead }]}>
-                  <span class="pos" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                  <span class="who"><b>{r.title}</b></span>
-                  <span class="val">{r.val}</span>
-                  <span class:list={['st', r.st.cls]}><span class="led" aria-hidden="true"></span>{r.st.label}</span>
-                </div>
-              ))
-            }
-          </div>
-          <div class="panel-foot">
-            <span>Stampante · Bambu Lab X2D</span>
-            <span>Produzione · <b>on-demand</b></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="projects-grid">
-        {projects.map((project) => <ProjectCard project={project} />)}
-        <div class="card-stack">
-          <div class="placeholder-card on-dark" role="note">
-            <span class="label">In coda</span>
-            <p>I prossimi progetti originali: SinkFit, Custom Lid System, DeskDock. Ogni case study arriverà qui con foto, iterazioni e dati di stampa.</p>
-          </div>
-          <div class="placeholder-card on-dark" role="note">
-            <span class="label">Print Lab · in arrivo</span>
-            <p>Le stampe realizzate da modelli di altri designer avranno una sezione dedicata, sempre con autore, fonte e licenza.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="kerb yellow" role="presentation"></div>
-
-  <!-- IMPRONTA -->
-  <section class="wrap section-pad" id="impronta" aria-labelledby="titolo-impronta">
-    <div class="section-head">
-      <div class="titles"><span class="section-num" aria-hidden="true">04</span><h2 id="titolo-impronta">Impronta</h2></div>
-      <p>Stampare poco e stampare bene: un pezzo alla volta, materiali riciclabili, riparare invece di sostituire.</p>
-    </div>
-    <div class="impronta-grid">
-      <div class="panel eco-panel">
-        <div class="panel-head">
-          <span class="panel-tab">Eco</span>
-          <p class="panel-title">Come produco</p>
-        </div>
-        <div class="panel-kerb"></div>
-        <div class="rows">
-          <div class="row txt"><span class="pos" aria-hidden="true">01</span><span class="who"><b>Solo su richiesta</b> — niente magazzino: si stampa ciò che serve, quando serve.</span></div>
-          <div class="row txt"><span class="pos" aria-hidden="true">02</span><span class="who"><b>Principalmente PLA</b> — bioplastica prodotta a partire da fonti rinnovabili.</span></div>
-          <div class="row txt"><span class="pos" aria-hidden="true">03</span><span class="who"><b>Riparare batte sostituire</b> — ricambi non critici che allungano la vita degli oggetti.</span></div>
-          <div class="row txt"><span class="pos" aria-hidden="true">04</span><span class="who"><b>Sbagliare in piccolo</b> — prototipi ridotti prima del pezzo definitivo: meno tempo, meno scarti.</span></div>
-        </div>
-        <div class="panel-foot">
-          <span>Nessun magazzino: si stampa solo ciò che serve</span>
-          <span>Riparare &gt; <b>sostituire</b></span>
-        </div>
-      </div>
-      <div class="figure">
-        <span class="big">Foto del laboratorio — in arrivo</span>
-        <span class="cap">Placeholder · Bambu Lab X2D al lavoro</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- PREVENTIVO -->
-  <section class="wrap section-pad-b" id="preventivo" aria-labelledby="titolo-preventivo">
-    <div class="section-head">
-      <div class="titles"><span class="section-num" aria-hidden="true">05</span><h2 id="titolo-preventivo">Come nasce un preventivo</h2></div>
-      <p>Niente stime a occhio: il costo si calcola sul modello 3D vero. Quattro passaggi e ricevi un PDF con ogni voce in chiaro.</p>
-    </div>
-    <div class="section-body">
-      <ol class="process" aria-label="Come nasce un preventivo">
-        {
-          preventivo.map((s) => (
-            <li>
-              <span class="top">
-                <span class:list={['step-num', s.c]} aria-hidden="true">{s.n}</span>
-                <h3>{s.t}</h3>
-              </span>
-              <p>{s.d}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-    <div class="quote-grid">
-      <div class="panel">
-        <div class="panel-head">
-          <span class="panel-tab">PDF · Esempio</span>
-          <p class="panel-title">Esempio di preventivo</p>
-          <p class="panel-meta">Dati di esempio</p>
-        </div>
-        <div class="panel-kerb"></div>
-        <div class="rows">
-          <div class="row txt3"><span class="pos" aria-hidden="true">01</span><span class="who">Materiale · PETG</span><span class="val">124 g</span></div>
-          <div class="row txt3"><span class="pos" aria-hidden="true">02</span><span class="who">Tempo di stampa</span><span class="val">4:10 h</span></div>
-          <div class="row txt3"><span class="pos" aria-hidden="true">03</span><span class="who">Servizi extra · inserti M4</span><span class="val">×6</span></div>
-          <div class="row txt3"><span class="pos" aria-hidden="true">04</span><span class="who">Copie</span><span class="val">×2</span></div>
-        </div>
-        <div class="panel-foot">
-          <span>Voci e margini sempre <b>visibili</b></span>
-          <span>Consegna PDF · <b>immediata</b></span>
-        </div>
-      </div>
-      <div class="placeholder-card wide" role="note">
-        <span class="label">Nota</span>
-        <p>
-          Il preventivo è gratuito e non impegna: serve a decidere insieme se il pezzo vale la
-          stampa. Prezzi e voci dell'esempio sono indicativi.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTATTO -->
-  <section class="wrap section-pad-b" id="contatto" aria-labelledby="titolo-contatto">
-    <div class="contact">
-      <p class="cta" id="titolo-contatto">Hai un problema da risolvere?</p>
-      <p>
-        Un pezzo introvabile, un supporto che non esiste, un accessorio che «quasi» funziona:
-        raccontamelo e valutiamo insieme se si può progettare.
-      </p>
-      <div class="cta-row">
-        <a class="btn primary" href="mailto:lore.larrigoni@gmail.com">Scrivimi →</a>
-      </div>
-      <p class="mail"><a href="mailto:lore.larrigoni@gmail.com">lore.larrigoni@gmail.com</a></p>
-    </div>
-  </section>
+  <Sheet section={section('perchi')} />
+  <Compare section={section('domanda')} />
+  {showsPrintLab(projects) && <PrintLabBand section={section('printlab')} />}
+  <ContactPanel section={section('contatto')} />
 </BaseLayout>

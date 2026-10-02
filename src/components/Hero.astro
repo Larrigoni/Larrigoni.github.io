@@ -1,0 +1,84 @@
+---
+/**
+ * Hero della home (brief §6.19, §11.1): occhiello, h1 in due frasi, lead,
+ * coppia di CTA con la nota, tre micro-prove; a destra la copertina di un
+ * progetto pubblicato, senza cornice né badge, che sfuma nel fondo.
+ *
+ * La didascalia viene dai dati dell'immagine (`RENDER — PORTA CIUCCIO`), così
+ * resta vera quando il render diventa una foto. Senza progetto pubblicato con
+ * copertina l'hero è solo testo: nessun visual segnaposto.
+ */
+import { Image } from 'astro:assets';
+
+import Eyebrow from './Eyebrow.astro';
+import Icon from './Icon.astro';
+import ItemText from './ItemText.astro';
+import Rich from './Rich.astro';
+import type { Shot } from './Tile.astro';
+import type { Section } from '../data/home.ts';
+import { rendersOnFloor, shotBadge } from '../lib/taxonomy.ts';
+import { NBSP } from '../lib/text.ts';
+
+interface Props {
+  section: Section;
+  /** La copertina che presta l'immagine, con il nome del suo progetto. */
+  visual?: { shot: Shot; project: string };
+}
+
+const { section, visual } = Astro.props;
+const { id, eyebrow, title, lead, items = [], cta } = section;
+const titleId = `${id}-titolo`;
+
+// Le tre micro-prove, nell'ordine di home.ts: progetto, stampa, serie.
+const ICONS = ['cad', 'print', 'series'] as const;
+---
+
+<section class="hero" id="top" aria-labelledby={titleId}>
+  <div class:list={['wrap', 'hero__grid', !visual && 'hero__grid--solo']}>
+    <div class="hero__text">
+      <Eyebrow text={eyebrow} />
+      <h1 id={titleId}>{title.claim}{title.soft && <>{' '}<span class="t-soft">{title.soft}</span></>}</h1>
+      {lead && <p class="lead"><Rich text={lead} /></p>}
+      {
+        cta && (
+          <div class="hero__act">
+            <div class="cta-row">
+              {cta.primary && <a class="btn primary" href={cta.primary.href}>{cta.primary.label}</a>}
+              {cta.ghost && <a class="btn" href={cta.ghost.href}>{cta.ghost.label}</a>}
+            </div>
+            {cta.ghost?.note && <p class="hero__note">{cta.ghost.note}</p>}
+          </div>
+        )
+      }
+      {
+        items.length > 0 && (
+          <ul class="hero__proofs" role="list">
+            {items.map((item, i) => (
+              <li>
+                <Icon name={ICONS[i % ICONS.length]} />
+                <span><ItemText item={item} /></span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+    {
+      visual && (
+        <figure class="hero__visual">
+          <div class:list={['hero__stage', rendersOnFloor(visual.shot) ? 'hero__stage--render' : 'hero__stage--foto']}>
+            <Image
+              src={visual.shot.src}
+              alt={visual.shot.alt}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 70rem) 34rem, (min-width: 60rem) 48vw, 100vw"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+          <figcaption class="hero__caption">{`${shotBadge(visual.shot)}${NBSP}— ${visual.project}`}</figcaption>
+        </figure>
+      )
+    }
+  </div>
+</section>

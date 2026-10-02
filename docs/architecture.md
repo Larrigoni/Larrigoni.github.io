@@ -118,24 +118,23 @@ email reale e dati reali (regola ADR-008).
 fallback `system-ui`; dentro `<img>` i font esterni non si caricano, quindi la
 resa dipende dal fallback. Polish futuro: convertire il testo in tracciato.
 
-## ADR-010 — Round-trip 3: primo case study (Scolatoio Oleolí) + pass mobile (2026-08-08)
+## ADR-010 — Round-trip 3: primo case study (Scolatoio da lavello) + pass mobile (2026-08-08)
 
 **Decisione:** portato a bordo il primo case study reale e completo:
-**Scolatoio Oleolí** (espositore scolante per saponette, cliente Oleolí, PETG,
+**Scolatoio da lavello** (espositore scolante, su commissione, PETG,
 2 pezzi, consegnato dopo 2 stampe fallite documentate).
 
-- Nuova pagina `/projects/scolatoio-oleoli/` (porting fedele della pagina
+- Nuova pagina `/projects/<vecchio slug col nome del committente>/` (porting fedele della pagina
   design): problema, soluzione, scheda del pezzo, galleria, diario di stampa.
 - Collection estesa con `client`, `pieces`, `image`, `imageAlt`, `hasPage`;
   le card progetto sono cliccabili quando `hasPage: true`.
-- Registro home: riga Oleolí in evidenza con dati reali; Maatbric non più
+- Registro home: riga dello scolatoio in evidenza con dati reali; Maatbric non più
   `featured`.
 - Pass di ottimizzazione mobile dal design system (header impilato con nav
   scorrevole, CTA piene, pannelli compatti).
 
 **Pipeline immagini:** gli originali restano in
-`SynologyDrive\DISEGNO 3D\Social\Pj1_Portaspugna\Immagini` (e
-`...\crotti\porta spugna lavello\render`); sul sito vanno versioni compresse in
+`SynologyDrive\DISEGNO 3D\Social\Pj1_Portaspugna\Immagini`; sul sito vanno versioni compresse in
 `public/projects/` (foto → JPEG q85 max 1600px, render CAD → PNG). Le copie nel
 progetto Claude Design superano il limite di lettura del tool (256 KiB), quindi
 la fonte per il sito sono SEMPRE gli originali locali ricompressi.
@@ -161,7 +160,7 @@ stesso (che ha invece autorizzato la pubblicazione delle immagini con il
 proprio logo):
 
 - pagina rinominata `/projects/scolatoio-da-lavello/`, con redirect dal vecchio
-  `/projects/scolatoio-oleoli` (in `astro.config.mjs`);
+  vecchio indirizzo col nome del committente (in `astro.config.mjs`; rimosso il 2026-09-25, ADR-020);
 - file di contenuto, componente pagina e immagini rinominati senza il nome del
   cliente (`public/projects/scolatoio-*`); rimosso il campo `client`;
 - titolo, h1, meta e card home: "Scolatoio da lavello"; l'occhiello dice
@@ -174,7 +173,7 @@ originale" se `featured`, altrimenti "Originale"), categoria solo se non c'è un
 materiale da mostrare, stato solo se diverso da `completato`, materiale se
 presente.
 
-## ADR-012 — Provenienza delle immagini (2026-08-09) — APERTO
+## ADR-012 — Provenienza delle immagini (2026-08-09) — CHIUSO da ADR-015
 
 **Fatto verificato:** cinque delle sette immagini del case study
 (`scolatoio-lavello`, `-ripiano`, `-piatto`, `-banco`, `-fallimenti`) hanno
@@ -200,7 +199,7 @@ chiesto di rimuovere il proprio marchio dalle immagini del case study.
 **Decisione:** le immagini pubblicate usano un marchio fittizio ("Floria") al
 posto di quello reale, ottenuto sostituendo la scritta sul medaglione. Il set
 sorgente è `SynologyDrive\DISEGNO 3D\Social\Pj1_Portaspugna\Immagini\FLORIA`;
-la cartella `OLEOLì` (marchio reale) **non va pubblicata**.
+la cartella col marchio reale **non va pubblicata**.
 
 **Vincoli applicati per non affermare il falso:**
 
@@ -211,6 +210,89 @@ la cartella `OLEOLì` (marchio reale) **non va pubblicata**.
   non essere identificato"* — così il lettore sa cosa sta guardando;
 - il titolo era già anonimo (ADR-011) e nel testo non compare alcun cliente.
 
-**Nota:** i file della cartella `OLEOLì` hanno i Content Credentials rimossi ma
+**Nota:** i file della cartella col marchio reale hanno i Content Credentials rimossi ma
 conservano il watermark ✦ visibile. Rimuovere i marcatori non rende
 un'immagine non-AI: la dichiarazione va fatta nel testo, come sopra.
+
+## ADR-014 — Progetti a tre livelli e origine dichiarata (2026-09-24)
+
+**Contesto:** il sito doveva mostrare «molti più esempi e meno dettagli», ma
+ogni pagina progetto era scritta a mano e il campo `originalDesign` non sapeva
+dire «base di altri, modificata».
+
+**Decisione:** lo schema (`src/lib/project-schema.ts`, testato in `tests/`) ha
+`depth` (`card` = solo nella griglia, `scheda`, `case-study`) e `origin`:
+
+- `originale`: geometria non derivata da un modello altrui. Se l'ha generata un
+  assistente AI sulle misure e le indicazioni di Lorenzo resta `originale`, e
+  lo si dichiara nel testo della scheda, senza etichette (decisione di Lorenzo,
+  2026-09-25);
+- `derivato`: parte da un modello pubblicato da altri, modificato;
+- `terzi`: modello di un altro autore, stampato così com'è.
+
+Le regole editoriali sono errori di build: `derivato` e `terzi` richiedono
+autore, fonte e licenza; un derivato deve dire cosa è stato modificato; un
+modello di terzi non diventa case study; schede e case study hanno una
+copertina; un case study ha almeno tre immagini e i sei `##` del metodo, in
+ordine; un progetto in vetrina ha titolo di beneficio e paragrafo di prova.
+`scripts/check-project.ts` applica le stesse regole a un file alla volta.
+
+## ADR-015 — Immagini: render Fusion e badge dichiarativo (2026-09-24)
+
+**Decisione:** le immagini di progetto sono render generati da Fusion
+(`scripts/fusion-capture.py` + `scripts/prepare-renders.mjs`: PNG con alpha,
+ritaglio sul pezzo, tela 4:3 costante, `--isolate`, `--neutral`) e foto di
+Lorenzo. Ogni immagine dichiara nello schema cosa mostra (`kind`) e se i suoi
+pixel sono ritoccati con AI (`aiAssisted`); il badge sulla tile lo scrive
+sempre. L'ombra di contatto sta nel CSS, non nel PNG. Chiude ADR-012.
+
+**Regola imparata:** un documento Fusion può contenere modelli di terzi
+importati; prima di usare un render lo si guarda.
+
+## ADR-016 — Filtri come rotte statiche (2026-09-24)
+
+**Decisione:** le viste filtrate sono pagine vere
+(`/projects/categoria/<categoria>/`, `/projects/tag/<tag>/`, quest'ultima solo
+con almeno due progetti): URL condivisibili, zero JavaScript.
+
+## ADR-017 — Immagini con astro:assets (2026-09-24)
+
+**Decisione:** le immagini di progetto stanno in `src/assets/projects/<slug>/`
+e passano da `astro:assets` (WebP responsive, dimensioni dichiarate).
+`public/` tiene solo favicon, logo, vCard e robots.
+
+## ADR-018 — Design system v2 «foglio tecnico» (2026-09-24)
+
+**Contesto:** il sistema «racing pop» (ADR-008/009) faceva sembrare il sito un
+esercizio universitario.
+
+**Decisione:** tema scuro modellato su kwslabs.com (pagina lunga ad ancore,
+testate di sezione uniformi, titoli in due frasi, superfici a gradini, onestà
+nelle etichette) più quattro rimandi racing e solo quelli: cordolo come filo di
+3px, numerazione negli occhielli mono (PROGETTO/P, GIRO, SETTORE, TRAGUARDO),
+telemetria (LED con etichetta, pannelli chiave/valore), monogramma LA con un
+solo rosso. Il rosso `#E5322E` ha tre gradini per il contrasto (componenti,
+riempimento della CTA, testo); i LED di fallimento non sono mai rossi. IBM Plex
+Sans + Mono. Token in `src/styles/tokens.css`, capitolato completo in
+`docs/brief-design-system.md`. Supera ADR-005, 008, 009.
+
+## ADR-019 — Kit di design generato dal build (2026-09-24)
+
+**Decisione:** Claude Design riceve un bundle generato da
+`scripts/gen-design-bundle.mjs` a partire dal build secondario
+`astro.design.mjs`: CSS compilato e componenti veri, mai copie. Le pagine del
+kit (`src/design-kit/`) sono iniettate solo da quel config e non finiscono mai
+online; lì le bozze sono visibili, nel build pubblico no. Il repo resta l'unica
+fonte di verità (ADR-007).
+
+## ADR-020 — Verifica delle licenze prima di pubblicare (2026-09-25)
+
+**Contesto:** una verifica di provenienza dei file ha mostrato che un progetto
+pubblicato non poteva restare online così com'era.
+
+**Decisione:** quel progetto è stato tolto dal sito il 2026-09-25. Da qui in
+avanti nessun progetto va online senza: provenienza della geometria verificata
+sui file (metadati dei 3MF, confronto delle misure), licenza del modello di
+partenza letta sulla pagina pubblica, e permesso commerciale quando il lavoro è
+pagato o promuove il servizio. Le analisi di dettaglio restano in note private,
+fuori da questo repo pubblico.

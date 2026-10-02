@@ -1,0 +1,34 @@
+---
+/**
+ * Indice dei progetti e sue viste filtrate (brief §11.2): la stessa testata
+ * su /projects/, /projects/categoria/… e /projects/tag/…, poi la barra dei
+ * filtri con i conteggi veri e la griglia di card. Il filtro attivo lo dice la
+ * riga di FilterBar, non un titolo diverso: la pagina resta la stessa.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import FilterBar from './FilterBar.astro';
+import ProjectGrid from './ProjectGrid.astro';
+import SectionHead from './SectionHead.astro';
+import { pages } from '../data/pages.ts';
+import type { Category, Tag } from '../lib/taxonomy.ts';
+
+interface Props {
+  /** Tutti i progetti pubblicati: servono alla barra dei filtri. */
+  all: CollectionEntry<'projects'>[];
+  /** Quelli della vista; di default tutti. */
+  projects?: CollectionEntry<'projects'>[];
+  current?: { kind: 'categoria'; slug: Category } | { kind: 'tag'; slug: Tag };
+}
+
+const { all, projects = all, current } = Astro.props;
+const { head } = pages.projects;
+---
+
+<section class="section page-projects" aria-labelledby="progetti-titolo">
+  <div class="wrap">
+    <SectionHead eyebrow={head.eyebrow} title={head.title} titleId="progetti-titolo" level={1} />
+    <FilterBar projects={all} current={current} />
+    <ProjectGrid projects={projects} headingLevel={2} eagerFirst />
+  </div>
+</section>

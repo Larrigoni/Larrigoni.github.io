@@ -1,0 +1,551 @@
+/*
+ * Pattern di pagina (brief §6.19, §11): Hero, Cosa ricevi, step-card,
+ * Manifesto, fascia Print Lab, fascia CTA, e l'impaginazione delle pagine
+ * interne (testata, pagina progetto, /about, /preventivo, 404, /card).
+ *
+ * File del gruppo pagine (D3): consuma i token e le primitive, non ridefinisce
+ * i componenti degli altri file. Mobile-first, solo `min-width`.
+ */
+
+/* --- Hero (§6.19) ----------------------------------------------------------- */
+
+.hero {
+  padding-block: var(--s-600) var(--sect);
+  background: linear-gradient(180deg, var(--pit), var(--bg));
+}
+
+/*
+ * Sotto 960px il render deve vedersi entro 812px dall'alto (§8): il blocco di
+ * testo si scioglie (`display: contents`) e il render sale subito dopo l'h1,
+ * prima di lead, CTA e micro-prove. L'ordine del markup non cambia, e la
+ * figura non contiene elementi focalizzabili: la tabulazione resta quella.
+ */
+.hero__grid {
+  display: grid;
+  gap: var(--s-300);
+  align-items: center;
+  justify-items: start;
+}
+
+.hero__text {
+  display: contents;
+}
+
+.hero__text > :nth-child(n + 3) {
+  order: 2;
+}
+
+.hero__visual {
+  order: 1;
+  justify-self: stretch;
+}
+
+@media (min-width: 60rem) {
+  .hero__grid {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    gap: var(--s-600);
+  }
+
+  .hero__grid--solo {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  }
+
+  .hero__text {
+    display: grid;
+    gap: var(--s-300);
+    justify-items: start;
+    min-width: 0;
+  }
+
+  .hero__visual {
+    order: 0;
+  }
+}
+
+.hero__act {
+  display: grid;
+  gap: var(--s-100);
+}
+
+.hero__note {
+  color: var(--faint);
+  font-size: var(--fs-note);
+}
+
+.hero__proofs {
+  display: grid;
+  gap: var(--s-100);
+  margin-top: var(--s-75);
+}
+
+.hero__proofs li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-100);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.hero__proofs .icon {
+  flex: none;
+  color: var(--steel);
+}
+
+/*
+ * Il render senza cornice: pavimento radiale più largo di quello della tile,
+ * ombra di contatto --lift, e una maschera in basso che lo fa uscire dal fondo.
+ */
+.hero__visual {
+  display: grid;
+  gap: var(--s-200);
+  min-width: 0;
+}
+
+.hero__stage {
+  aspect-ratio: 4 / 3;
+  mask-image: linear-gradient(to bottom, #000 70%, transparent);
+}
+
+.hero__stage img {
+  width: 100%;
+  height: 100%;
+}
+
+.hero__stage--render {
+  background: radial-gradient(ellipse 80% 40% at 50% 85%, var(--steel-soft), transparent 70%);
+}
+
+.hero__stage--render img {
+  object-fit: contain;
+  padding: 6%;
+  filter: var(--lift);
+}
+
+.hero__stage--foto img {
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+.hero__caption {
+  color: var(--steel);
+  font: 400 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+/* --- Cosa ricevi (§6.19) ------------------------------------------------------ */
+
+.ricevi__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-100) var(--s-300);
+  margin-bottom: var(--s-400);
+}
+
+.ricevi__claim {
+  color: var(--text);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+}
+
+.ricevi__list {
+  display: grid;
+  gap: var(--s-200);
+}
+
+@media (min-width: 40rem) {
+  .ricevi__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-300) var(--s-500);
+  }
+}
+
+@media (min-width: 60rem) {
+  .ricevi__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ricevi__list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-100);
+  color: var(--muted);
+}
+
+/* La spunta rossa esiste solo qui (§5.6): un gruppo, un tocco. */
+.ricevi__check {
+  flex: none;
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.ricevi__note,
+.steps__note {
+  max-width: var(--measure);
+  margin-top: var(--s-400);
+  color: var(--faint);
+  font-size: var(--fs-note);
+}
+
+/* --- Da dove si parte: step-card (§6.19) --------------------------------------- */
+
+.steps {
+  display: grid;
+  gap: var(--s-100);
+}
+
+@media (min-width: 47.5rem) {
+  .steps {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--s-200);
+  }
+
+  .step:nth-child(-n + 2) {
+    grid-column: span 3;
+  }
+
+  .step:nth-child(n + 3) {
+    grid-column: span 2;
+  }
+}
+
+/* Come un giro (method.css): non sono link, nessun hover. */
+.step {
+  display: grid;
+  gap: var(--s-75);
+  align-content: start;
+  padding: var(--s-200);
+  border: var(--bd);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.step__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-100);
+  min-height: 24px;
+  margin-bottom: var(--s-50);
+}
+
+.step__icon {
+  color: var(--steel);
+}
+
+.step h3 {
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+.step p {
+  color: var(--faint);
+  font-size: var(--fs-sm);
+}
+
+/* L'unica evidenziata: bordo tinto, non pieno. */
+.step--now {
+  border-color: var(--accent-line);
+}
+
+/* --- Manifesto (§6.19) ---------------------------------------------------------- */
+
+.manifesto__inner {
+  display: grid;
+  gap: var(--s-300);
+  justify-items: center;
+  text-align: center;
+}
+
+.manifesto__quote {
+  max-width: 18em;
+  color: var(--text);
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: var(--lh-title);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+@media (min-width: 47.5rem) {
+  .manifesto__quote {
+    font-size: 3rem;
+  }
+}
+
+.manifesto__hit {
+  color: var(--accent-text);
+}
+
+.manifesto .lead {
+  margin-inline: auto;
+}
+
+/* --- Fascia Print Lab (§11.1) ----------------------------------------------------- */
+
+.printlab__grid {
+  display: grid;
+  gap: var(--s-300);
+}
+
+.printlab__grid .section-head {
+  margin-bottom: 0;
+}
+
+.printlab__act {
+  display: grid;
+  gap: var(--s-200);
+  justify-items: start;
+}
+
+@media (min-width: 60rem) {
+  .printlab__grid {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    align-items: end;
+  }
+
+  .printlab__act {
+    justify-items: end;
+  }
+}
+
+/* --- Fascia CTA (§6.19) ------------------------------------------------------------ */
+
+.cta-band__inner {
+  display: grid;
+  gap: var(--s-300);
+}
+
+.cta-band__claim {
+  color: var(--text);
+  font-size: var(--fs-h4);
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.cta-band__act {
+  display: grid;
+  gap: var(--s-100);
+}
+
+.cta-band__note {
+  color: var(--faint);
+  font-size: var(--fs-note);
+}
+
+/* A 375px la CTA piena va a tutta larghezza. */
+.cta-band .btn.primary {
+  width: 100%;
+}
+
+@media (min-width: 47.5rem) {
+  .cta-band__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s-500);
+  }
+
+  .cta-band .btn.primary {
+    width: auto;
+  }
+}
+
+/* --- Testata delle pagine interne ------------------------------------------------- */
+
+.page-head {
+  padding-block: var(--s-600) var(--s-500);
+}
+
+.page-head .section-head {
+  margin-bottom: 0;
+}
+
+/*
+ * La testata di una pagina ha l'h1 (60px): nei 680px della testata di sezione
+ * andava su cinque righe. Il lead resta alla sua misura (--measure).
+ */
+.section-head--page {
+  max-width: 60rem;
+}
+
+.page-back {
+  margin-bottom: var(--s-300);
+  font-size: var(--fs-sm);
+}
+
+/* --- Pagina progetto (§11.2) ------------------------------------------------------- */
+
+.project__intro .pills {
+  margin-top: var(--s-100);
+}
+
+.project__layout {
+  display: grid;
+  gap: var(--s-500);
+}
+
+@media (min-width: 60rem) {
+  .project__layout {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+    gap: var(--s-600);
+  }
+
+  /* L'aside è alto quanto la galleria: così la scheda sticky ha corsa (telemetry.css). */
+  .project__side {
+    align-self: stretch;
+  }
+}
+
+.project__media {
+  display: grid;
+  gap: var(--s-400);
+  min-width: 0;
+}
+
+.project__side {
+  display: grid;
+  gap: var(--s-300);
+  align-content: start;
+  min-width: 0;
+}
+
+.project__body {
+  display: grid;
+  gap: var(--s-500);
+  margin-top: var(--sect);
+}
+
+/* --- /about ------------------------------------------------------------------------- */
+
+.about__grid {
+  display: grid;
+  gap: var(--s-500);
+}
+
+@media (min-width: 60rem) {
+  .about__grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+    gap: var(--s-600);
+  }
+}
+
+/* Il limite dichiarato: filetto sinistro 2px, come «Cosa non fa» del case. */
+.boundary-note {
+  max-width: var(--measure);
+  padding-left: var(--s-200);
+  border-left: 2px solid var(--line-strong);
+  color: var(--faint);
+  font-size: var(--fs-sm);
+}
+
+.page-act {
+  display: grid;
+  gap: var(--s-100);
+  justify-items: start;
+}
+
+.page-act__note {
+  color: var(--faint);
+  font-size: var(--fs-note);
+}
+
+/* --- /preventivo ---------------------------------------------------------------------- */
+
+.voci {
+  display: grid;
+  gap: var(--s-200);
+  max-width: var(--measure);
+}
+
+.voci li {
+  padding-bottom: var(--s-200);
+  border-bottom: var(--bd);
+  color: var(--muted);
+}
+
+.voci li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/* --- 404 (§6.19) ---------------------------------------------------------------------- */
+
+.not-found {
+  display: grid;
+  gap: var(--s-300);
+  justify-items: start;
+  padding-block: var(--sect);
+}
+
+.not-found .section-head {
+  margin-bottom: 0;
+}
+
+.not-found__act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-300);
+}
+
+/* --- /card/lorenzo (§6.19) ------------------------------------------------------------ */
+
+.vcard-page {
+  display: grid;
+  min-height: 100svh;
+  grid-template-rows: 1fr auto;
+}
+
+.vcard-page main {
+  display: grid;
+  place-items: center;
+  padding: var(--s-700) var(--gutter) 0;
+}
+
+.vcard {
+  display: grid;
+  gap: var(--s-200);
+  justify-items: center;
+  width: 100%;
+  max-width: 24rem;
+  padding: var(--s-400) var(--s-300);
+  border: var(--bd-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  text-align: center;
+}
+
+.vcard__name {
+  font-size: var(--fs-h3);
+  line-height: 1.33;
+}
+
+.vcard__actions {
+  display: grid;
+  gap: var(--s-100);
+  width: 100%;
+  margin-top: var(--s-200);
+}
+
+.vcard__actions .btn {
+  width: 100%;
+}
+
+/* --- Raccordi fra blocchi delle pagine interne ------------------------------------- */
+
+/* Il corpo che segue una testata di pagina: niente padding sopra, la testata ne ha già. */
+.page-body {
+  padding-bottom: var(--sect);
+}
+
+.voci + .boundary-note {
+  margin-top: var(--s-500);
+}
+
+.project__end {
+  margin-top: var(--sect);
+}

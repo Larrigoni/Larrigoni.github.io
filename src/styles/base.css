@@ -1,0 +1,488 @@
+/*
+ * Primitive condivise: reset, tipografia, impaginazione e i pezzi che ogni
+ * componente usa (occhiello, titolo in due frasi, bottoni, pill, tag, LED).
+ * Consuma solo i token di tokens.css.
+ */
+
+/* --- Reset ---------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--nav-h) + var(--s-400));
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 var(--fs-body) / var(--lh-body) var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+
+a {
+  color: var(--accent-text);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--text);
+}
+
+strong,
+b {
+  font-weight: 600;
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: var(--focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Accessibilità -------------------------------------------------------- */
+
+/* Neutro di proposito: --accent-deep riempie solo la CTA primaria (tokens.css). */
+.skip-link {
+  position: absolute;
+  left: var(--s-200);
+  top: -100px;
+  z-index: 100;
+  padding: var(--s-100) var(--s-200);
+  border: var(--bd-strong);
+  border-radius: var(--radius-sm);
+  background: var(--raised);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: var(--s-200);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- Tipografia ----------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-sans);
+  color: var(--text);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-title);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-title);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  line-height: 1.33;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: var(--fs-h4);
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/*
+ * Titolo in due frasi: affermazione forte, poi la seconda riga più leggera in
+ * steel. Solo per h1 e per gli h2 di sezione; i titoli d'azione restano a una frase.
+ */
+.t-soft {
+  display: block;
+  font-weight: 400;
+  color: var(--steel);
+  letter-spacing: -0.01em;
+}
+
+.lead {
+  max-width: var(--measure);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+  color: var(--muted);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.faint {
+  color: var(--faint);
+}
+
+/* Occhiello: mono, maiuscolo, preceduto da un trattino steel di 24×1px. */
+.eyebrow {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: var(--s-100);
+  font: 500 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+
+/* Quando l'occhiello va a capo il trattino resta centrato sulla prima riga (§5.4). */
+.eyebrow::before {
+  align-self: flex-start;
+  margin-top: calc(0.665em - 0.5px);
+}
+
+.eyebrow.bare::before {
+  content: none;
+}
+
+/* Un segmento dell'occhiello di 26 caratteri o meno non va mai a capo al suo interno (§5.4). */
+.nw {
+  white-space: nowrap;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  letter-spacing: var(--track-label);
+}
+
+.label {
+  font: 500 var(--fs-micro) / 1.4 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* --- Impaginazione -------------------------------------------------------- */
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--wrap));
+  margin-inline: auto;
+}
+
+.wrap.narrow {
+  width: min(100% - 2 * var(--gutter), var(--wrap-narrow));
+}
+
+.section {
+  padding-block: var(--sect);
+}
+
+.section.band {
+  padding-block: var(--band);
+}
+
+/* Le sezioni alternano --bg e --surface; quelle su surface hanno i filetti. */
+.section.alt {
+  background: var(--surface);
+  border-block: var(--bd);
+}
+
+.section.pit {
+  background: var(--pit);
+}
+
+/* Testata di sezione: occhiello → h2 in due frasi → lead, e un cordolo sotto l'h2. */
+.section-head {
+  display: grid;
+  gap: var(--s-200);
+  max-width: 680px;
+  margin-bottom: var(--s-600);
+}
+
+.section-head.center {
+  margin-inline: auto;
+  justify-items: center;
+  text-align: center;
+}
+
+.section-head h2::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: var(--kerb-h);
+  margin-top: var(--s-200);
+  background: var(--kerb);
+}
+
+.section-head.center h2::after {
+  margin-inline: auto;
+}
+
+/* --- Bottoni -------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-75);
+  min-height: 44px;
+  padding: 0 var(--s-300);
+  border: var(--bd-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text);
+  font: 600 var(--fs-sm) / 1 var(--font-sans);
+  text-decoration: none;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+
+.btn:hover {
+  border-color: var(--steel);
+  color: var(--text);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* La CTA primaria: una sola per schermata. Riempita del gradino scuro del rosso. */
+.btn.primary {
+  border-color: var(--accent);
+  background: var(--accent-deep);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-primary);
+}
+
+/*
+ * In hover il fondo NON passa a --accent: il bianco sopra farebbe 4.35:1, sotto AA
+ * per un testo di 14px. Si accendono l'anello e l'alone, il riempimento resta.
+ */
+.btn.primary:hover {
+  border-color: var(--accent);
+  background: var(--accent-deep);
+  color: var(--on-accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 10px 28px -8px var(--accent-line);
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-200);
+}
+
+/* Link d'azione testuale, con freccia. In riga propria il bersaglio è il box del
+   link, non la riga: almeno 24px (WCAG 2.5.8). */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link-arrow:hover {
+  text-decoration: underline;
+}
+
+/* --- Pill, tag, LED ------------------------------------------------------- */
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-75);
+}
+
+/* Pill: tratteggiata, per le caratteristiche di un progetto. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 var(--s-100);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--pill);
+  color: var(--muted);
+  font: 400 var(--fs-note) / 1 var(--font-sans);
+}
+
+/* Tag: mono in maiuscolo, per origine, stato e tipo di immagine. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-75);
+  padding: var(--s-50) var(--s-75);
+  border: var(--bd-strong);
+  border-radius: var(--radius-tag);
+  color: var(--muted);
+  font: 500 var(--fs-micro) / 1.2 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.tag.accent {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+/*
+ * LED di telemetria: sempre accompagnato da un'etichetta testuale (WCAG 1.4.1).
+ * Piatto: nessun alone, nessuna pulsazione (l'alone era il LED da videogioco).
+ */
+.led {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--faint);
+}
+
+.led.ok {
+  background: var(--led-ok);
+}
+
+.led.test {
+  background: var(--led-test);
+}
+
+.led.fail {
+  background: var(--led-fail);
+}
+
+.led.queue {
+  background: var(--led-queue);
+  box-shadow: inset 0 0 0 1px var(--faint);
+}
+
+/* Colori forzati (§3.A): il trattino sotto l'h2 diventa un filo, il LED tiene il colore con un anello. */
+@media (forced-colors: active) {
+  .section-head h2::after {
+    background: none;
+    border-top: var(--kerb-h) solid CanvasText;
+  }
+
+  .led {
+    forced-color-adjust: none;
+    box-shadow: inset 0 0 0 1px CanvasText;
+  }
+}
+
+/* --- Testo lungo (corpo Markdown dei progetti) ---------------------------- */
+
+.prose {
+  max-width: var(--measure);
+  color: var(--muted);
+}
+
+.prose > * + * {
+  margin-top: var(--s-200);
+}
+
+.prose h2 {
+  margin-top: var(--s-600);
+  font-size: var(--fs-h4);
+}
+
+.prose h3 {
+  margin-top: var(--s-400);
+  font-size: var(--fs-body);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.2em;
+}
+
+.prose li + li {
+  margin-top: var(--s-75);
+}
+
+/* Un case study è un giro del metodo: la numerazione dei sei ## è CSS puro. */
+.prose--case {
+  counter-reset: giro;
+}
+
+.prose--case h2 {
+  counter-increment: giro;
+}
+
+.prose--case h2::before {
+  content: 'GIRO ' counter(giro) '/6';
+  display: block;
+  margin-bottom: var(--s-100);
+  font: 500 var(--fs-eyebrow) / 1 var(--font-mono);
+  letter-spacing: var(--track-eyebrow);
+  color: var(--steel);
+}

@@ -1,0 +1,48 @@
+---
+/**
+ * Il capitolato per Claude Design, reso con le primitive del sito: è la prima
+ * card del gruppo Pages, così chi apre il progetto legge il brief per primo.
+ */
+import KitLayout from './KitLayout.astro';
+import { Content } from '../../docs/brief-design-system.md';
+---
+
+<KitLayout title="Brief · design system v2">
+  <article class="prose brief">
+    <Content />
+  </article>
+</KitLayout>
+
+<style>
+  .brief {
+    max-width: 52rem;
+  }
+
+  .brief :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+  }
+
+  .brief :global(th),
+  .brief :global(td) {
+    padding: var(--s-75) var(--s-100);
+    border-bottom: var(--bd);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .brief :global(pre) {
+    overflow-x: auto;
+    padding: var(--s-200);
+    border: var(--bd);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font: 400 var(--fs-note) / 1.5 var(--font-mono);
+  }
+
+  .brief :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+</style>

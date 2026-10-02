@@ -1,0 +1,29 @@
+---
+/**
+ * Fascia CTA di fine pagina (brief §6.19): una frase e la CTA piena, il solo
+ * rosso pieno della pagina. A 375px il bottone va a tutta larghezza.
+ */
+import type { Cta } from '../data/home.ts';
+
+interface Props {
+  claim: string;
+  cta: Cta;
+  /** Azione secondaria, ghost, accanto alla CTA. */
+  ghost?: Cta;
+}
+
+const { claim, cta, ghost } = Astro.props;
+---
+
+<section class="section alt band cta-band" aria-label={claim}>
+  <div class="wrap cta-band__inner">
+    <p class="cta-band__claim">{claim}</p>
+    <div class="cta-band__act">
+      <div class="cta-row">
+        <a class="btn primary" href={cta.href}>{cta.label}</a>
+        {ghost && <a class="btn" href={ghost.href}>{ghost.label}</a>}
+      </div>
+      {cta.note && <p class="cta-band__note">{cta.note}</p>}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,72 @@
+---
+/**
+ * Kit · Footer (brief §6.2). Il componente vero, con i dati di home.ts e la
+ * data dell'ultimo progetto letta dalla collection del build di design.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<KitLayout
+  title="Footer"
+  note="Cordolo in cima, fondo --bg, nessun colore proprio. Tre colonne da 760px, impilate sotto. Il meta porta la data dell'ultimo progetto pubblicato, mai quella del build."
+>
+  <Specimen label="Desktop · tre colonne 1.4fr 1fr 1fr, gap 48 · meta dalla collection del build di design (bozze comprese)">
+    <div class="frame"><Footer /></div>
+  </Specimen>
+
+  <Specimen label="Nessun progetto pubblicato · la riga del meta non c'è: una riga in meno, non una riga finta (il build pubblico di oggi)">
+    <div class="frame"><Footer updated={null} /></div>
+  </Specimen>
+
+  <Specimen label="Hover e focus su un link · testo bone, anello globale (stati fermati per la card)">
+    <div class="frame hold"><Footer /></div>
+  </Specimen>
+
+  <div class="phones">
+    <Specimen label="375px · colonne impilate, gap 32; il cordolo resta 3px">
+      <div class="frame phone"><Footer /></div>
+    </Specimen>
+
+    <Specimen label="320px · zoom al 400%">
+      <div class="frame phone phone--320"><Footer /></div>
+    </Specimen>
+  </div>
+</KitLayout>
+
+<style>
+  /* Una cornice è una viewport: spigoli vivi, così il cordolo arriva ai bordi come sullo schermo. */
+  .frame {
+    contain: layout paint;
+    overflow: hidden;
+    border: var(--bd-strong);
+    background: var(--bg);
+  }
+
+  .phones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--s-500);
+  }
+
+  .phone {
+    width: 375px;
+    max-width: 100%;
+  }
+
+  .phone--320 {
+    width: 320px;
+  }
+
+  /* Stati fermati: le stesse dichiarazioni di chrome.css e di base.css. Se cambiano lì, cambiano qui. */
+  .hold :global(nav .footer__links li:nth-child(2) a) {
+    color: var(--text);
+  }
+
+  .hold :global(nav .footer__links li:nth-child(4) a) {
+    outline: var(--focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+</style>

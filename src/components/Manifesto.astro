@@ -1,0 +1,29 @@
+---
+/**
+ * Manifesto (brief §6.19): la frase non è un titolo ma una citazione, con le
+ * parole marcate in home.ts (`**esiste**`) in --accent-text, ferme. Poi il
+ * lead e un'azione ghost. Nessuna CTA piena, nessun trattino cordolo.
+ */
+import Eyebrow from './Eyebrow.astro';
+import Rich from './Rich.astro';
+import type { Section } from '../data/home.ts';
+
+interface Props {
+  section: Section;
+}
+
+const { section } = Astro.props;
+const { id, eyebrow, title, lead, cta } = section;
+const quoteId = `${id}-frase`;
+---
+
+<section class="section manifesto" id={id} aria-labelledby={quoteId}>
+  <div class="wrap manifesto__inner">
+    <Eyebrow text={eyebrow} />
+    <blockquote class="manifesto__quote" id={quoteId}>
+      <p><Rich text={title.claim} mark="manifesto__hit" /></p>
+    </blockquote>
+    {lead && <p class="lead"><Rich text={lead} /></p>}
+    {cta?.ghost && <a class="btn" href={cta.ghost.href}>{cta.ghost.label}</a>}
+  </div>
+</section>

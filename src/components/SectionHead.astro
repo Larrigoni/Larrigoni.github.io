@@ -1,0 +1,34 @@
+---
+/**
+ * Testata di sezione (brief §6.6): occhiello → titolo in due frasi → lead.
+ * Il trattino cordolo sotto l'h2 lo mette base.css; un h1 (testata di pagina)
+ * non lo ha. Lo slot aggiunge blocchi dopo il lead.
+ */
+import Eyebrow from './Eyebrow.astro';
+import Rich from './Rich.astro';
+import type { Title } from '../data/home.ts';
+
+interface Props {
+  eyebrow?: string | readonly (string | undefined)[];
+  title: Title;
+  lead?: string;
+  /** id del titolo, per l'`aria-labelledby` della sezione. */
+  titleId: string;
+  center?: boolean;
+  /** 1 per la testata di una pagina, 2 (default) per una sezione. */
+  level?: 1 | 2;
+  as?: 'div' | 'header';
+  class?: string;
+}
+
+const { eyebrow, title, lead, titleId, center = false, level = 2, as: Tag = 'div', class: className } = Astro.props;
+const Heading = level === 1 ? 'h1' : 'h2';
+---
+
+<Tag class:list={['section-head', center && 'center', level === 1 && 'section-head--page', className]}>
+  {eyebrow && <Eyebrow text={eyebrow} />}
+  {/* Lo spazio fra le due frasi non si vede (.t-soft va a capo) ma si legge: senza, «esiste.E non hai». */}
+  <Heading id={titleId}>{title.claim}{title.soft && <>{' '}<span class="t-soft">{title.soft}</span></>}</Heading>
+  {lead && <p class="lead"><Rich text={lead} /></p>}
+  <slot />
+</Tag>

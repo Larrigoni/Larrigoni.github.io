@@ -1,0 +1,59 @@
+---
+/**
+ * Giri: le sei tappe del metodo, `GIRO n/6` (brief §6.11).
+ *
+ * I dati sono le voci della sezione `metodo` di home.ts: `tag` è l'occhiello
+ * (scritto nel markup, è un dato), `strong` il titolo, `text` il corpo.
+ * L'evidenza la decide il componente: la tappa «Il progetto» (METHOD_STEPS[2],
+ * GIRO 3/6), una sola per gruppo. Non sono link: nessun hover.
+ */
+import type { Item } from '../data/home.ts';
+import { METHOD_STEPS } from '../lib/taxonomy.ts';
+
+interface Props {
+  /** Le sei tappe, nell'ordine del metodo. */
+  items: Item[];
+  /** Chiusura sotto le card («Dal giro 6 si torna all'1: …»). */
+  closing?: string;
+}
+
+const { items, closing } = Astro.props;
+
+const nowIndex = items.findIndex((item) => item.strong === METHOD_STEPS[2]);
+---
+
+<div class="giri-wrap">
+  <ol class="giri" role="list">
+    {
+      items.map((item, i) => (
+        <li class:list={['giro', i === nowIndex && 'giro--now']}>
+          {item.tag && <span class="eyebrow bare">{item.tag}</span>}
+          {item.strong && <h3>{item.strong}</h3>}
+          <p>{item.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+  {
+    closing && (
+      <p class="giri__closing">
+        <svg
+          viewBox="0 0 16 16"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M2.5 8a5.5 5.5 0 1 0 1.61-3.89L2.5 5.6" />
+          <path d="M2.5 2.5v3.1h3.1" />
+        </svg>
+        <span>{closing}</span>
+      </p>
+    )
+  }
+</div>

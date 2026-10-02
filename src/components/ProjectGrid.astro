@@ -1,0 +1,37 @@
+---
+/**
+ * Griglia di card compatte (brief §6.8): `repeat(auto-fill, …)`, mai
+ * auto-fit, così regge da 1 a 4 card senza allargarle né riempire i vuoti.
+ * Ordine per `order` (sortProjects: prima i numerati, poi dal più recente).
+ *
+ * Con zero progetti non rende nulla: niente segnaposto, niente «in arrivo».
+ * Stili in src/styles/components/grid.css.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import ProjectCard from './ProjectCard.astro';
+import { sortProjects } from '../lib/projects.ts';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+  /** Livello dei titoli delle card: 2 se la griglia segue direttamente l'h1. */
+  headingLevel?: 2 | 3;
+  /** La prima tile è nel primo viewport: caricala subito (§7.1). */
+  eagerFirst?: boolean;
+}
+
+const { projects, headingLevel = 3, eagerFirst = false } = Astro.props;
+const sorted = sortProjects(projects);
+---
+
+{
+  sorted.length > 0 && (
+    <ul class="pgrid" role="list">
+      {sorted.map((project, i) => (
+        <li>
+          <ProjectCard project={project} headingLevel={headingLevel} eager={eagerFirst && i === 0} />
+        </li>
+      ))}
+    </ul>
+  )
+}

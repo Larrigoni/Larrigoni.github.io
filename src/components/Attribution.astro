@@ -1,0 +1,79 @@
+---
+/**
+ * Attribution: autore, fonte, licenza, uso commerciale e modifiche di un
+ * modello che non è di Lorenzo (brief §6.16, ADR-011, ADR-020). Obbligatoria
+ * quando `origin` è `derivato` o `terzi`; per un progetto `originale` il
+ * componente non rende nulla, così la pagina può includerlo sempre.
+ *
+ * Sta accanto alle immagini (sotto la galleria, nella stessa colonna), mai nel
+ * footer. Nessun LED, nessun bordo rosso. Ogni riga esiste solo se il dato
+ * esiste nel blocco `external` del progetto: niente «n/d», niente trattini.
+ * La licenza è un link solo se il `.md` ne dà l'indirizzo (`licenseUrl`):
+ * un link scritto qui sarebbe un dato inventato.
+ * Stili in `src/styles/components/contact.css`.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import { originLabels } from '../lib/taxonomy.ts';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { origin, external } = project.data;
+
+/** Testata (§6.16): l'etichetta di taxonomy.ts per i terzi, «Modello derivato» per i derivati. */
+const heading = origin === 'terzi' ? originLabels.terzi : 'Modello derivato';
+const headId = `attribuzione-${project.id}`;
+---
+
+{
+  origin !== 'originale' && external && (
+    <section class="attribution" aria-labelledby={headId}>
+      <p class="eyebrow bare attribution__head" id={headId}>
+        {heading}
+      </p>
+      <dl class="attribution__rows">
+        <div class="attribution__row">
+          <dt>Autore</dt>
+          <dd>{external.author}</dd>
+        </div>
+        <div class="attribution__row">
+          <dt>Fonte</dt>
+          <dd>
+            <a href={external.url}>
+              {external.platform}
+              <span aria-hidden="true"> ↗</span>
+            </a>
+          </dd>
+        </div>
+        <div class="attribution__row">
+          <dt>Licenza</dt>
+          <dd>
+            {external.licenseUrl ? (
+              <a href={external.licenseUrl}>
+                {external.license}
+                <span aria-hidden="true"> ↗</span>
+              </a>
+            ) : (
+              external.license
+            )}
+          </dd>
+        </div>
+        {external.commercialUse !== undefined && (
+          <div class="attribution__row">
+            <dt>Uso commerciale</dt>
+            <dd>{external.commercialUse ? 'Sì' : 'No'}</dd>
+          </div>
+        )}
+        {external.modifications && (
+          <div class="attribution__row">
+            <dt>Modifiche apportate</dt>
+            <dd>{external.modifications}</dd>
+          </div>
+        )}
+      </dl>
+    </section>
+  )
+}

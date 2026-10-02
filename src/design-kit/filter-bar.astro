@@ -1,0 +1,69 @@
+---
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import FilterBar from '../components/FilterBar.astro';
+import { getPublishedProjects } from '../lib/content.ts';
+import { CATEGORIES, TAGS } from '../lib/taxonomy.ts';
+
+// Dati reali del build di design (bozze comprese). Gli stati «pochi progetti»
+// si ottengono togliendo voci reali, mai aggiungendone: niente fixture qui.
+const projects = await getPublishedProjects();
+
+const category = CATEGORIES.find((c) => projects.some((p) => p.data.category === c));
+const tag = TAGS.find((t) => projects.filter((p) => p.data.tags.includes(t)).length >= 2);
+
+// Due voci reali di categorie diverse: la barra più corta che ha ancora senso.
+const first = projects[0];
+const second = first && projects.find((p) => p.data.category !== first.data.category);
+const two = first && second ? [first, second] : [];
+const one = projects.slice(0, 1);
+---
+
+<KitLayout
+  title="Barra dei filtri"
+  note="Filtri come link a pagine statiche, con il conteggio vero. Ordine fisso in ogni vista: Tutti, poi le categorie, poi i tag. Il filtro corrente è tinto e sottolineato, e non si sposta mai; nelle viste filtrate una riga sopra la barra dice quale è attivo. Se ogni filtro darebbe lo stesso elenco di «Tutti», la barra non compare."
+>
+  <Specimen label="Indice /projects/ · «Tutti» corrente · dati reali del build di design, bozze comprese">
+    <FilterBar projects={projects} />
+    <p class="label">
+      Stati · hover: bordo steel, testo bone · Tab: l'anello globale, 2px a 3px di distanza · sotto 640px: una riga sola a
+      scorrimento, il filtro tagliato netto dal bordo segnala il seguito, nessuna dissolvenza
+    </p>
+  </Specimen>
+
+  {
+    category && (
+      <Specimen label="Vista categoria · riga «Filtro attivo» sopra la barra, filtro corrente tinto e sottolineato">
+        <FilterBar projects={projects} current={{ kind: 'categoria', slug: category }} />
+      </Specimen>
+    )
+  }
+
+  {
+    tag && (
+      <Specimen label="Vista tag · stesso ordine, stesso posto: cambia solo il filtro corrente">
+        <FilterBar projects={projects} current={{ kind: 'tag', slug: tag }} />
+      </Specimen>
+    )
+  }
+
+  {
+    two.length === 2 && (
+      <Specimen label="Pochi progetti · due sole voci reali, di categorie diverse: pochi filtri">
+        <FilterBar projects={two} />
+      </Specimen>
+    )
+  }
+
+  <Specimen label="Un progetto solo · ogni filtro darebbe l'elenco di «Tutti»: la barra non compare">
+    <FilterBar projects={one} />
+    <p class="empty">Nessun markup.</p>
+  </Specimen>
+</KitLayout>
+
+<style>
+  .empty {
+    color: var(--faint);
+    font-size: var(--fs-note);
+  }
+</style>

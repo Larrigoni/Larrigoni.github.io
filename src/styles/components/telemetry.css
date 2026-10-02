@@ -1,0 +1,196 @@
+/*
+ * Componenti: Telemetry, ProjectSpecs, PrintLog, BigNumbers.
+ *
+ * File con un solo proprietario: chi scrive questi componenti scrive solo qui.
+ * Consuma i token di tokens.css e le primitive di base.css, senza ridefinirle.
+ *
+ * La telemetria vera è una tabella mono con un LED (brief §3.C): superficie
+ * --surface-2, filetti 1px, nessuna barra, gauge, percentuale o alone. Nessun
+ * rosso: il fallimento è il LED ruggine. Un pannello visibile per schermata.
+ *
+ * Pannello e cifre misurano la propria colonna, non la viewport (container
+ * query): lo stesso pannello sta nella colonna 5fr della pagina progetto, a
+ * tutta colonna in /about e a 327px su un telefono. Sotto i 24rem di pannello
+ * (ogni telefono fino a 430px) la chiave sta sopra il valore, come nel brief
+ * a 375px. Il contenitore prende la larghezza dal genitore: in una riga flex
+ * senza larghezza propria collasserebbe, quindi va in un blocco o in una griglia.
+ */
+
+/* --- .tele: il pannello chiave/valore ------------------------------------- */
+
+.tele {
+  container-type: inline-size;
+  overflow: hidden;
+  border: var(--bd);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+/* Testata: titolo steel a sinistra, meta faint a destra; va a capo se non ci sta. */
+.tele__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-50) var(--s-200);
+  padding: var(--s-100);
+  border-bottom: var(--bd);
+  font: 500 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+}
+
+.tele__title {
+  color: var(--steel);
+}
+
+.tele__meta {
+  color: var(--faint);
+}
+
+/*
+ * Corpo: a telefono ogni riga è una pila, chiave sopra e valore sotto. Da 24rem
+ * di pannello le righe diventano due colonne allineate (subgrid): la chiave
+ * larga almeno 9rem, uguale in tutte le righe.
+ */
+.tele__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.tele__row {
+  display: grid;
+  gap: var(--s-75) var(--s-200);
+  padding: 10px var(--s-100);
+}
+
+.tele__row + .tele__row {
+  border-top: var(--bd);
+}
+
+.tele__key {
+  font: 400 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.tele__val {
+  min-width: 0;
+  font: 500 var(--fs-body) / 1.5 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Riga di stato: il LED sta al centro della prima riga di testo; se il testo
+ * va a capo, rientra sotto il testo e non sotto il LED. La linea di base della
+ * riga la dà il testo, non il LED vuoto.
+ */
+.tele__val--led {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--s-75);
+  align-items: start;
+}
+
+.tele__val--led .led {
+  margin-top: 8.5px;
+  margin-top: calc((1lh - 7px) / 2);
+}
+
+.tele__val--led .tele__txt {
+  align-self: baseline;
+}
+
+/* Il seguito del valore (la causa di una stampa) è tono minore, non un secondo dato. */
+.tele__detail {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+@container (min-width: 24rem) {
+  .tele__head {
+    padding-inline: var(--s-200);
+  }
+
+  /* Con subgrid il padding della riga entra nella prima colonna: 9rem + 16px. */
+  .tele__body {
+    grid-template-columns: minmax(calc(9rem + var(--s-200)), max-content) minmax(0, 1fr);
+    column-gap: var(--s-200);
+  }
+
+  .tele__row {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(9rem, max-content) minmax(0, 1fr);
+    grid-template-columns: subgrid;
+    align-items: baseline;
+    padding-inline: var(--s-200);
+  }
+}
+
+/*
+ * ProjectSpecs: da 960px accompagna la galleria nella colonna 5fr. Senza
+ * align-self:start l'elemento di griglia si allunga quanto la galleria e lo
+ * sticky non ha corsa. Sotto 960px resta in flusso: niente sticky a telefono.
+ */
+@media (min-width: 60rem) {
+  .tele--specs {
+    position: sticky;
+    top: calc(var(--nav-h) + var(--s-500));
+    align-self: start;
+  }
+}
+
+/* --- BigNumbers: le cifre grandi ------------------------------------------ */
+
+.cifre {
+  container-type: inline-size;
+}
+
+/* Due colonne; quattro quando ci stanno (36rem: quattro cifre da 48px con l'unità). */
+.cifre__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-300);
+}
+
+@container (min-width: 36rem) {
+  .cifre__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Nessuna card per cella: solo il filetto del foglio sopra ogni cifra. */
+.cifre__item {
+  display: grid;
+  align-content: start;
+  gap: var(--s-75);
+  padding-top: var(--s-200);
+  border-top: var(--bd);
+}
+
+/* Nel markup l'etichetta precede la cifra (così si legge); a schermo la cifra sta sopra. */
+.cifre__value {
+  order: -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--s-50);
+  font: 500 var(--fs-data) / 1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.cifre__unit {
+  font: 400 var(--fs-sm) / 1 var(--font-mono);
+  color: var(--faint);
+}
+
+.cifre__label {
+  font: 400 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--faint);
+}

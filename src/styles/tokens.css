@@ -1,0 +1,129 @@
+/*
+ * Token del design system v2 — «foglio tecnico».
+ *
+ * Ambiente scuro, calmo e numerato (riferimento: kwslabs.com) letto con la voce
+ * della telemetria: un solo oggetto acceso per schermata, e quell'oggetto e'
+ * rosso. Ogni valore qui dentro e' una decisione: vedi docs/brief-design-system.md
+ * e ADR-018 in docs/architecture.md.
+ */
+:root {
+  /* Superfici a gradini: un solo ambiente blu-notte, mai un secondo tema. */
+  --pit: #07090f;
+  --bg: #0c0f17;
+  --surface: #11151f;
+  --surface-2: #161b27;
+  --raised: #1e2432;
+  --sheet: #131826;
+
+  /* Testo */
+  --text: #edeae4;
+  --muted: #aba79d;
+  --faint: #969084;
+
+  /* Struttura: seconda riga dei titoli, icone, bordi attivi. Mai azione. */
+  --steel: #7e9cb4;
+  --steel-soft: rgba(126, 156, 180, 0.14);
+  --line: rgba(220, 228, 240, 0.1);
+  --line-strong: rgba(220, 228, 240, 0.18);
+
+  /*
+   * Accento racing: UNA tonalita' per l'occhio, tre gradini per il contrasto.
+   * #E5322E su --bg fa 4.4:1 e col bianco sopra 4.35:1, sotto AA per il testo:
+   * il rosso puro resta per gli usi da componente (3:1), la CTA si riempie del
+   * gradino scuro, il testo usa il gradino chiaro.
+   */
+  --accent: #e5322e;        /* cordolo, bordi, anello di focus, alone, monogramma: mai fondo di un testo */
+  --accent-deep: #cc2a22;   /* SOLO riempimento della CTA primaria (bianco sopra = 5.3:1) */
+  --accent-text: #ff6b63;   /* SOLO testo rosso su scuro, a ogni corpo: link, voce nav corrente, tag, parole del manifesto (6.9:1) */
+  --accent-soft: rgba(229, 50, 46, 0.12);
+  --accent-line: rgba(229, 50, 46, 0.45);
+  --on-accent: #ffffff;
+
+  /*
+   * LED di telemetria: pallini da 6-8px sempre accompagnati da un'etichetta.
+   * Il fallimento NON e' rosso: il rosso e' azione, e un LED «fallita» rosso
+   * sembrerebbe un pulsante. Ruggine per fallito, ambra per in prova, verde
+   * per validato, anello vuoto per in coda.
+   */
+  --led-ok: #41c98b;
+  --led-test: #e0a458;
+  --led-fail: #b36b5e;
+  --led-queue: transparent;
+  --error: #d98a7b;
+  --strike: rgba(179, 107, 94, 0.8);
+
+  /* Cordolo: filo da 3px, mai un rivestimento. Il secondo colore e' il bone del testo. */
+  --kerb-h: 3px;
+  --kerb: repeating-linear-gradient(-45deg, var(--accent) 0 8px, var(--text) 8px 16px);
+
+  /* Tipografia: IBM Plex Sans per tutto, IBM Plex Mono per occhielli, etichette e dati. */
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --fs-h1: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem);
+  --fs-h2: clamp(1.875rem, 1.5rem + 1vw, 2.25rem);
+  --fs-h3: 1.5rem;
+  --fs-h4: 1.25rem;
+  --fs-lead: 1.125rem;
+  --fs-body: 1rem;
+  --fs-sm: 0.875rem;
+  --fs-note: 0.8125rem;
+  --fs-eyebrow: 0.75rem;
+  --fs-micro: 0.625rem;
+  --fs-data: 3rem;
+  --lh-tight: 1.1;
+  --lh-title: 1.15;
+  --lh-body: 1.6;
+  --lh-lead: 1.55;
+  --track-eyebrow: 0.14em;
+  --track-label: 0.12em;
+
+  /* Spaziatura (scala di kwslabs) */
+  --s-50: 4px;
+  --s-75: 8px;
+  --s-100: 12px;
+  --s-200: 16px;
+  --s-300: 24px;
+  --s-400: 32px;
+  --s-500: 40px;
+  --s-600: 48px;
+  --s-700: 64px;
+  --s-800: 80px;
+  --s-900: 96px;
+  --sect: var(--s-500);
+  --band: var(--s-500);
+  --wrap: 70rem;
+  --wrap-narrow: 45rem;
+  --measure: 42.5rem;
+  --gutter: 1.5rem;
+  --nav-h: 62px;
+
+  /* Raggi e bordi */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-tag: 6px;
+  --pill: 999px;
+  --bd: 1px solid var(--line);
+  --bd-strong: 1px solid var(--line-strong);
+  --bd-accent: 1px solid var(--accent-line);
+
+  /* Gli unici effetti ammessi */
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --t-fast: 0.3s;
+  --t-hover: 0.4s;
+  --glow: 0 0 40px -18px rgba(229, 50, 46, 0.5);                 /* solo il pannello contatto */
+  --shadow-primary: 0 0 0 1px rgba(229, 50, 46, 0.5), 0 6px 20px -8px rgba(229, 50, 46, 0.55);
+  --lift: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 1px rgba(237, 234, 228, 0.28));
+  --grid-sheet:
+    radial-gradient(rgba(220, 228, 240, 0.05) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(rgba(126, 156, 180, 0.08) 1px, transparent 1px) 0 0 / 96px 96px,
+    linear-gradient(90deg, rgba(126, 156, 180, 0.08) 1px, transparent 1px) 0 0 / 96px 96px;
+  --focus: 2px solid var(--accent);
+}
+
+@media (min-width: 47.5rem) {
+  :root {
+    --sect: var(--s-900);
+    --band: var(--s-700);
+  }
+}

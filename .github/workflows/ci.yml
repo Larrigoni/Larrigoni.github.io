@@ -1,0 +1,30 @@
+name: Verifica
+
+# Sui rami di lavoro e sulle pull request: stessi controlli del deploy, senza
+# pubblicare. Su main li esegue già deploy.yml prima del build.
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verifica:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 24 (esegue i test TypeScript senza compilazione)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Regole dei contenuti
+        run: npm test
+      - name: Controllo dei tipi
+        run: npx astro check
+      - name: Build
+        run: npm run build

@@ -15,3 +15,6 @@ npm-debug.log*
 # sistema operativo
 .DS_Store
 Thumbs.db
+
+# Build secondario per il kit di Claude Design
+.design-build/
