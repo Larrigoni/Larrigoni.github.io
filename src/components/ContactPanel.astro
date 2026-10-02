@@ -1,0 +1,98 @@
+---
+/**
+ * ContactPanel: la sezione `#contatto` e il suo pannello `.intent`, l'unico
+ * del sito che brilla (brief §6.18). L'indirizzo è in chiaro, come link a un
+ * mailto semplice; la CTA piena apre il mailto con la traccia precompilata.
+ * Niente modulo, niente «copia», niente JavaScript.
+ *
+ * Tutto il testo arriva dalla sezione `contatto` di `src/data/home.ts`: il
+ * componente non scrive copy. Un campo che manca è un blocco in meno, mai un
+ * segnaposto. Stili in `src/styles/components/contact.css`.
+ */
+import ItemText from './ItemText.astro';
+import SectionHead from './SectionHead.astro';
+import type { Section } from '../data/home.ts';
+import { splitGlyph } from '../lib/text.ts';
+
+interface Props {
+  /** La sezione `contatto` di `home.sections`. */
+  section: Section;
+}
+
+const { section } = Astro.props;
+const { id, eyebrow, title, lead, headA, items = [], note, headB, itemsB = [], cta } = section;
+
+const titleId = `${id}-titolo`;
+/** L'indirizzo in chiaro: in home.ts è la ghost, verso il mailto semplice di riserva. */
+const email = cta?.ghost;
+/** «Scrivimi →»: il mailto precompilato, con la nota sotto. */
+const primary = cta?.primary;
+
+
+/** L'indirizzo va a capo, se deve, solo prima della chiocciola (<wbr>, nessun carattere in più). */
+const at = email ? email.label.indexOf('@') : -1;
+const [ctaText, ctaGlyph] = primary ? splitGlyph(primary.label) : ['', undefined];
+---
+
+<section id={id} class="section alt contact" aria-labelledby={titleId}>
+  <div class="wrap">
+    <div class="intent">
+      <div class="intent__brief">
+        <SectionHead eyebrow={eyebrow} title={title} lead={lead} titleId={titleId} as="header" />
+
+        {
+          items.length > 0 && (
+            <div class="intent__block">
+              {headA && <h3>{headA}</h3>}
+              <ol class="intent__needs">
+                {items.map((item) => (
+                  <li>
+                    <ItemText item={item} />
+                  </li>
+                ))}
+              </ol>
+              {note && <p class="intent__note">{note}</p>}
+            </div>
+          )
+        }
+
+        {
+          itemsB.length > 0 && (
+            <div class="intent__block">
+              {headB && <h3>{headB}</h3>}
+              <ol class="intent__next" role="list">
+                {itemsB.map((item) => (
+                  <li>
+                    <ItemText item={item} />
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )
+        }
+      </div>
+
+      {
+        (email || primary) && (
+          <div class="intent__reach">
+            {email && (
+              <p class="intent__email">
+                {/* Su una riga sola: uno spazio fra i pezzi finirebbe dentro l'indirizzo copiato. */}
+                <a href={email.href} aria-label={email.label}>{at > 0 ? <>{email.label.slice(0, at)}<wbr />{email.label.slice(at)}</> : email.label}</a>
+              </p>
+            )}
+            {primary && (
+              <div class="intent__act">
+                <a class="btn primary intent__cta" href={primary.href}>
+                  {ctaText}
+                  {ctaGlyph && <span aria-hidden="true">{ctaGlyph}</span>}
+                </a>
+                {primary.note && <p class="intent__note">{primary.note}</p>}
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

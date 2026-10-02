@@ -1,0 +1,27 @@
+---
+/**
+ * Kit: Il problema (brief §6.15), reso con i testi veri di home.ts.
+ * Da 960px le scraps stanno agli angoli di una griglia in flusso; sotto sono
+ * una pila dritta: la variante scatta con la viewport, non col campione.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Scraps from '../components/Scraps.astro';
+import { home } from '../data/home.ts';
+
+const problema = home.sections.find((s) => s.id === 'problema');
+if (!problema) throw new Error('home.ts: manca la sezione «problema»');
+---
+
+<KitLayout
+  title="Il problema · scraps"
+  note="Tre frasi barrate e una dritta, ai quattro angoli del testo, in flusso e mai in absolute: mai sopra il testo, mai fuori dalla pagina. Ruotano solo le barrate, al massimo 2°: la rotazione è il disordine, la frase giusta è dritta. Il barrato si legge anche senza vederlo: ogni voce ha un prefisso per gli screen reader."
+>
+  <Specimen label="sezione intera · testi di home.ts (problema) · rosso pieno: nessuno · tocchi rossi: nessuno oltre al trattino cordolo">
+    <Scraps section={problema} />
+  </Specimen>
+
+  <Specimen label="sotto 960px · pila centrata, gap 8, nessuna rotazione; testo prima della pila">
+    <p class="muted">La variante scatta sulla larghezza della finestra, non del campione: si vede nella card home-mobile, o restringendo questa pagina sotto 960px.</p>
+  </Specimen>
+</KitLayout>

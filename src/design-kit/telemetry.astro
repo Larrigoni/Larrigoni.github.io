@@ -1,0 +1,151 @@
+---
+/**
+ * Kit · telemetria (brief §3.C, §6.10): Telemetry, ProjectSpecs, PrintLog,
+ * BigNumbers. Il porta ciuccio viene dalla collection (dati reali); il resto è
+ * FIXTURE. I campioni sono larghi quanto la colonna in cui vivono nel sito,
+ * e l'ultimo gruppo è largo 327px: il pannello misura la sua colonna, quindi
+ * lì si vede esattamente la resa a 375px.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import BigNumbers from '../components/BigNumbers.astro';
+import PrintLog from '../components/PrintLog.astro';
+import ProjectSpecs from '../components/ProjectSpecs.astro';
+import Telemetry, { type TeleRow } from '../components/Telemetry.astro';
+import { getPublishedProjects } from '../lib/content.ts';
+import { PRINT_OUTCOMES, STATUSES, outcomeInfo, statusInfo } from '../lib/taxonomy.ts';
+import {
+  anatomyRows,
+  numbersFew,
+  numbersFull,
+  printLogFixture,
+  specsComplete,
+  toolsRows,
+} from './fixtures-telemetry.ts';
+
+const projects = await getPublishedProjects();
+const portaCiuccio = projects.find((project) => project.id === 'porta-ciuccio');
+
+// Le etichette dei LED vengono da taxonomy.ts: il kit non le riscrive.
+const ledRows: TeleRow[] = [
+  ...STATUSES.map((status) => ({ key: `Stato ${status}`, value: statusInfo[status].label, led: statusInfo[status].led })),
+  ...PRINT_OUTCOMES.map((outcome) => ({ key: `Esito ${outcome}`, value: outcomeInfo[outcome].label, led: outcomeInfo[outcome].led })),
+];
+---
+
+<KitLayout
+  title="Telemetria"
+  note="Pannelli chiave/valore, registro stampe e cifre grandi. Una riga esiste solo se il suo dato esiste, e un pannello senza righe non esiste. Nessun rosso: il fallimento è ruggine, e un pannello solo per schermata."
+>
+  {
+    portaCiuccio && (
+      <Specimen label="ProjectSpecs · porta ciuccio, dati reali · due righe: la forma normale nello stato «pochi dati» · colonna 5fr, sticky da 960px">
+        <div class="kit-col">
+          <ProjectSpecs project={portaCiuccio} />
+        </div>
+      </Specimen>
+    )
+  }
+
+  <Specimen label="ProjectSpecs · tutte le righe che lo schema sa dare · pezzo validato: solo qui la testata dice «Rev. finale»" fixture>
+    <div class="kit-col">
+      <ProjectSpecs project={specsComplete} />
+    </div>
+  </Specimen>
+
+  {
+    portaCiuccio && (
+      <Specimen label="PrintLog · porta ciuccio, dati reali · una stampa, fallita, con la sua causa">
+        <div class="kit-col">
+          <PrintLog log={portaCiuccio.data.printLog} />
+        </div>
+      </Specimen>
+    )
+  }
+
+  <Specimen label="PrintLog · quattro voci nel frontmatter: la stampa 2, fallita senza causa, non si pubblica né si conta" fixture>
+    <div class="kit-col">
+      <PrintLog log={printLogFixture} />
+    </div>
+  </Specimen>
+
+  <Specimen label="Riga di stato · i LED di taxonomy.ts, sempre con l'etichetta; nessun LED rosso">
+    <div class="kit-col">
+      <Telemetry title="LED di stato" meta="taxonomy.ts" rows={ledRows} />
+    </div>
+  </Specimen>
+
+  <Specimen label="Telemetry · anatomia di una riga · link interno ed esterno con l'anello di focus globale; la riga senza dato non compare" fixture>
+    <div class="kit-wide">
+      <Telemetry title="Pannello generico" meta="Testata a destra" rows={anatomyRows} />
+    </div>
+  </Specimen>
+
+  <Specimen label="Telemetry · pannello Strumenti di /about, dati di home.ts · Dove e Dal non documentati: righe assenti">
+    <div class="kit-wide">
+      <Telemetry title="Strumenti" rows={toolsRows} />
+    </div>
+  </Specimen>
+
+  <Specimen label="Telemetry · Esempio da un lavoro fatto, senza dati reali: il pannello non esiste">
+    <Telemetry title="Esempio da un lavoro fatto" meta="Dati reali anonimizzati" rows={[]} />
+    <p class="kit-void">Nessun elemento reso: qui, in pagina, non c'è niente.</p>
+  </Specimen>
+
+  <Specimen label="BigNumbers · quattro cifre, il massimo per pagina · 2 colonne, 4 quando ci stanno" fixture>
+    <div class="kit-measure">
+      <BigNumbers items={numbersFull} />
+    </div>
+  </Specimen>
+
+  <Specimen label="BigNumbers · pochi dati: il tempo macchina non misurato non compare, le colonne vuote restano vuote" fixture>
+    <div class="kit-measure">
+      <BigNumbers items={numbersFew} />
+    </div>
+  </Specimen>
+
+  <Specimen label="A 375px · larghi 327px: chiave sopra valore, testata che va a capo, cifre 2 × 2" fixture>
+    <div class="kit-phones">
+      <div class="kit-phone">
+        <ProjectSpecs project={specsComplete} />
+      </div>
+      <div class="kit-phone">
+        <PrintLog log={printLogFixture} />
+      </div>
+      <div class="kit-phone">
+        <BigNumbers items={numbersFull} />
+      </div>
+    </div>
+  </Specimen>
+</KitLayout>
+
+<style>
+  /* Larghe quanto le colonne del sito: 5fr della pagina progetto, testo stretto, misura. */
+  .kit-col {
+    max-width: 28rem;
+  }
+
+  .kit-wide {
+    max-width: var(--wrap-narrow);
+  }
+
+  .kit-measure {
+    max-width: var(--measure);
+  }
+
+  .kit-phones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    gap: var(--s-400);
+  }
+
+  .kit-phone {
+    width: min(100%, 327px);
+  }
+
+  .kit-void {
+    font-size: var(--fs-note);
+    color: var(--faint);
+  }
+</style>

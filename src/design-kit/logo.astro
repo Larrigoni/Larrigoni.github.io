@@ -1,0 +1,209 @@
+---
+/**
+ * Kit · Monogramma LA (brief §3.D). Qui Lorenzo approva o boccia il ridisegno
+ * e sceglie la banda a 28px. Le misure e il peso del file sono letti dal
+ * repository al build, non scritti a mano.
+ */
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Footer from '../components/Footer.astro';
+import Logo from '../components/Logo.astro';
+import Nav from '../components/Nav.astro';
+
+const sizes = [96, 64, 40, 28] as const;
+const uses: Record<(typeof sizes)[number], string> = {
+  96: 'immagine OG',
+  64: '/card/lorenzo',
+  40: 'footer',
+  28: 'brand della nav',
+};
+
+const file = readFileSync(path.join(process.cwd(), 'public/logo.svg'), 'utf8');
+const bytes = Buffer.byteLength(file);
+const hasText = /<text\b/.test(file);
+const hasFont = /font-family|@font-face/.test(file);
+---
+
+<KitLayout
+  title="Monogramma"
+  note="Il ridisegno piatto del vecchio logo: blocco rosso senza raggio, «LA» in IBM Plex Sans 700 convertito in tracciato, banda-cordolo con lo stesso motivo del filo del sito. Un solo skew di −12°, sul gruppo intero: l'unico del sito."
+>
+  <Specimen label="Le quattro misure d'uso · 96 · 64 · 40 · 28">
+    <ul class="scale" role="list">
+      {
+        sizes.map((size) => (
+          <li>
+            <Logo size={size} />
+            <span class="mono cap">
+              {size}px · {uses[size]}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </Specimen>
+
+  <Specimen label="DA TESTARE · la banda a 28px: a strisce contro piena in bone (sotto i 40px, se le strisce si impastano)">
+    <ul class="scale" role="list">
+      <li>
+        <Logo size={28} band="strisce" />
+        <span class="mono cap">28 · strisce</span>
+      </li>
+      <li>
+        <Logo size={28} band="piena" />
+        <span class="mono cap">28 · piena</span>
+      </li>
+      <li>
+        <Logo size={40} band="strisce" />
+        <span class="mono cap">40 · strisce</span>
+      </li>
+      <li>
+        <Logo size={40} band="piena" />
+        <span class="mono cap">40 · piena</span>
+      </li>
+    </ul>
+  </Specimen>
+
+  <Specimen label="Costruzione · ingrandito ×4 solo per leggerla (tela 96×96)">
+    <div class="build">
+      <div class="zoom"><Logo size={96} /></div>
+      <dl class="facts">
+        <div><dt class="mono">Blocco</dt><dd>72×72, --accent, raggio 0, nessun contorno né ombra</dd></div>
+        <div><dt class="mono">Lettere</dt><dd>IBM Plex Sans 700 in tracciato, maiuscole alte 34, tracking −.03em, bone</dd></div>
+        <div><dt class="mono">Verticale</dt><dd>12 di aria · lettere · 12 di aria · banda 8 · 6 di fondo</dd></div>
+        <div><dt class="mono">Banda</dt><dd>da bordo a bordo, strisce a −45° da 8, rosso e bone</dd></div>
+        <div><dt class="mono">Skew</dt><dd>un solo skewX(−12°) sul gruppo, ricentrato: 4,35 di aria per lato</dd></div>
+      </dl>
+    </div>
+  </Specimen>
+
+  <Specimen label="File · public/logo.svg">
+    <p class="mono file">
+      {bytes} byte (limite 3 KB) · elemento text: {hasText ? 'sì' : 'nessuno'} · font nel file: {hasFont ? 'sì' : 'nessuno'}
+    </p>
+  </Specimen>
+
+  <Specimen label="Nel brand della nav · 28px, aria-hidden: il nome è già testo">
+    <div class="frame"><Nav current="/" /></div>
+  </Specimen>
+
+  <Specimen label="Nel footer · 40px">
+    <div class="frame"><Footer /></div>
+  </Specimen>
+
+  <Specimen label="Nel biglietto /card/lorenzo · 64px, dentro il main">
+    <div class="card-panel">
+      <Logo size={64} />
+    </div>
+  </Specimen>
+
+  <Specimen label="Nell'immagine Open Graph · 96px nell'angolo in basso a sinistra, fondo --pit (1200×630 ridotta a metà)">
+    <div class="og-shrink">
+      <div class="og"><Logo size={96} class="og__mark" /></div>
+    </div>
+  </Specimen>
+</KitLayout>
+
+<style>
+  .scale {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--s-500);
+  }
+
+  .scale li {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-100);
+  }
+
+  .cap {
+    font-size: var(--fs-eyebrow);
+    color: var(--steel);
+  }
+
+  .build {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--s-600);
+  }
+
+  /* Solo per leggere la costruzione: sul sito il monogramma non supera i 96px. */
+  .zoom {
+    zoom: 4;
+    background: var(--surface-2);
+    outline: 1px solid var(--line);
+  }
+
+  .facts {
+    display: grid;
+    gap: var(--s-100);
+    max-width: var(--measure);
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+
+  .facts div {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: var(--s-200);
+  }
+
+  .facts dt {
+    font-size: var(--fs-eyebrow);
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .file {
+    font-size: var(--fs-eyebrow);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .frame {
+    contain: layout paint;
+    overflow: hidden;
+    padding-bottom: var(--s-200);
+    border: var(--bd-strong);
+    border-radius: var(--radius);
+    background: var(--bg);
+  }
+
+  .card-panel {
+    display: grid;
+    justify-items: center;
+    width: min(100%, 24rem);
+    padding: var(--s-400);
+    border: var(--bd);
+    border-radius: var(--radius-lg);
+    background: var(--surface-2);
+  }
+
+  .og-shrink {
+    width: 600px;
+    max-width: 100%;
+    overflow: hidden;
+    border: var(--bd-strong);
+    border-radius: var(--radius);
+  }
+
+  .og {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    zoom: 0.5;
+    background: var(--pit);
+  }
+
+  .og :global(.og__mark) {
+    position: absolute;
+    left: var(--s-700);
+    bottom: var(--s-700);
+  }
+</style>

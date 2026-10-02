@@ -1,0 +1,30 @@
+---
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+---
+
+<KitLayout title="Testata di sezione" note="Ogni sezione apre allo stesso modo: occhiello mono numerato, titolo in due frasi, lead. Il cordolo da 3px sotto il titolo è uno dei tre soli usi del cordolo.">
+  <Specimen label="testata standard · allineata a sinistra">
+    <div class="section-head">
+      <p class="eyebrow">Progetti · In uso, non in vetrina</p>
+      <h2>Non render da vetrina.<span class="t-soft">Pezzi disegnati, stampati e in uso.</span></h2>
+      <p class="lead">Ogni pezzo qui sotto è partito da una misura vera. Apri la scheda e giudica.</p>
+    </div>
+  </Specimen>
+
+  <Specimen label="testata centrata · sezioni-manifesto">
+    <div class="section-head center">
+      <p class="eyebrow">Il problema</p>
+      <h2>Il pezzo che ti serve non esiste.<span class="t-soft">E nessuno sa dirti a chi chiederlo.</span></h2>
+    </div>
+  </Specimen>
+
+  <Specimen label="su superficie alternata · --surface con filetti">
+    <div class="section alt band">
+      <div class="section-head">
+        <p class="eyebrow">Il metodo · Un giro, sempre lo stesso</p>
+        <h2>Ogni pezzo fa lo stesso giro.<span class="t-soft">Sei tappe, nessun salto.</span></h2>
+      </div>
+    </div>
+  </Specimen>
+</KitLayout>

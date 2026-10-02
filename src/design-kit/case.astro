@@ -1,0 +1,35 @@
+---
+/**
+ * Kit · Case (brief §6.9). La sezione Progetti nello stato «pochi progetti»
+ * con i dati veri del build di design, poi gli stati che nessun progetto ha
+ * ancora, come FIXTURE.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Case from '../components/Case.astro';
+import Progetti from '../components/Progetti.astro';
+import { home } from '../data/home.ts';
+import { getPublishedProjects } from '../lib/content.ts';
+import { homeCases } from '../lib/projects.ts';
+import { caseFull, caseMinimal } from './fixtures-method.ts';
+
+const section = home.sections.find((s) => s.id === 'progetti');
+if (!section) throw new Error('home.ts: manca la sezione «progetti».');
+const cases = homeCases(await getPublishedProjects());
+---
+
+<KitLayout
+  title="Case"
+  note="Il cuore della home: un article per progetto in vetrina, impilati. Testo a sinistra e tile a destra da 860px, mai alternati; sotto 860px la tile viene prima del testo e torna 4:3. Ogni riga esiste solo se il dato esiste."
+>
+  <Specimen label="sezione Progetti · pochi progetti: un solo case · dati dal .md del porta ciuccio, tratto distintivo compreso (campo trait)">
+    <Progetti section={section} cases={cases} />
+  </Specimen>
+
+  <Specimen label="case impilati · gap 32 · stato pieno (tre pill, fonte di terzi, senza numero) e stato povero (nessuna riga facoltativa)" fixture>
+    <div class="cases">
+      <Case project={caseFull} />
+      <Case project={caseMinimal} />
+    </div>
+  </Specimen>
+</KitLayout>

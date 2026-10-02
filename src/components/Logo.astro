@@ -1,0 +1,64 @@
+---
+/**
+ * Monogramma LA (brief §3.D): blocco rosso, lettere bone, banda-cordolo.
+ *
+ * Tela 96×96, misure prima della trasformazione: blocco 72×72 da (12,12);
+ * «LA» in IBM Plex Sans 700 convertito in tracciato (altezza delle maiuscole
+ * 34, tracking −.03em, crenatura L-A del font, centrato sull'inchiostro);
+ * dall'alto del blocco 12 di aria, lettere, 12 di aria, banda da 8, 6 di fondo.
+ * Un solo `skewX(-12)` sul gruppo intero, ricentrato sulla mezzeria (48):
+ * l'unico skew del sito. Restano 4,35 di aria per lato.
+ *
+ * Due soli colori, `--accent` e `--text`, dati da chrome.css; gli esadecimali
+ * negli attributi sono solo il ripiego se il foglio non arriva.
+ * `public/logo.svg` è lo stesso disegno, in file.
+ */
+interface Props {
+  /** Le sole quattro misure d'uso: nav 28, footer 40, biglietto 64, immagine OG 96. */
+  size: 28 | 40 | 64 | 96;
+  /**
+   * Accanto al nome scritto (brand della nav, footer): `aria-hidden`, perché il
+   * nome è già testo. Altrove `role="img"` con il nome come etichetta.
+   */
+  decorative?: boolean;
+  /**
+   * Banda a strisce come il cordolo del sito, oppure piena in bone.
+   * DA TESTARE a 28px (§3.D): se le strisce si impastano, sotto i 40px si usa `piena`.
+   */
+  band?: 'strisce' | 'piena';
+  class?: string;
+}
+
+const { size, decorative = false, band = 'strisce', class: className } = Astro.props;
+
+// Tracciati generati dai contorni di IBM Plex Sans Bold (fontTools), in unità della tela.
+const LETTERS =
+  'M41.45 58H21.09V24H28.49V51.42H41.45Z' +
+  'M74.91 58H67.22L64.78 49.91H53.43L51 58H43.49L54.7 24H63.86Z' +
+  'M62.98 43.63 60.88 36.57 59.18 30.72H58.94L57.28 36.57L55.18 43.63Z';
+
+// Banda-cordolo: strisce a −45° larghe 8 (misurate di traverso), bone sul rosso del blocco.
+const BAND_STRIPES =
+  'M23.72 70H35.03L27.03 78H15.72Z' + 'M46.34 70H57.66L49.66 78H38.34Z' + 'M68.97 70H80.28L72.28 78H60.97Z';
+const BAND_SOLID = 'M12 70H84V78H12Z';
+
+const ink = LETTERS + (band === 'piena' ? BAND_SOLID : BAND_STRIPES);
+const a11y = decorative
+  ? { 'aria-hidden': 'true' as const }
+  : { role: 'img' as const, 'aria-label': 'Lorenzo Arrigoni' };
+---
+
+<svg
+  class:list={['logo', className]}
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 96 96"
+  width={size}
+  height={size}
+  focusable="false"
+  {...a11y}
+>
+  <g transform="translate(10.2 0) skewX(-12)">
+    <rect class="logo__block" x="12" y="12" width="72" height="72" fill="#e5322e"></rect>
+    <path class="logo__ink" fill="#edeae4" d={ink}></path>
+  </g>
+</svg>

@@ -1,0 +1,81 @@
+---
+/**
+ * Nav a pillola (brief §6.1, §2.7): sempre visibile, zero JavaScript.
+ *
+ * Brand (monogramma 28px + nome + ruolo) · voci · CTA tinta «Scrivimi».
+ * Nessun hamburger, nessun nascondimento allo scroll: sotto 760px le voci
+ * scorrono in orizzontale e il seguito lo segnala la voce tagliata dal bordo.
+ * Le soglie sono container query sulla larghezza della testata (che è quella
+ * della pagina): così il kit può mostrare la resa a 375px dentro una cornice.
+ *
+ * Voci e CTA vengono da `home.nav` (src/data/home.ts). Le due regole di §6.1
+ * che home.ts non porta stanno qui sotto, in `AWAY` e `WIDE_ONLY`.
+ */
+import Logo from './Logo.astro';
+import { home } from '../data/home.ts';
+import type { HomeContent } from '../data/home.ts';
+
+interface Props {
+  /** Percorso della pagina corrente. Di default quello vero; il kit lo passa per mostrare gli stati. */
+  current?: string;
+  /** Voci e CTA. Di default `home.nav`. */
+  nav?: HomeContent['nav'];
+}
+
+const { current = Astro.url.pathname, nav = home.nav } = Astro.props;
+
+// Nome e ruolo del brand: testo del brief (§6.1), non presente in home.ts.
+const NAME = 'Lorenzo Arrigoni';
+const ROLE = 'Progettazione 3D';
+
+// Fuori dalla home «Progetti» porta all'indice, non all'ancora (§6.1).
+const AWAY: Record<string, string> = { '/#progetti': '/projects/' };
+// «Per chi è» sparisce sotto 760px (§6.1).
+const WIDE_ONLY = new Set(['/#perchi']);
+
+const path = current.endsWith('/') ? current : `${current}/`;
+const onHome = path === '/';
+
+/** In home le ancore restano ancore (`#progetti`); altrove tornano alla home o all'indice. */
+function resolve(href: string) {
+  if (onHome) return href.startsWith('/#') ? href.slice(1) : href;
+  return AWAY[href] ?? href;
+}
+
+/**
+ * Corrente solo una pagina vera, mai un'ancora: l'indice dei progetti con le
+ * sue viste filtrate, e /preventivo/. Una scheda progetto non è l'indice.
+ */
+function isCurrent(href: string) {
+  if (href.includes('#')) return false;
+  if (path === href) return true;
+  return path.startsWith(href) && /^(categoria|tag)\//.test(path.slice(href.length));
+}
+
+const items = nav.items.map((item) => {
+  const href = resolve(item.href);
+  return { label: item.label, href, current: isCurrent(href), wideOnly: WIDE_ONLY.has(item.href) };
+});
+const cta = { label: nav.cta.label, href: resolve(nav.cta.href) };
+---
+
+<header class="site-header">
+  <nav class="wrap nav" aria-label="Principale">
+    <a class="nav__brand" href="/">
+      <Logo size={28} decorative />
+      <span class="nav__name">{NAME} <span class="nav__role">· {ROLE}</span></span>
+    </a>
+    <ul class="nav__list" role="list">
+      {
+        items.map((item) => (
+          <li class:list={[item.wideOnly && 'nav__wide']}>
+            <a href={item.href} aria-current={item.current ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <a class="nav__cta" href={cta.href}>{cta.label}</a>
+  </nav>
+</header>

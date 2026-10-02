@@ -1,0 +1,25 @@
+---
+/**
+ * Vista filtrata per categoria: una rotta statica per ogni categoria con
+ * almeno un progetto, così ogni filtro ha un URL vero e funziona senza JS.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ProjectsView from '../../../components/ProjectsView.astro';
+import { getPublishedProjects } from '../../../lib/content.ts';
+import { CATEGORIES, categoryLabels } from '../../../lib/taxonomy.ts';
+
+export async function getStaticPaths() {
+  const all = await getPublishedProjects();
+  return CATEGORIES.map((categoria) => ({
+    params: { categoria },
+    props: { categoria, all, projects: all.filter((p) => p.data.category === categoria) },
+  })).filter(({ props }) => props.projects.length > 0);
+}
+
+const { categoria, all, projects } = Astro.props;
+const label = categoryLabels[categoria];
+---
+
+<BaseLayout title={`${label} · Progetti · Lorenzo Arrigoni`} description={`Progetti nella categoria ${label}.`}>
+  <ProjectsView all={all} projects={projects} current={{ kind: 'categoria', slug: categoria }} />
+</BaseLayout>

@@ -1,0 +1,18 @@
+---
+/**
+ * Una voce di lista di home.ts: etichetta in grassetto, « – » e il testo
+ * (brief §5.5). Se l'etichetta chiude con la punteggiatura («Misura.») basta
+ * uno spazio.
+ */
+import Rich from './Rich.astro';
+import type { Item } from '../data/home.ts';
+import { itemJoiner } from '../lib/text.ts';
+
+interface Props {
+  item: Pick<Item, 'strong' | 'text'>;
+}
+
+const { item } = Astro.props;
+---
+
+{item.strong && <><strong>{item.strong}</strong>{itemJoiner(item.strong)}</>}<Rich text={item.text} />

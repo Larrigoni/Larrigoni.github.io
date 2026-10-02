@@ -1,0 +1,38 @@
+---
+/**
+ * Cosa ricevi (brief §6.19): una fascia, non una sezione con h2. Occhiello e
+ * frase sulla stessa riga, poi le voci con la spunta in --accent-text (un
+ * gruppo, un tocco: l'unico posto del sito con la spunta rossa) e la nota.
+ */
+import Eyebrow from './Eyebrow.astro';
+import ItemText from './ItemText.astro';
+import type { Section } from '../data/home.ts';
+
+interface Props {
+  section: Section;
+}
+
+const { section } = Astro.props;
+const { id, eyebrow, title, items = [], note } = section;
+const titleId = `${id}-titolo`;
+---
+
+<section class="section alt band ricevi" id={id} aria-labelledby={titleId}>
+  <div class="wrap">
+    <div class="ricevi__head">
+      <Eyebrow text={eyebrow} />
+      <p class="ricevi__claim" id={titleId}>{title.claim}</p>
+    </div>
+    <ul class="ricevi__list" role="list">
+      {
+        items.map((item) => (
+          <li>
+            <span class="ricevi__check" aria-hidden="true">✓</span>
+            <span><ItemText item={item} /></span>
+          </li>
+        ))
+      }
+    </ul>
+    {note && <p class="ricevi__note">{note}</p>}
+  </div>
+</section>

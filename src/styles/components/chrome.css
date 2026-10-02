@@ -1,0 +1,382 @@
+/*
+ * Componenti: Nav, Footer, Kerb, Logo.
+ *
+ * File con un solo proprietario: chi scrive questi componenti scrive solo qui.
+ * Consuma i token di tokens.css e le primitive di base.css, senza ridefinirle.
+ *
+ * Nav e footer rispondono con container query sulla propria larghezza, che sul
+ * sito è quella della pagina: le soglie sono quelle del brief (480, 760, 960),
+ * e il kit può mostrare la resa a 375px dentro una cornice larga 375.
+ */
+
+/* --- Cordolo (§3.A) --------------------------------------------------------- */
+
+/* Un filo da 3px: delimita, non decora. Tre usi ai margini, nessun altro. */
+.kerb {
+  height: var(--kerb-h);
+  background: var(--kerb);
+}
+
+/* Uso 1: in cima a ogni pagina, fermo. Prende il posto della barra di avanzamento. */
+.kerb--top {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* Uso 4: chiusura di /card/lorenzo, a tutta larghezza e staccata dal pannello. */
+.kerb--end {
+  width: 100%;
+  margin-top: var(--s-600);
+}
+
+/* Uso 2: il bordo del footer. */
+.site-footer::before {
+  content: '';
+  display: block;
+  height: var(--kerb-h);
+  background: var(--kerb);
+}
+
+/* Colori forzati: il motivo sparisce, il filo resta. */
+@media (forced-colors: active) {
+  .kerb,
+  .site-footer::before {
+    background: none;
+    border-top: var(--kerb-h) solid CanvasText;
+  }
+}
+
+/* --- Monogramma (§3.D) ------------------------------------------------------ */
+
+.logo {
+  flex: none;
+}
+
+.logo__block {
+  fill: var(--accent);
+}
+
+.logo__ink {
+  fill: var(--text);
+}
+
+/* Colori forzati: il marchio resta leggibile nei colori di sistema. */
+@media (forced-colors: active) {
+  .logo {
+    forced-color-adjust: none;
+  }
+
+  .logo__block {
+    fill: CanvasText;
+  }
+
+  .logo__ink {
+    fill: Canvas;
+  }
+}
+
+/* --- Nav a pillola (§6.1) --------------------------------------------------- */
+
+.site-header {
+  container: nav / inline-size;
+  position: sticky;
+  top: var(--s-200);
+  z-index: 20;
+  margin-top: var(--s-200);
+}
+
+/*
+ * Vetro a .90 e non a .72 come kwslabs: sotto la nav passano render e foto
+ * chiare, e a .72 le voci scendevano a 3.25:1 (§4.3). È l'unico vetro del sito.
+ */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--s-300);
+  min-height: var(--nav-h);
+  padding: var(--s-75) var(--s-75) var(--s-75) var(--s-200);
+  border: var(--bd);
+  border-radius: var(--pill);
+  background: rgba(12, 15, 23, 0.9);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav {
+    background: rgba(12, 15, 23, 0.96);
+  }
+}
+
+/* Brand: area di 44px anche quando resta solo il monogramma; il margine negativo lo tiene a 16 dal bordo. */
+.nav__brand {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-100);
+  min-width: 44px;
+  min-height: 44px;
+  margin-inline-start: calc(-1 * var(--s-75));
+  padding-inline: var(--s-75);
+  border-radius: var(--pill);
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Sotto 480px il nome resta solo per gli screen reader: il link ha comunque un nome. */
+.nav__name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  font: 600 var(--fs-body) / 1.2 var(--font-sans);
+}
+
+.nav__role {
+  display: none;
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--faint);
+}
+
+/*
+ * Voci. Sotto 760px la lista scorre in orizzontale, senza dissolvenza: il
+ * seguito lo dice la voce tagliata netta dal bordo. Lo scorrimento resta anche
+ * sopra, dove non serve, come rete per testo ingrandito e spaziatura aumentata.
+ */
+.nav__list {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.nav__list::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Sotto 480px ogni voce occupa due terzi della lista (almeno quanto il suo
+ * testo), con il testo al centro: il bordo taglia sempre la seconda voce a
+ * metà, a qualunque larghezza del telefono. Con le voci larghe quanto il testo
+ * il bordo cadeva fra due voci a 381-403px (iPhone da 390 e 393): nessuna voce
+ * tagliata, e il seguito spariva.
+ */
+.nav__list li {
+  flex: 0 0 calc(200% / 3);
+  min-width: max-content;
+  scroll-snap-align: start;
+}
+
+/*
+ * Senza JavaScript la striscia non scorre da sola sulla voce con il focus: a
+ * 320-480px la voce restava fuori vista e l'anello ritagliato (WCAG 2.4.7,
+ * 2.4.11; review finale E). Finché il focus è dentro, la striscia va a capo.
+ */
+.nav__list:has(a:focus-visible) {
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+
+.nav__wide {
+  display: none;
+}
+
+.nav__list a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--s-100);
+  border-radius: var(--pill);
+  color: var(--muted);
+  font: 500 var(--fs-sm) / 1 var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--t-hover) var(--ease),
+    color var(--t-hover) var(--ease);
+}
+
+.nav__list a:hover {
+  background: var(--steel-soft);
+  color: var(--text);
+}
+
+/* Corrente = sottolineato, come il filtro corrente (§6.17). Mai --accent-text sul fondo di hover (4.28:1). */
+.nav__list a[aria-current='page'] {
+  color: var(--accent-text);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+.nav__list a[aria-current='page']:hover {
+  color: var(--text);
+}
+
+/*
+ * Eccezione dichiarata all'anello globale: interno, perché la lista a
+ * scorrimento ritaglierebbe quello esterno; e senza il fondo di hover, perché
+ * lì l'anello scenderebbe a 2.74:1. Sul vetro, da entrambi i lati: 3.43:1.
+ */
+.nav__list a:focus-visible {
+  outline-offset: -2px;
+  background: transparent;
+}
+
+/* CTA tinta, non piena: la nav è sempre visibile e starebbe accanto alla CTA dell'hero. */
+.nav__cta {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--s-200);
+  border: var(--bd-accent);
+  border-radius: var(--pill);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font: 600 var(--fs-sm) / 1 var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    border-color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+
+.nav__cta:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.nav__cta:active {
+  transform: scale(0.98);
+}
+
+@container nav (min-width: 30rem) {
+  .nav__name {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+
+  .nav__list li {
+    flex: none;
+  }
+}
+
+@container nav (min-width: 47.5rem) {
+  .nav__list {
+    flex: 0 1 auto;
+    margin-inline-start: auto;
+  }
+
+  .nav__wide {
+    display: block;
+  }
+}
+
+@container nav (min-width: 60rem) {
+  .nav__role {
+    display: inline;
+  }
+}
+
+/* --- Footer (§6.2) ---------------------------------------------------------- */
+
+.site-footer {
+  container: footer / inline-size;
+  background: var(--bg);
+}
+
+.footer__body {
+  padding-block: var(--s-600) var(--s-400);
+}
+
+.footer__grid {
+  display: grid;
+  gap: var(--s-400);
+}
+
+.footer__brand {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: var(--s-100);
+}
+
+.footer__brand .logo {
+  margin-bottom: var(--s-50);
+}
+
+.footer__name {
+  font: 600 var(--fs-body) / 1.4 var(--font-sans);
+  color: var(--text);
+}
+
+.footer__tagline {
+  max-width: 36ch;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  color: var(--muted);
+}
+
+.footer__col {
+  display: grid;
+  align-content: start;
+  gap: var(--s-75);
+}
+
+/* Ogni link ha un'area alta 44px (§10.4). */
+.footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+  font: 500 var(--fs-sm) / 1.3 var(--font-sans);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: color var(--t-hover) var(--ease);
+}
+
+.footer__links a:hover {
+  color: var(--text);
+}
+
+/* L'email è l'unico link rosso del footer; in hover torna bone come gli altri. */
+.footer__links .footer__email {
+  color: var(--accent-text);
+}
+
+/* La data dell'ultimo progetto pubblicato, mai del build. */
+.footer__meta {
+  margin-top: var(--s-75);
+  font-size: var(--fs-eyebrow);
+  line-height: 1.33;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.footer__legal {
+  margin-top: var(--s-600);
+  padding-top: var(--s-300);
+  border-top: var(--bd);
+  font-size: var(--fs-note);
+  color: var(--faint);
+}
+
+@container footer (min-width: 47.5rem) {
+  .footer__grid {
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: var(--s-600);
+  }
+}

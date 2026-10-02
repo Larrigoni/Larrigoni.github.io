@@ -1,0 +1,47 @@
+---
+/**
+ * ProjectSpecs: la scheda del pezzo nella pagina progetto (brief §6.10).
+ *
+ * Righe nell'ordine del brief, solo se il dato esiste: Materiale · Pezzi ·
+ * Varianti · Stampante · Software · Contesto · Stato. «Funzione» non ha un
+ * campo nello schema, quindi oggi non si genera. Un progetto senza blocco
+ * `print` ha due righe (Contesto, Stato): è la forma normale nello stato
+ * «pochi dati», non un pannello da riempire.
+ *
+ * Nella colonna 5fr della pagina, da 960px, è sticky (telemetry.css): chi la
+ * impagina la mette in un elemento di griglia, mai in una riga flex, perché
+ * il pannello misura la sua colonna (container query).
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import Telemetry, { type TeleRow } from './Telemetry.astro';
+import { contextLabels, statusInfo } from '../lib/taxonomy.ts';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  class?: string;
+}
+
+const { project, class: className } = Astro.props;
+const { print, context, status } = project.data;
+
+const materials = print?.materials.map((m) => m.trim()).filter(Boolean) ?? [];
+const software = print?.software?.map((s) => s.trim()).filter(Boolean) ?? [];
+const state = statusInfo[status];
+
+const rows: TeleRow[] = [
+  { key: materials.length > 1 ? 'Materiali' : 'Materiale', value: materials.join(', ') },
+  { key: 'Pezzi', value: print?.pieces },
+  { key: 'Varianti', value: print?.variants },
+  { key: 'Stampante', value: print?.printer },
+  { key: 'Software', value: software.join(', ') },
+  { key: 'Contesto', value: contextLabels[context] },
+  { key: 'Stato', value: state.label, led: state.led },
+];
+
+// «Rev. finale» solo su un pezzo validato: su un prototipo in prova la
+// testata direbbe il contrario della riga di stato (ADR-011).
+const meta = status === 'completato' ? 'Rev. finale' : undefined;
+---
+
+<Telemetry title="Scheda del pezzo" meta={meta} rows={rows} class={['tele--specs', className].filter(Boolean).join(' ')} />

@@ -1,0 +1,82 @@
+---
+/**
+ * Telemetry: il pannello chiave/valore del foglio tecnico (brief §3.C, §6.10).
+ *
+ * Testata mono (titolo steel a sinistra, meta faint a destra) e corpo `dl`.
+ * Una riga esiste solo se il suo dato esiste: niente «n/d», niente trattini.
+ * Se non resta nessuna riga, il pannello non esiste (non rende nulla).
+ *
+ * Base di ProjectSpecs, PrintLog, del pannello Strumenti di /about e
+ * dell'esempio di /preventivo. Stili in `styles/components/telemetry.css`.
+ * Il pannello non ha stati: sono dati. Il focus esiste solo sui link.
+ */
+import type { Led } from '../lib/taxonomy.ts';
+
+export interface TeleRow {
+  /** Chiave (`dt`), scritta normale: il maiuscolo lo fa il CSS. */
+  key: string;
+  /** Valore (`dd`). Vuoto, `null` o `undefined`: la riga non si genera. */
+  value?: string | number | null;
+  /** LED prima del valore; il valore ne è l'etichetta (WCAG 1.4.1). */
+  led?: Led;
+  /** Seguito del valore, dopo « — », in tono minore: la causa di una stampa. */
+  detail?: string;
+  /** Il valore diventa un link; se esterno, con « ↗ » nel testo. */
+  href?: string;
+}
+
+interface Props {
+  /** Testata a sinistra, in steel. */
+  title: string;
+  /** Testata a destra, in faint: un conteggio, una revisione. */
+  meta?: string;
+  rows: TeleRow[];
+  /** Modificatore del componente che lo usa (`tele--specs`, `tele--log`). */
+  class?: string;
+}
+
+const { title, meta, rows, class: className } = Astro.props;
+
+const format = (value: string | number) => (typeof value === 'number' ? value.toLocaleString('it-IT') : value.trim());
+const hasValue = (value: TeleRow['value']): value is string | number =>
+  typeof value === 'number' ? Number.isFinite(value) : Boolean(value?.trim());
+
+const shown = rows
+  .filter((row) => hasValue(row.value))
+  .map((row) => ({
+    ...row,
+    text: format(row.value as string | number),
+    detail: row.detail?.trim() || undefined,
+    external: row.href ? /^https?:\/\//.test(row.href) : false,
+  }));
+---
+
+{
+  shown.length > 0 && (
+    <figure class:list={['tele', className]}>
+      <figcaption class="tele__head">
+        <span class="tele__title">{title}</span>
+        {meta && (
+          <span class="tele__meta">
+            <span class="visually-hidden">, </span>
+            {meta}
+          </span>
+        )}
+      </figcaption>
+      <dl class="tele__body">
+        {shown.map((row) => (
+          <div class="tele__row">
+            <dt class="tele__key">{row.key}</dt>
+            <dd class:list={['tele__val', row.led && 'tele__val--led']}>
+              {row.led && <span class:list={['led', row.led]} aria-hidden="true" />}
+              <span class="tele__txt">
+                {row.href ? <a href={row.href}>{row.external ? `${row.text} ↗` : row.text}</a> : row.text}
+                {row.detail && <span class="tele__detail">{` — ${row.detail}`}</span>}
+              </span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </figure>
+  )
+}

@@ -1,0 +1,65 @@
+---
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import { getPublishedProjects } from '../lib/content.ts';
+import { cardVariants, gridFill } from './fixtures-grid.ts';
+
+// Sul sito una card senza tile non esiste: un progetto senza immagine resta in
+// bozza (§6.8). Nel build di design le bozze compaiono, ma non sono una variante.
+const real = (await getPublishedProjects()).filter((p) => p.data.cover);
+const withFill = (n: number) => [...real, ...gridFill.slice(0, n)];
+---
+
+<KitLayout
+  title="Card di progetto"
+  note="La card compatta dell'indice: niente bordo, niente fondo, la cornice è la tile. Occhiello P0n, titolo che è l'unico link, meta mono, LED solo se il progetto non è completato. Le colonne sono auto-fill: la card ha la stessa larghezza con uno, due, tre o quattro progetti, e lo spazio che resta vuoto resta vuoto."
+>
+  <Specimen label="Card reali con immagine · una card sola: la colonna resta di un terzo, il resto resta vuoto">
+    <div class="stack">
+      <ProjectGrid projects={real} eagerFirst />
+      <p class="label">
+        Stati · hover: titolo in accent-text, bordo della tile steel · Tab: un solo anello, sulla tile · nessun
+        sollevamento, nessuna ombra
+      </p>
+    </div>
+  </Specimen>
+
+  <Specimen label="Varianti · completato: riga meta, nessun LED · titolo su due righe · derivato · modello di terzi: niente sigla P" fixture>
+    <ProjectGrid projects={cardVariants} />
+  </Specimen>
+
+  <Specimen label="Pochi progetti · 2 card: la terza colonna resta vuota" fixture>
+    <ProjectGrid projects={withFill(1)} />
+  </Specimen>
+
+  <Specimen label="Pochi progetti · 3 card: una riga piena" fixture>
+    <ProjectGrid projects={withFill(2)} />
+  </Specimen>
+
+  <Specimen label="Pochi progetti · 4 card: la seconda riga ha una card sola, a sinistra" fixture>
+    <ProjectGrid projects={withFill(3)} />
+  </Specimen>
+
+  <Specimen label="375px · una colonna, stesse misure, tile da margine a margine" fixture>
+    <div class="phone">
+      <ProjectGrid projects={withFill(1)} />
+    </div>
+  </Specimen>
+</KitLayout>
+
+<style>
+  .stack {
+    display: grid;
+    gap: var(--s-400);
+  }
+
+  /* Cornice da telefono: 375px con il gutter di 24. auto-fill risponde alla
+     larghezza del contenitore, quindi qui le colonne sono quelle vere a 375px. */
+  .phone {
+    width: min(100%, 375px);
+    padding: var(--s-300);
+    outline: var(--bd);
+    border-radius: var(--radius-lg);
+  }
+</style>

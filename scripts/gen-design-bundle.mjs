@@ -1,298 +1,245 @@
-// ⚠️ OBSOLETO (2026-08-05, vedi ADR-008): questo script replica il PRIMO
-// design (minimale) e il progetto Claude Design è ora più avanti (design
-// "racing pop"). NON rigenerare e ricaricare il bundle senza prima
-// aggiornare lo script, o si sovrascrive il lavoro fatto sulla piattaforma.
-//
-// Genera il bundle di card HTML per il progetto Claude Design
-// "Lorenzo Arrigoni — Portfolio". Ogni card è autonoma: font in data-URI,
-// CSS inline, prima riga marker <!-- @dsCard group="…" -->.
-//
-// Prerequisito: `npm run build` (le card Pages partono da dist/).
-// Uso: node scripts/gen-design-bundle.mjs [cartella-output]
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+#!/usr/bin/env node
+/**
+ * Genera il bundle di card per il progetto Claude Design «Lorenzo Arrigoni —
+ * Portfolio» DAL BUILD DEL REPO (ADR-019).
+ *
+ *   node scripts/gen-design-bundle.mjs [--only colors,type,brief] [--no-build]
+ *
+ * Il bundle non contiene una copia del CSS: contiene il CSS compilato dal
+ * build secondario (`astro.design.mjs`) e i componenti Astro reali, resi con
+ * dati reali. Se il bundle diverge dal sito, è un bug di questo script.
+ *
+ * Ogni card è un HTML autonomo: CSS inline, font latin in data-URI (woff2),
+ * immagini ridotte a WebP 800px in data-URI, prima riga
+ * `<!-- @dsCard group="…" -->`. Le varianti mobile usano un iframe `srcdoc`
+ * largo 375px, così le media query scattano davvero come su un telefono.
+ *
+ * Alla fine scrive `.design-bundle/manifest.json`: è la lista `writes` del
+ * `finalize_plan` di DesignSync.
+ */
+import { execSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const REPO = fileURLToPath(new URL('..', import.meta.url));
-const OUT = process.argv[2] ?? join(REPO, '.design-bundle');
+import sharp from 'sharp';
 
-const b64 = (p) => readFileSync(p).toString('base64');
-const F = {
-  archivoLatin: b64(join(REPO, 'node_modules/@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2')),
-  archivoLatinExt: b64(join(REPO, 'node_modules/@fontsource-variable/archivo/files/archivo-latin-ext-wght-normal.woff2')),
-  mono400: b64(join(REPO, 'node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2')),
-  mono500: b64(join(REPO, 'node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2')),
-};
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const BUILD = path.join(ROOT, '.design-build');
+const OUT = path.join(ROOT, '.design-bundle');
 
-const FONT_CSS = `
-@font-face{font-family:'Archivo Variable';font-style:normal;font-weight:100 900;font-display:swap;src:url(data:font/woff2;base64,${F.archivoLatin}) format('woff2-variations');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Archivo Variable';font-style:normal;font-weight:100 900;font-display:swap;src:url(data:font/woff2;base64,${F.archivoLatinExt}) format('woff2-variations');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(data:font/woff2;base64,${F.mono400}) format('woff2')}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(data:font/woff2;base64,${F.mono500}) format('woff2')}
-`;
-
-// Token e stili base — copia fedele di src/styles/global.css (senza animazioni)
-const BASE_CSS = `
-:root{--paper:#f6f3ec;--paper-raised:#fdfbf6;--ink:#17140d;--ink-soft:#625c4e;--line:rgba(23,20,13,.16);--line-strong:rgba(23,20,13,.6);--accent:#a8362c;--font-sans:'Archivo Variable',system-ui,-apple-system,sans-serif;--font-mono:'IBM Plex Mono',ui-monospace,'Cascadia Mono',monospace;--site-max:72rem;--measure:44rem;--pad-x:clamp(1.25rem,5vw,3rem);--section-gap:clamp(4rem,10vw,7rem)}
-*,*::before,*::after{box-sizing:border-box;margin:0}
-html{color-scheme:light}
-body{background:var(--paper);color:var(--ink);font-family:var(--font-sans);font-size:1.0625rem;line-height:1.65;-webkit-font-smoothing:antialiased;padding:1.75rem}
-h1,h2,h3{line-height:1.1;font-weight:640;letter-spacing:-.015em;text-wrap:balance}
-a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.2em}
-a:hover{color:var(--accent)}
-.label{font-family:var(--font-mono);font-size:.75rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
-.section-head{display:flex;align-items:baseline;gap:1rem;border-top:1px solid var(--line-strong);padding-top:.85rem}
-.section-num{font-family:var(--font-mono);font-size:.8rem;font-weight:500;color:var(--accent)}
-.section-head h2{font-size:clamp(1.5rem,3.5vw,2.1rem);text-transform:uppercase;letter-spacing:.02em}
-`;
-
-// Stili dei componenti — copie non-scoped degli stili nei file .astro
-const COMPONENTS_CSS = `
-/* Header */
-.site-header{border-bottom:1px solid var(--line-strong);background:var(--paper)}
-.site-header .bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:.9rem}
-.wordmark{font-weight:680;font-size:.95rem;letter-spacing:.16em;text-transform:uppercase;text-decoration:none}
-.site-header nav{display:flex;gap:clamp(1rem,3vw,2rem)}
-.site-header nav a{font-family:var(--font-mono);font-size:.78rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
-/* Hero */
-.hero-eyebrow{font-family:var(--font-mono);font-size:.75rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
-.hero-title{font-size:clamp(3rem,12vw,7rem);font-weight:720;text-transform:uppercase;letter-spacing:-.025em;line-height:.95;margin-top:1.25rem}
-.hero-tagline{margin-top:1.75rem;font-family:var(--font-mono);font-size:clamp(.85rem,2vw,1rem);font-weight:500;letter-spacing:.05em;color:var(--accent)}
-.hero-lead{margin-top:1rem;font-size:clamp(1.2rem,3vw,1.6rem);font-weight:460;max-width:34ch}
-.hero-tools{margin-top:1.5rem}
-.hero-grid{background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:26px 26px}
-/* Striscia metodo */
-.process{list-style:none;padding:.9rem 0;margin:0;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);display:flex;flex-wrap:wrap;gap:.4rem 1.6rem;background:var(--paper)}
-.process li{font-family:var(--font-mono);font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
-.process li:not(:last-child)::after{content:'→';margin-left:1.6rem;color:var(--ink-soft)}
-.step-num{color:var(--accent);margin-right:.45rem}
-/* Griglia capacità */
-.cap-grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}
-.cap-grid li{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:1.1rem 1.2rem;font-weight:500;font-size:.98rem;display:flex;gap:.8rem;align-items:baseline;background:var(--paper-raised)}
-.cap-num{font-family:var(--font-mono);font-size:.72rem;color:var(--accent)}
-/* Card progetto */
-.pcard{border:1px solid var(--ink);background:var(--paper-raised);padding:clamp(1.5rem,4vw,2.25rem);display:flex;flex-direction:column;gap:1.1rem;max-width:44rem}
-.pcard:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(23,20,13,.12)}
-.badges{display:flex;flex-wrap:wrap;gap:.5rem}
-.badge{font-family:var(--font-mono);font-size:.7rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line-strong);padding:.25rem .6rem}
-.badge.accent{border-color:var(--accent);color:var(--accent)}
-.pcard h3{font-size:clamp(1.4rem,3vw,1.8rem)}
-.pcard .summary{color:var(--ink-soft);max-width:38rem}
-.pcard .meta{display:flex;flex-wrap:wrap;gap:1rem 2.5rem;border-top:1px solid var(--line);padding-top:1.1rem}
-.pcard .meta dd{margin:.15rem 0 0;font-size:.9rem}
-.pcard .note{color:var(--accent)}
-/* Card placeholder */
-.placeholder-card{border:1px dashed var(--line-strong);padding:clamp(1.25rem,3vw,1.75rem);color:var(--ink-soft);display:flex;flex-direction:column;gap:.5rem;max-width:44rem}
-/* CTA contatto */
-.cta{font-size:clamp(1.6rem,4.5vw,2.6rem);font-weight:640;letter-spacing:-.015em;line-height:1.15;max-width:24ch;margin-bottom:1.25rem}
-.contact-placeholder{margin-top:2rem;border:1px dashed var(--accent);padding:clamp(1.25rem,3vw,1.75rem);max-width:var(--measure);display:flex;flex-direction:column;gap:.5rem}
-.contact-placeholder .label{color:var(--accent)}
-/* Footer */
-.site-footer{border-top:1px solid var(--line-strong)}
-.site-footer .grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1.25rem 3rem;padding-block:2rem 2.5rem}
-.site-footer .colophon{font-size:.9rem;color:var(--ink-soft);line-height:1.7}
-.site-footer .meta{line-height:2}
-`;
-
-const doc = (group, title, body, extraCss = '') =>
-  `<!-- @dsCard group="${group}" -->\n<!doctype html>\n<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title><style>${FONT_CSS}${BASE_CSS}${COMPONENTS_CSS}${extraCss}</style></head>\n<body>\n${body}\n</body></html>\n`;
-
-const cards = [];
-
-// ---------- Colors ----------
-const swatches = [
-  ['Paper', '#f6f3ec', 'sfondo pagina'],
-  ['Paper raised', '#fdfbf6', 'card e superfici'],
-  ['Ink', '#17140d', 'testo principale'],
-  ['Ink soft', '#625c4e', 'testo secondario'],
-  ['Line', 'rgba(23,20,13,.16)', 'hairline leggere'],
-  ['Line strong', 'rgba(23,20,13,.6)', 'hairline marcate'],
-  ['Accent', '#a8362c', 'vermiglio — badge, numeri, CTA'],
+/**
+ * Le card del bundle. `kit` = pagina di `src/design-kit/`, `page` = pagina
+ * vera del sito, `palette` = generata da tokens.css. Le card la cui sorgente
+ * non esiste ancora vengono saltate con un avviso: il bundle v2.0 parte prima
+ * che tutti i componenti esistano.
+ */
+const CARDS = [
+  { id: 'palette', group: 'Colors', out: 'colors/palette.html', palette: true },
+  { id: 'kerb-lines', group: 'Colors', out: 'colors/kerb-lines.html', kit: 'kerb-lines' },
+  { id: 'typography', group: 'Type', out: 'type/typography.html', kit: 'typography' },
+  { id: 'logo', group: 'Components', out: 'components/logo.html', kit: 'logo' },
+  { id: 'nav', group: 'Components', out: 'components/nav.html', kit: 'nav' },
+  { id: 'buttons', group: 'Components', out: 'components/buttons.html', kit: 'buttons' },
+  { id: 'section-head', group: 'Components', out: 'components/section-head.html', kit: 'section-head' },
+  { id: 'tile', group: 'Components', out: 'components/tile.html', kit: 'tile' },
+  { id: 'project-card', group: 'Components', out: 'components/project-card.html', kit: 'project-card' },
+  { id: 'case', group: 'Components', out: 'components/case.html', kit: 'case' },
+  { id: 'telemetry', group: 'Components', out: 'components/telemetry.html', kit: 'telemetry' },
+  { id: 'giri', group: 'Components', out: 'components/giri.html', kit: 'giri' },
+  { id: 'timeline', group: 'Components', out: 'components/timeline.html', kit: 'timeline' },
+  { id: 'sheet-fit', group: 'Components', out: 'components/sheet-fit.html', kit: 'sheet-fit' },
+  { id: 'compare', group: 'Components', out: 'components/compare.html', kit: 'compare' },
+  { id: 'scraps', group: 'Components', out: 'components/scraps.html', kit: 'scraps' },
+  { id: 'attribution', group: 'Components', out: 'components/attribution.html', kit: 'attribution' },
+  { id: 'filter-bar', group: 'Components', out: 'components/filter-bar.html', kit: 'filter-bar' },
+  { id: 'contact-panel', group: 'Components', out: 'components/contact-panel.html', kit: 'contact-panel' },
+  { id: 'footer', group: 'Components', out: 'components/footer.html', kit: 'footer' },
+  { id: 'brief', group: 'Pages', out: 'pages/00-brief.html', kit: 'brief' },
+  { id: 'home-desktop', group: 'Pages', out: 'pages/home-desktop.html', page: '/' },
+  { id: 'home-mobile', group: 'Pages', out: 'pages/home-mobile.html', page: '/', mobile: true },
+  // Pagine progetto: il build di design include le bozze. Un case study
+  // pubblicabile oggi non esiste: la card viene saltata finché non c'è.
+  { id: 'project-scheda', group: 'Pages', out: 'pages/project-scheda.html', page: '/projects/porta-ciuccio/' },
+  { id: 'project-case-study', group: 'Pages', out: 'pages/project-case-study.html', page: '/projects/caso-studio/' },
+  { id: 'projects-index', group: 'Pages', out: 'pages/projects-index.html', page: '/projects/' },
+  { id: 'preventivo', group: 'Pages', out: 'pages/preventivo.html', page: '/preventivo/' },
+  { id: 'about', group: 'Pages', out: 'pages/about.html', page: '/about/' },
+  { id: '404', group: 'Pages', out: 'pages/404.html', page: '/404.html' },
+  { id: 'card', group: 'Pages', out: 'pages/card.html', page: '/card/lorenzo/' },
 ];
-cards.push({
-  path: 'colors/palette.html',
-  html: doc(
-    'Colors',
-    'Palette — Lorenzo Arrigoni',
-    `<p class="label" style="margin-bottom:1.25rem">Palette · estetica "tavola tecnica"</p>
-<div class="swatches">${swatches
-      .map(
-        ([name, val, use]) =>
-          `<div class="sw"><div class="chip" style="background:${val}"></div><p class="sw-name">${name}</p><p class="sw-val">${val}</p><p class="sw-use">${use}</p></div>`
-      )
-      .join('')}</div>`,
-    `.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(10rem,1fr));gap:1.25rem}
-.sw .chip{height:5.5rem;border:1px solid var(--line-strong)}
-.sw-name{font-weight:640;margin-top:.6rem}
-.sw-val{font-family:var(--font-mono);font-size:.75rem;color:var(--ink-soft)}
-.sw-use{font-size:.8rem;color:var(--ink-soft)}`
-  ),
-});
 
-// ---------- Type ----------
-cards.push({
-  path: 'type/typography.html',
-  html: doc(
-    'Type',
-    'Tipografia — Lorenzo Arrigoni',
-    `<p class="label" style="margin-bottom:1.5rem">Tipografia · Archivo Variable + IBM Plex Mono</p>
-<div class="t-row"><span class="t-tag">Display · 720 · uppercase</span><p class="hero-title" style="font-size:clamp(2.5rem,8vw,4.5rem)">Lorenzo<br>Arrigoni</p></div>
-<div class="t-row"><span class="t-tag">H2 sezione · 640 · uppercase</span><h2 style="font-size:2.1rem;text-transform:uppercase;letter-spacing:.02em">Cosa progetto</h2></div>
-<div class="t-row"><span class="t-tag">H3 card · 640</span><h3 style="font-size:1.8rem">Maatbric Smart Business Card</h3></div>
-<div class="t-row"><span class="t-tag">Body · 400 · 1.0625rem</span><p style="max-width:44rem">Progetto e realizzo oggetti che risolvono piccoli problemi reali: prototipi, accessori funzionali, ricambi non critici e oggetti intelligenti con NFC.</p></div>
-<div class="t-row"><span class="t-tag">Label mono · 500 · tracking .14em</span><p class="label">Bambu Lab X2D · Autodesk Fusion</p></div>
-<div class="t-row"><span class="t-tag">Numeri mono accent</span><p class="label"><span style="color:var(--accent)">01</span> Problema&ensp;<span style="color:var(--accent)">02</span> Analisi&ensp;<span style="color:var(--accent)">03</span> Vincoli</p></div>`,
-    `.t-row{border-top:1px solid var(--line);padding:1.25rem 0;display:flex;flex-direction:column;gap:.75rem}
-.t-tag{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}`
-  ),
-});
+// --- argomenti ---------------------------------------------------------------
 
-// ---------- Components ----------
-cards.push({
-  path: 'components/header.html',
-  html: doc(
-    'Components',
-    'Header',
-    `<header class="site-header" style="margin:-1.75rem -1.75rem 0"><div class="bar" style="padding-inline:1.75rem"><a class="wordmark" href="#">Lorenzo&nbsp;Arrigoni</a><nav><a href="#">Progetti</a><a href="#">Contatto</a></nav></div></header>`
-  ),
-});
+const args = process.argv.slice(2);
+const onlyArg = args.find((a) => a.startsWith('--only'));
+const only = onlyArg ? (onlyArg.includes('=') ? onlyArg.split('=')[1] : args[args.indexOf(onlyArg) + 1]) : undefined;
+const wanted = only ? new Set(only.split(',').map((s) => s.trim().toLowerCase())) : undefined;
+const selected = CARDS.filter((c) => !wanted || wanted.has(c.id) || wanted.has(c.group.toLowerCase()));
 
-cards.push({
-  path: 'components/hero.html',
-  html: doc(
-    'Components',
-    'Hero',
-    `<div class="hero-grid" style="margin:-1.75rem;padding:3.5rem 1.75rem">
-<p class="hero-eyebrow">Portfolio · Progettazione &amp; stampa 3D</p>
-<h1 class="hero-title">Lorenzo<br>Arrigoni</h1>
-<p class="hero-tagline">Progettazione 3D&ensp;·&ensp;Prototipazione&ensp;·&ensp;Soluzioni su misura</p>
-<p class="hero-lead">Progetto e realizzo oggetti che risolvono piccoli problemi reali.</p>
-<p class="label hero-tools">Bambu Lab X2D · Autodesk Fusion</p>
-</div>`
-  ),
-});
+if (!args.includes('--no-build')) {
+  execSync('npx astro build --config astro.design.mjs', { cwd: ROOT, stdio: 'inherit' });
+}
 
-cards.push({
-  path: 'components/process-strip.html',
-  html: doc(
-    'Components',
-    'Striscia metodo',
-    `<ol class="process">${['Problema', 'Analisi', 'Vincoli', 'Progettazione', 'Prototipo', 'Test', 'Iterazione', 'Soluzione']
-      .map((s, i) => `<li><span class="step-num">${String(i + 1).padStart(2, '0')}</span>${s}</li>`)
-      .join('')}</ol>`
-  ),
-});
+// --- strumenti -----------------------------------------------------------------
 
-cards.push({
-  path: 'components/section-head.html',
-  html: doc(
-    'Components',
-    'Intestazione di sezione',
-    `<div class="section-head"><span class="section-num">01</span><h2>Cosa progetto</h2></div>
-<div style="height:2rem"></div>
-<div class="section-head"><span class="section-num">02</span><h2>Progetti</h2></div>`
-  ),
-});
+const read = (p) => readFileSync(p, 'utf8');
+const fromBuild = (url) => path.join(BUILD, decodeURIComponent(url.split('?')[0]));
+const dataUri = (buffer, mime) => `data:${mime};base64,${buffer.toString('base64')}`;
 
-cards.push({
-  path: 'components/cap-grid.html',
-  html: doc(
-    'Components',
-    'Griglia "Cosa progetto"',
-    `<ul class="cap-grid">${['Oggetti personalizzati', 'Prototipi', 'Accessori funzionali', 'Piccoli ricambi non critici', 'Organizer', 'Supporti', 'Adattatori', 'Oggetti intelligenti con NFC']
-      .map((c, i) => `<li><span class="cap-num">${String(i + 1).padStart(2, '0')}</span>${c}</li>`)
-      .join('')}</ul>`
-  ),
-});
+function builtFile(route) {
+  if (route.endsWith('.html')) return path.join(BUILD, route);
+  return path.join(BUILD, route, 'index.html');
+}
 
-cards.push({
-  path: 'components/project-card.html',
-  html: doc(
-    'Components',
-    'Card progetto — 2 varianti',
-    `<p class="label" style="margin-bottom:1rem">Variante A · design originale</p>
-<article class="pcard">
-  <div class="badges"><span class="badge accent">Design originale</span><span class="badge">In sviluppo</span></div>
-  <h3>Maatbric Smart Business Card</h3>
-  <p class="summary">Biglietto da visita stampato in 3D con tag NFC integrato: avvicinando il telefono si apre una pagina contatto digitale, aggiornabile nel tempo senza ristampare il biglietto.</p>
-  <dl class="meta"><div><dt class="label">Categoria</dt><dd>Smart Objects</dd></div><div><dt class="label">Stampante</dt><dd>Bambu Lab X2D</dd></div><div><dt class="label">Software</dt><dd>Autodesk Fusion</dd></div></dl>
-  <p class="note label">Case study completo — in arrivo</p>
-</article>
-<p class="label" style="margin:2rem 0 1rem">Variante B · Print Lab (dati di esempio)</p>
-<article class="pcard">
-  <div class="badges"><span class="badge">Print Lab · modello di terzi</span><span class="badge">Completato</span></div>
-  <h3>Esempio stampa da modello di terzi</h3>
-  <p class="summary">Testo di esempio per la variante Print Lab: la card cita sempre autore, piattaforma e licenza del modello originale.</p>
-  <dl class="meta"><div><dt class="label">Autore</dt><dd>— esempio —</dd></div><div><dt class="label">Piattaforma</dt><dd>— esempio —</dd></div><div><dt class="label">Licenza</dt><dd>— esempio —</dd></div></dl>
-</article>`
-  ),
-});
+const fontCache = new Map();
 
-cards.push({
-  path: 'components/placeholder-card.html',
-  html: doc(
-    'Components',
-    'Card placeholder',
-    `<div class="placeholder-card"><span class="label">In lavorazione</span><p>Altri case study sono in preparazione e verranno pubblicati qui.</p></div>`
-  ),
-});
+/**
+ * Tiene solo i @font-face del sottoinsieme latin (copre l'italiano, accenti
+ * compresi) e solo il woff2, in data-URI. Tutti i sottoinsiemi di tutti i
+ * pesi porterebbero ogni card oltre il megabyte.
+ */
+function inlineFonts(css) {
+  return css.replace(/@font-face\s*{[^}]*}/g, (block) => {
+    if (block.includes('url(data:')) return block;
+    const match = block.match(/url\(["']?([^)"']*-latin-(?!ext)[^)"']*\.woff2)["']?\)/);
+    if (!match) return '';
+    const url = match[1];
+    if (!fontCache.has(url)) fontCache.set(url, dataUri(readFileSync(fromBuild(url)), 'font/woff2'));
+    return block.replace(/src:[^;}]+/, `src:url(${fontCache.get(url)}) format("woff2")`);
+  });
+}
 
-cards.push({
-  path: 'components/contact-cta.html',
-  html: doc(
-    'Components',
-    'CTA contatto',
-    `<p class="cta">Hai un problema che potrebbe essere risolto con un oggetto su&nbsp;misura?</p>
-<p style="max-width:44rem;color:var(--ink-soft)">Un pezzo introvabile, un supporto che non esiste, un accessorio che «quasi» funziona: raccontamelo e valutiamo insieme se si può progettare una soluzione.</p>
-<div class="contact-placeholder"><span class="label">Placeholder · TODO</span><p>Canale di contatto in configurazione — l'indirizzo email e i profili social verranno pubblicati qui a breve.</p></div>`
-  ),
-});
+function inlineStyles(html) {
+  let out = html.replace(/<link\b[^>]*rel=["']stylesheet["'][^>]*>/g, (tag) => {
+    const href = tag.match(/href=["']([^"']+)["']/)?.[1];
+    if (!href || !href.startsWith('/')) return tag;
+    return `<style>${inlineFonts(read(fromBuild(href)))}</style>`;
+  });
+  out = out.replace(/<style([^>]*)>([\s\S]*?)<\/style>/g, (_, attrs, css) => `<style${attrs}>${inlineFonts(css)}</style>`);
+  // Riferimenti che dentro Claude Design sarebbero rotti: favicon, canonical.
+  return out.replace(/<link\b[^>]*rel=["'](?:icon|apple-touch-icon|canonical|sitemap)["'][^>]*>\s*/g, '');
+}
 
-cards.push({
-  path: 'components/footer.html',
-  html: doc(
-    'Components',
-    'Footer',
-    `<footer class="site-footer" style="margin:0 -1.75rem -1.75rem"><div class="grid" style="padding-inline:1.75rem"><p class="colophon">© 2026 Lorenzo Arrigoni<br>Progettazione 3D · Prototipazione · Soluzioni su misura</p><p class="meta label">Social — in arrivo (placeholder)<br><a href="#">Codice sorgente su GitHub</a></p></div></footer>`
-  ),
-});
+const imageCache = new Map();
 
-// ---------- Pages (da dist/, CSS inline, font in data-URI) ----------
-const FONT_MAP = {
-  'archivo-latin-wght-normal': F.archivoLatin,
-  'archivo-latin-ext-wght-normal': F.archivoLatinExt,
-  'ibm-plex-mono-latin-400-normal': F.mono400,
-  'ibm-plex-mono-latin-500-normal': F.mono500,
+async function inlineImages(html) {
+  const tags = [...html.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
+  let out = html;
+  for (const tag of new Set(tags)) {
+    const src = tag.match(/\bsrc=["']([^"']+)["']/)?.[1];
+    if (!src || src.startsWith('data:') || !src.startsWith('/')) continue;
+    if (!imageCache.has(src)) {
+      const buffer = await sharp(fromBuild(src)).resize({ width: 800, withoutEnlargement: true }).webp({ quality: 75 }).toBuffer();
+      imageCache.set(src, dataUri(buffer, 'image/webp'));
+    }
+    const replaced = tag
+      .replace(/\s(?:srcset|sizes)=["'][^"']*["']/g, '')
+      .replace(/\bsrc=["'][^"']+["']/, `src="${imageCache.get(src)}"`);
+    out = out.split(tag).join(replaced);
+  }
+  return out;
+}
+
+const escapeAttr = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+const titleOf = (html, fallback) => html.match(/<title>([^<]*)<\/title>/)?.[1] ?? fallback;
+
+function asMobile(html, title) {
+  return `<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title} · 375px</title>
+<style>html,body{margin:0;background:#07090f}body{display:grid;justify-items:center;padding:24px}iframe{width:375px;height:9000px;border:1px solid rgba(220,228,240,.18);border-radius:16px;background:#0c0f17}</style>
+</head><body><iframe title="${escapeAttr(title)} a 375px" srcdoc="${escapeAttr(html)}"></iframe></body></html>`;
+}
+
+// --- palette dai token ---------------------------------------------------------
+
+function luminance(hex) {
+  const n = hex.replace('#', '');
+  const full = n.length === 3 ? [...n].map((c) => c + c).join('') : n;
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255);
+  const lin = (c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+
+const contrast = (a, b) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
 };
 
-function pageCard(distFile, extraCss = '') {
-  let html = readFileSync(join(REPO, 'dist', distFile), 'utf8');
-  html = html.replace(/<link rel="stylesheet" href="(\/_astro\/[^"]+\.css)"\s*\/?>/g, (_m, href) => {
-    let css = readFileSync(join(REPO, 'dist', href.slice(1)), 'utf8');
-    css = css.replace(/url\(\/_astro\/([a-z0-9-]+)\.[\w-]+\.woff2\)/gi, (m, base) =>
-      FONT_MAP[base] ? `url(data:font/woff2;base64,${FONT_MAP[base]})` : m
-    );
-    return `<style>${css}</style>`;
-  });
-  if (extraCss) html = html.replace('</head>', `<style>${extraCss}</style></head>`);
-  return `<!-- @dsCard group="Pages" -->\n${html}`;
+function paletteCard(css) {
+  const root = read(path.join(ROOT, 'src/styles/tokens.css')).match(/:root\s*{([\s\S]*?)\n}/)[1];
+  const tokens = [...root.matchAll(/(--[\w-]+):\s*([^;]+);[ \t]*(?:\/\*\s*(.*?)\s*\*\/)?/g)].map(([, name, value, note]) => ({
+    name,
+    value: value.trim(),
+    note: note ?? '',
+  }));
+  const bg = tokens.find((t) => t.name === '--bg').value;
+  const colors = tokens.filter((t) => /^#[0-9a-f]{3,8}$/i.test(t.value) || /^rgba?\(/.test(t.value) || t.value === 'transparent');
+
+  const rows = colors
+    .map((t) => {
+      const ratio = /^#[0-9a-f]{6}$/i.test(t.value) ? contrast(t.value, bg) : undefined;
+      const verdict = ratio === undefined ? '—' : `${ratio.toFixed(2)}:1 ${ratio >= 4.5 ? 'AA testo' : ratio >= 3 ? 'AA componenti' : 'sotto soglia'}`;
+      return `<tr><td><span class="sw" style="background:${t.value}"></span></td><td class="mono">${t.name}</td><td class="mono">${t.value}</td><td class="mono">${verdict}</td><td>${t.note}</td></tr>`;
+    })
+    .join('\n');
+
+  return `<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Palette · token del design system v2</title>
+<style>${css}
+.pal{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}.pal td,.pal th{padding:var(--s-75) var(--s-100);border-bottom:var(--bd);text-align:left;vertical-align:middle}
+.sw{display:block;width:48px;height:32px;border-radius:var(--radius-sm);border:var(--bd-strong)}</style></head>
+<body><main class="wrap" style="padding-block:var(--s-700)">
+<p class="eyebrow">Kit · design system v2</p><h1 style="margin-block:var(--s-200) var(--s-600)">Palette</h1>
+<p class="lead" style="margin-bottom:var(--s-600)">Generata da <code>src/styles/tokens.css</code>. Contrasti calcolati con la formula WCAG contro <code>--bg</code> (${bg}).</p>
+<table class="pal"><thead><tr><th></th><th>Token</th><th>Valore</th><th>Contrasto su --bg</th><th>Uso</th></tr></thead><tbody>
+${rows}
+</tbody></table></main></body></html>`;
 }
 
-cards.push({ path: 'pages/home-desktop.html', html: pageCard('index.html') });
-cards.push({
-  path: 'pages/home-mobile.html',
-  html: pageCard(
-    'index.html',
-    `html{background:#dedad0}body{max-width:375px;margin:1.5rem auto;outline:1px solid rgba(23,20,13,.35);box-shadow:0 12px 40px rgba(23,20,13,.18)}`
-  ),
-});
-cards.push({ path: 'pages/404.html', html: pageCard('404.html') });
+// --- generazione ----------------------------------------------------------------
 
-// ---------- scrittura ----------
-for (const c of cards) {
-  const p = join(OUT, c.path);
-  mkdirSync(dirname(p), { recursive: true });
-  writeFileSync(p, c.html);
-  console.log(`${c.path}  ${(c.html.length / 1024).toFixed(0)} KB`);
+rmSync(OUT, { recursive: true, force: true });
+mkdirSync(OUT, { recursive: true });
+
+// Il CSS compilato per la palette: si prende da una pagina del kit, già con i font inline.
+const typographyPage = builtFile('/kit/typography');
+const sharedCss = existsSync(typographyPage)
+  ? [...inlineStyles(read(typographyPage)).matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]).join('\n')
+  : '';
+
+const manifest = [];
+const skipped = [];
+
+for (const card of selected) {
+  let html;
+  if (card.palette) {
+    html = paletteCard(sharedCss);
+  } else {
+    const file = builtFile(card.kit ? `/kit/${card.kit}` : card.page);
+    if (!existsSync(file)) {
+      skipped.push(`${card.out} (manca ${card.kit ? `/kit/${card.kit}` : card.page})`);
+      continue;
+    }
+    html = await inlineImages(inlineStyles(read(file)));
+    if (card.mobile) html = asMobile(html, titleOf(html, card.id));
+  }
+
+  const body = `<!-- @dsCard group="${card.group}" -->\n${html}`;
+  const target = path.join(OUT, card.out);
+  mkdirSync(path.dirname(target), { recursive: true });
+  writeFileSync(target, body);
+  manifest.push({ path: card.out, group: card.group, bytes: Buffer.byteLength(body) });
 }
-console.log(`\n${cards.length} card generate in ${OUT}`);
+
+writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+
+const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
+console.log(`\n${manifest.length} card in ${path.relative(ROOT, OUT)}/`);
+for (const m of manifest) console.log(`  ${m.bytes > 1024 * 1024 ? '!' : ' '} ${m.path.padEnd(38)} ${kb(m.bytes).padStart(8)}  ${m.group}`);
+if (skipped.length) {
+  console.log(`\n${skipped.length} card saltate, sorgente non ancora presente:`);
+  for (const s of skipped) console.log(`    ${s}`);
+}
+const heavy = manifest.filter((m) => m.bytes > 1024 * 1024);
+if (heavy.length) console.log(`\nATTENZIONE: ${heavy.length} card oltre 1 MB.`);

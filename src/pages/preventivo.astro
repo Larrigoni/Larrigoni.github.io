@@ -1,0 +1,46 @@
+---
+/**
+ * /preventivo (brief §11.2): testata, i quattro settori fino al PDF, cosa
+ * incide sul prezzo, la riga sul recesso e la CTA piena. Il pannello
+ * «Esempio da un lavoro fatto» e le FAQ non ci sono finché non esistono dati
+ * reali e domande ricevute davvero (piano §9.3, §9.6).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+import ItemText from '../components/ItemText.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Timeline from '../components/Timeline.astro';
+import { home } from '../data/home.ts';
+import { pages } from '../data/pages.ts';
+
+const { meta, head, steps, factors, recesso, cta } = pages.preventivo;
+const contatto = home.sections.find((s) => s.id === 'contatto')?.title.claim ?? 'Raccontami il problema.';
+---
+
+<BaseLayout title={meta.title} description={meta.description}>
+  <header class="page-head">
+    <div class="wrap">
+      <SectionHead eyebrow={head.eyebrow} title={head.title} lead={head.lead} titleId="preventivo-titolo" level={1} />
+    </div>
+  </header>
+
+  <section class="section alt" aria-labelledby="settori-titolo">
+    <div class="wrap">
+      <SectionHead eyebrow={steps.eyebrow} title={steps.title} titleId="settori-titolo" />
+      <Timeline items={steps.items} />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="voci-titolo">
+    <div class="wrap">
+      <SectionHead eyebrow={factors.eyebrow} title={factors.title} titleId="voci-titolo" />
+      <ul class="voci" role="list">
+        {factors.items.map((item) => <li><ItemText item={item} /></li>)}
+      </ul>
+      <p class="boundary-note">{recesso}</p>
+    </div>
+  </section>
+
+  {/* La frase del contatto della home: la fascia chiede di scrivere, non ripete il titolo. */}
+  <CtaBand claim={contatto} cta={cta.primary} />
+</BaseLayout>

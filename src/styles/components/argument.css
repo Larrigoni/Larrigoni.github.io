@@ -1,0 +1,345 @@
+/*
+ * Componenti: Sheet, Compare, Scraps.
+ *
+ * File con un solo proprietario: chi scrive questi componenti scrive solo qui.
+ * Consuma i token di tokens.css e le primitive di base.css, senza ridefinirle.
+ *
+ * Le tre sezioni «d'argomento» della home: per chi è (il foglio a griglia),
+ * la domanda giusta (il confronto), il problema (le scraps). Nessuna ha stati:
+ * non contengono elementi interattivi, quindi niente hover, niente transizioni.
+ * Mobile-first; soglie 760px (47.5rem) e 960px (60rem), brief §10.9.
+ */
+
+/* === Sheet · Tavola 01 · Per chi è (brief §6.13) ============================
+ * L'unica texture del sito: punti ogni 24px e griglia steel ogni 96px su
+ * --sheet. Sul foglio il testo è --text o --muted, mai --faint (4.41:1
+ * sull'incrocio delle linee, §4.3).
+ */
+
+.sheet {
+  position: relative;
+  background: var(--grid-sheet), var(--sheet);
+  border-block: var(--bd-strong);
+}
+
+/* Chip al posto dell'occhiello: stessa voce mono, ma su fondo opaco. */
+.sheet__chip {
+  width: fit-content;
+  padding: var(--s-50) 10px;
+  border: var(--bd-strong);
+  border-radius: var(--radius-tag);
+  background: var(--bg);
+  color: var(--muted);
+  font: 500 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+}
+
+.sheet__cols {
+  display: grid;
+  gap: var(--s-200);
+}
+
+/* Colonne velate: il foglio si intravede, il testo resta sopra i 5.9:1. */
+.sheet__col {
+  display: grid;
+  align-content: start;
+  gap: var(--s-200);
+  padding: var(--s-300);
+  border: var(--bd);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+}
+
+/* Una delle due sole eccezioni al «mono non è mai un titolo» (§5.1). */
+.sheet__col h3 {
+  font: 500 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+/* L'unico titolo tutto rosso del sito (§3.E, punto 4): è l'evidenza del gruppo. */
+.sheet__col--si h3 {
+  color: var(--accent-text);
+}
+
+.sheet__list {
+  display: grid;
+  gap: var(--s-100);
+}
+
+.sheet__list li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: var(--s-100);
+  color: var(--text);
+}
+
+/* Icona lineare steel, centrata sulla prima riga (16px su un'interlinea di 25.6). */
+.sheet__icon {
+  margin-top: 0.3em;
+  color: var(--steel);
+}
+
+/* La nota sulle categorie escluse: il filetto è decorativo, il testo dice tutto. */
+.sheet__note {
+  max-width: var(--measure);
+  margin-top: var(--s-400);
+  padding-left: var(--s-200);
+  border-left: 2px solid var(--accent-line);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+@media (min-width: 47.5rem) {
+  /* Righello a tacche sul bordo sinistro: parte del foglio, non una seconda
+     texture. Ogni tacca cade su un multiplo di 8: una su tre su un punto, una
+     su dodici su una linea della griglia. */
+  .sheet::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 14px;
+    background: repeating-linear-gradient(to bottom, var(--line-strong) 0 1px, transparent 1px 8px);
+    pointer-events: none;
+  }
+
+  .sheet__cols {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--s-600);
+  }
+
+  .sheet__note {
+    margin-top: var(--s-600);
+  }
+}
+
+/* === Compare · La domanda giusta (brief §6.14) ==============================
+ * Un solo contenitore, due colonne divise da un filo. L'evidenza è la colonna
+ * B: tag tinto e « + » in --accent-text (un gruppo, un tocco).
+ */
+
+.compare__table {
+  display: grid;
+  border: var(--bd-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.compare__col {
+  display: grid;
+  align-content: start;
+  gap: var(--s-300);
+  padding: var(--s-300);
+  background: var(--surface);
+}
+
+.compare__col--b {
+  border-top: var(--bd);
+  background: var(--surface-2);
+}
+
+.compare__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-75) var(--s-100);
+}
+
+.compare__head h3 {
+  font-size: var(--fs-h4);
+  line-height: 1.4;
+}
+
+.compare__list {
+  display: grid;
+  gap: var(--s-100);
+}
+
+.compare__list li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: var(--s-75);
+  color: var(--muted);
+}
+
+/* Marcatori come glifi mono, fuori dall'albero accessibile. */
+.compare__mark {
+  font: 500 var(--fs-body) / var(--lh-body) var(--font-mono);
+  text-align: center;
+  color: var(--faint);
+}
+
+.compare__col--b .compare__mark {
+  color: var(--accent-text);
+}
+
+.compare__verdict {
+  max-width: 680px;
+  margin-top: var(--s-400);
+  color: var(--text);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+}
+
+@media (min-width: 47.5rem) {
+  .compare__table {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .compare__col {
+    padding: var(--s-400);
+  }
+
+  .compare__col--b {
+    border-top: 0;
+    border-left: var(--bd);
+  }
+}
+
+/* === Scraps · Il problema (brief §6.15) =====================================
+ * Il secondo dei tre gradienti di fondo ammessi (§9.26): da --pit a --surface
+ * in 360px. Sotto 960px le scraps sono una pila centrata e dritta; da 960px
+ * stanno ai quattro angoli di una griglia in flusso, mai in absolute, e ruotano
+ * solo le barrate: la rotazione è il segno del disordine, non un ornamento.
+ */
+
+.problem {
+  background: linear-gradient(180deg, var(--pit), var(--surface) 360px);
+  border-block: var(--bd);
+}
+
+.problem__grid {
+  display: grid;
+  gap: var(--s-400);
+}
+
+.problem__text {
+  width: 100%;
+  max-width: 640px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.problem__punch {
+  color: var(--text);
+  font-size: var(--fs-lead);
+  font-weight: 500;
+  line-height: var(--lh-lead);
+}
+
+.scraps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-75);
+}
+
+/* Un'etichetta: non una card, non un link. */
+.scrap {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-50);
+  width: 100%;
+  max-width: 240px;
+  padding: var(--s-75) var(--s-100);
+  border: var(--bd);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.scrap__say {
+  color: var(--text);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+/* Il barrato: l'unica linea da 2px fuori da filetti e timeline (§3.E, punto 2). */
+.scrap__say s {
+  color: var(--faint);
+  text-decoration-line: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--strike);
+}
+
+.scrap__reply {
+  color: var(--muted);
+  font-size: var(--fs-note);
+  line-height: 1.45;
+}
+
+.scrap .tag {
+  margin-top: var(--s-50);
+}
+
+@media (min-width: 60rem) {
+  .problem__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'a b'
+      't t'
+      'c d';
+    gap: var(--s-300) var(--s-600);
+  }
+
+  .problem__text {
+    grid-area: t;
+    justify-self: center;
+  }
+
+  /* La lista (role="list") presta le sue voci alla griglia della sezione. */
+  .scraps {
+    display: contents;
+  }
+
+  /* Larghe quanto la frase, al massimo 240. Gli scarti verso l'interno sono
+     margini in flusso: la voce resta nella sua cella e non tocca mai il testo. */
+  .scrap {
+    width: fit-content;
+  }
+
+  .scrap:nth-child(1) {
+    grid-area: a;
+    align-self: end;
+    justify-self: start;
+    margin-inline-start: 6%;
+  }
+
+  .scrap:nth-child(2) {
+    grid-area: b;
+    align-self: end;
+    justify-self: end;
+    margin-inline-end: 10%;
+    margin-bottom: var(--s-400);
+  }
+
+  .scrap:nth-child(3) {
+    grid-area: c;
+    align-self: start;
+    justify-self: start;
+    margin-inline-start: 14%;
+    margin-top: var(--s-300);
+  }
+
+  .scrap:nth-child(4) {
+    grid-area: d;
+    align-self: start;
+    justify-self: end;
+    margin-inline-end: 4%;
+  }
+
+  .scrap--tilt-1 {
+    transform: rotate(-2deg);
+  }
+
+  .scrap--tilt-2 {
+    transform: rotate(2deg);
+  }
+
+  .scrap--tilt-3 {
+    transform: rotate(-1.5deg);
+  }
+}

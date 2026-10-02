@@ -1,0 +1,30 @@
+---
+/**
+ * Occhiello (brief §5.4): un solo contenitore flessibile, così la riga va a
+ * capo solo dopo un « · » e mai dentro un segmento `.nw`. Fra i segmenti uno
+ * spazio indivisibile prima del punto e uno normale dopo (src/lib/text.ts).
+ *
+ * Il testo si scrive normale: il maiuscolo lo fa il CSS. `bare` toglie il
+ * trattino (card, pannelli, timeline, Giri); `plain` toglie la primitiva e
+ * lascia solo la classe passata (il chip della Tavola 01).
+ */
+import { NBSP, eyebrowSegments } from '../lib/text.ts';
+import type { Led } from '../lib/taxonomy.ts';
+
+interface Props {
+  /** «Progetto 03 · Studio», oppure i segmenti già separati (quelli vuoti si scartano). */
+  text: string | readonly (string | undefined)[];
+  bare?: boolean;
+  plain?: boolean;
+  /** LED di stato davanti al testo (la 404). */
+  led?: Led;
+  as?: 'p' | 'span';
+  class?: string;
+}
+
+const { text, bare = false, plain = false, led, as: Tag = 'p', class: className } = Astro.props;
+const segments = eyebrowSegments(text);
+---
+
+{/* Su una riga sola: un a capo nel sorgente diventerebbe uno spazio spezzabile prima di « · ». */}
+{segments.length > 0 && <Tag class:list={[!plain && 'eyebrow', !plain && bare && 'bare', className]}>{led && <span class:list={['led', led]} aria-hidden="true" />}<span class="eyebrow__txt">{segments.map((s, i) => <>{i > 0 && `${NBSP}· `}<span class={s.nw ? 'nw' : undefined}>{s.text}</span></>)}</span></Tag>}

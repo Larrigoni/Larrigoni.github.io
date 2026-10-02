@@ -15,7 +15,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Le regole editoriali sono test: un progetto che le viola non va online.
+  verifica:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 24 (esegue i test TypeScript senza compilazione)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Regole dei contenuti
+        run: npm test
+      - name: Controllo dei tipi
+        run: npx astro check
+      - name: Almeno un progetto pubblicabile
+        run: node scripts/check-publishable.mjs
+
   build:
+    needs: verifica
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

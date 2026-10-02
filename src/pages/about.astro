@@ -1,0 +1,38 @@
+---
+/**
+ * /about (brief §11.2): prima persona, testi in src/data/pages.ts, categorie
+ * escluse dichiarate, pannello strumenti con le sole righe documentate.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Rich from '../components/Rich.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Telemetry from '../components/Telemetry.astro';
+import { pages } from '../data/pages.ts';
+
+const { meta, head, body, boundary, tools, cta } = pages.about;
+---
+
+<BaseLayout title={meta.title} description={meta.description}>
+  <header class="page-head">
+    <div class="wrap">
+      <SectionHead eyebrow={head.eyebrow} title={head.title} titleId="about-titolo" level={1} />
+    </div>
+  </header>
+
+  <section class="page-body" aria-labelledby="about-titolo">
+    <div class="wrap about__grid">
+      <div class="prose">
+        {body.map((paragraph) => <p><Rich text={paragraph} /></p>)}
+        <p class="boundary-note">{boundary}</p>
+        <div class="page-act">
+          <div class="cta-row">
+            <a class="btn primary" href={cta.primary.href}>{cta.primary.label}</a>
+            <a class="btn" href={cta.ghost.href}>{cta.ghost.label}</a>
+          </div>
+          <p class="page-act__note">{cta.primary.note}</p>
+        </div>
+      </div>
+      <Telemetry title="Strumenti" rows={tools} />
+    </div>
+  </section>
+</BaseLayout>

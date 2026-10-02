@@ -1,0 +1,13 @@
+---
+/** Indice di tutti i progetti pubblicati (brief §11.2). */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectsView from '../../components/ProjectsView.astro';
+import { pages } from '../../data/pages.ts';
+import { getPublishedProjects } from '../../lib/content.ts';
+
+const projects = await getPublishedProjects();
+---
+
+<BaseLayout title={pages.projects.meta.title} description={pages.projects.meta.description}>
+  <ProjectsView all={projects} />
+</BaseLayout>

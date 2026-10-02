@@ -1,0 +1,196 @@
+---
+/**
+ * Tavola «Tile e galleria» (brief §6.7, §6.19, §7): la cornice delle immagini
+ * in tutti i suoi trattamenti, e la galleria della pagina progetto.
+ * I dati reali vengono dalla collection (porta ciuccio); gli stati che nessun
+ * progetto ha ancora vengono da fixtures-media.ts, dentro `<Specimen fixture>`.
+ */
+import { getImage } from 'astro:assets';
+
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Gallery from '../components/Gallery.astro';
+import Tile from '../components/Tile.astro';
+import { getPublishedProjects } from '../lib/content.ts';
+import {
+  disegnoFixture,
+  fotoFixture,
+  fotoRitoccataFixture,
+  renderRitoccatoFixture,
+  scenaFixture,
+  schermataFixture,
+  senzaDidascaliaFixture,
+} from './fixtures-media.ts';
+
+const projects = await getPublishedProjects();
+const portaCiuccio = projects.find((project) => project.id === 'porta-ciuccio');
+const cover = portaCiuccio?.data.cover;
+// Come in Gallery: il link porta all'immagine grande ottimizzata, non al PNG originale.
+const coverFull = cover ? (await getImage({ src: cover.src, width: 1600, format: 'webp' })).src : '#';
+const gallery = portaCiuccio?.data.gallery ?? [];
+const realShots = cover ? [cover, ...gallery] : gallery;
+
+const ROW = '(min-width: 70rem) 22rem, (min-width: 40rem) 50vw, 100vw';
+---
+
+<KitLayout
+  title="Tile e galleria"
+  note="Un render trasparente si posa su un pavimento di luce fredda, una foto va al vivo, e un badge su fondo opaco dichiara sempre cosa si guarda. Il rosso non tocca mai un'immagine, né dentro né sul bordo."
+>
+  {
+    cover && (
+      <Specimen label="Tile--render · render CAD sul pavimento · 4:3 · copertina reale del porta ciuccio">
+        <div class="k-one">
+          <Tile shot={cover} eager />
+        </div>
+      </Specimen>
+    )
+  }
+
+  {
+    realShots.length > 0 && (
+      <Specimen label="Pezzo scuro · lo stacca da --raised il filo chiaro di --lift · render reali">
+        <div class="k-row">
+          {realShots.map((shot) => (
+            <Tile shot={shot} sizes={ROW} />
+          ))}
+        </div>
+      </Specimen>
+    )
+  }
+
+  <Specimen label="Tile--foto · al vivo, object-fit: cover · un render fa le veci della foto" fixture>
+    <div class="k-one">
+      <Tile shot={fotoFixture} />
+    </div>
+  </Specimen>
+
+  <Specimen label="Badge · un'etichetta per tipo d'immagine · .tag su fondo opaco --bg" fixture>
+    <div class="k-row">
+      {cover && <Tile shot={cover} sizes={ROW} />}
+      <Tile shot={scenaFixture} sizes={ROW} />
+      <Tile shot={fotoFixture} sizes={ROW} />
+      <Tile shot={disegnoFixture} sizes={ROW} />
+      <Tile shot={schermataFixture} sizes={ROW} />
+    </div>
+  </Specimen>
+
+  <Specimen label="Ritoccato · aiAssisted riguarda i pixel, mai la geometria" fixture>
+    <div class="k-row">
+      <Tile shot={renderRitoccatoFixture} sizes={ROW} />
+      <Tile shot={fotoRitoccataFixture} sizes={ROW} />
+    </div>
+  </Specimen>
+
+  {
+    cover && (
+      <Specimen label="Rapporti · 4:3 di base, 3:2 promossa, 1:1 · uno per gruppo di tile">
+        <div class="k-ratios">
+          <figure class="k-state">
+            <Tile shot={cover} sizes={ROW} />
+            <figcaption class="label">4:3</figcaption>
+          </figure>
+          <figure class="k-state">
+            <Tile shot={cover} sizes={ROW} class="tile--3-2" />
+            <figcaption class="label">3:2 · tile--3-2</figcaption>
+          </figure>
+          <figure class="k-state">
+            <Tile shot={cover} sizes={ROW} class="tile--1-1" />
+            <figcaption class="label">1:1 · tile--1-1</figcaption>
+          </figure>
+        </div>
+      </Specimen>
+    )
+  }
+
+  {
+    cover && (
+      <Specimen label="Tile-link · riposo, hover, focus · gli ultimi due resi fermi">
+        <div class="k-row">
+          <div class="k-state">
+            <a class="tile-link" href={coverFull}>
+              <Tile shot={cover} sizes={ROW} />
+            </a>
+            <p class="label">Riposo · bordo --line-strong</p>
+          </div>
+          <div class="k-state">
+            <a class="tile-link k-hover" href={coverFull} tabindex="-1">
+              <Tile shot={cover} sizes={ROW} />
+            </a>
+            <p class="label">Hover · bordo --steel, niente zoom né ombra</p>
+          </div>
+          <div class="k-state">
+            <a class="tile-link k-focus" href={coverFull} tabindex="-1">
+              <Tile shot={cover} sizes={ROW} />
+            </a>
+            <p class="label">Focus · anello --accent sul link, 3px fuori</p>
+          </div>
+        </div>
+      </Specimen>
+    )
+  }
+
+  {
+    realShots.length > 0 && (
+      <Specimen label="Galleria · porta ciuccio, dati reali · da 768px la prima a 3:2, sotto una striscia">
+        <div class="k-col">
+          <Gallery shots={realShots} label="Immagini del porta ciuccio" />
+        </div>
+      </Specimen>
+    )
+  }
+
+  {
+    cover && (
+      <Specimen label="Galleria · una sola immagine · da margine a margine" fixture>
+        <div class="k-col">
+          <Gallery shots={[cover]} />
+        </div>
+      </Specimen>
+    )
+  }
+
+  {
+    cover && gallery[0] && (
+      <Specimen label="Galleria · quattro immagini · foto dopo i render · senza didascalia, solo il prefisso" fixture>
+        <div class="k-col">
+          <Gallery shots={[cover, fotoFixture, gallery[0], senzaDidascaliaFixture]} />
+        </div>
+      </Specimen>
+    )
+  }
+</KitLayout>
+
+<style>
+  .k-one {
+    max-width: 34rem;
+  }
+
+  /* La colonna 7fr della pagina progetto, a 1440px. */
+  .k-col {
+    max-width: 40rem;
+  }
+
+  .k-row,
+  .k-ratios {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--s-300);
+    align-items: start;
+  }
+
+  .k-state {
+    display: grid;
+    gap: var(--s-100);
+  }
+
+  /* Stati resi fermi: gli stessi valori di media.css e di :focus-visible in base.css. */
+  .k-hover :global(.tile) {
+    border-color: var(--steel);
+  }
+
+  .k-focus {
+    outline: var(--focus);
+    outline-offset: 3px;
+  }
+</style>

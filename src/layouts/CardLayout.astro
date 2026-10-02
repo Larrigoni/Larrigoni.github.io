@@ -1,14 +1,11 @@
 ---
-// Layout minimale per le business card digitali (/card/*): niente header
-// e footer di navigazione — la pagina viene aperta da un tag NFC e deve
-// essere immediata su mobile.
-import '@fontsource/titan-one';
-import '@fontsource-variable/archivo';
-import '@fontsource-variable/archivo/wght-italic.css';
-import '@fontsource/ibm-plex-mono/400.css';
-import '@fontsource/ibm-plex-mono/500.css';
-import '@fontsource/ibm-plex-mono/600.css';
+// Layout minimale per il biglietto digitale (/card/*): niente nav né footer,
+// la pagina la apre un tag NFC e deve essere immediata sul telefono. Il
+// cordolo sta in cima (uso 1) e chiude la pagina (uso 4), mai attorno al
+// pannello (brief §3.A, §6.19).
+import '../lib/fonts.ts';
 import '../styles/global.css';
+import Kerb from '../components/Kerb.astro';
 
 interface Props {
   title: string;
@@ -28,7 +25,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#f5c518" />
+    <meta name="theme-color" content="#0c0f17" />
 
     <meta property="og:type" content="profile" />
     <meta property="og:site_name" content="Lorenzo Arrigoni" />
@@ -36,12 +33,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="it_IT" />
+    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   </head>
-  <body>
-    <slot />
+  <body class="vcard-page">
+    <Kerb pos="top" />
+    <main>
+      <slot />
+    </main>
+    <Kerb pos="end" />
   </body>
 </html>

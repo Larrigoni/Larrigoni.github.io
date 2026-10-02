@@ -1,0 +1,32 @@
+---
+/**
+ * Un campione nel kit: etichetta mono sopra, il componente sotto. Gli stati
+ * sintetici (che nei dati reali ancora non esistono) si marcano `fixture`.
+ */
+interface Props {
+  label: string;
+  fixture?: boolean;
+}
+
+const { label, fixture = false } = Astro.props;
+---
+
+<section class="specimen">
+  <p class="label">{label}{fixture && <span class="tag">Fixture</span>}</p>
+  <div class="specimen-body"><slot /></div>
+</section>
+
+<style>
+  .specimen {
+    display: grid;
+    gap: var(--s-200);
+    padding-block: var(--s-500);
+    border-top: var(--bd);
+  }
+
+  .specimen .label {
+    display: flex;
+    align-items: center;
+    gap: var(--s-100);
+  }
+</style>

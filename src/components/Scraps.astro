@@ -1,0 +1,81 @@
+---
+/**
+ * Il problema (brief §6.15): testata centrata, lead e frase-punch, attorno le
+ * «scraps», cose che si sentono dire.
+ *
+ * Tre frasi barrate (elemento `s`, con la confutazione sotto) e una dritta con
+ * il suo tag. Sotto 960px le voci sono una pila centrata, dritte; da 960px
+ * stanno ai quattro angoli di una griglia IN FLUSSO (mai `position:absolute`),
+ * due sopra e due sotto il testo, e ruotano solo le barrate (−2°, +2°, −1.5°).
+ * Nel markup il testo viene prima della lista: l'ordine di lettura resta
+ * titolo → scraps, e le scraps non hanno elementi focalizzabili. Il barrato
+ * non si sente: ogni voce ha un prefisso per gli screen reader.
+ *
+ * Testi da `home.ts`, sezione `problema`: `items[].struck` segna le barrate,
+ * `outcome` è la confutazione, `tag` l'etichetta della voce dritta.
+ * Stili in `styles/components/argument.css`.
+ */
+import Rich from './Rich.astro';
+import SectionHead from './SectionHead.astro';
+import type { Section } from '../data/home.ts';
+
+interface Props {
+  /** La sezione `problema` di home.ts: eyebrow, title, lead, punch, items (struck/outcome/tag). */
+  section: Section;
+  /** id della sezione. Di norma è `section.id`. */
+  id?: string;
+  /**
+   * Testi per gli screen reader, fissati dal brief (§6.15): nome della lista e
+   * prefissi nascosti delle voci barrate e di quella dritta.
+   */
+  labels?: { list?: string; wrong?: string; right?: string };
+}
+
+const { section, id = section.id, labels: labelsProp = {} } = Astro.props;
+const labels = {
+  list: 'Cose che si sentono dire',
+  wrong: 'Idea sbagliata:',
+  right: 'Quello che vale:',
+  ...labelsProp,
+};
+const { eyebrow, title, lead, punch, items = [] } = section;
+const titleId = `${id}-titolo`;
+
+
+// Le rotazioni seguono l'ordine delle sole barrate: la dritta non ruota mai.
+let struck = 0;
+const scraps = items.map((item) => ({ ...item, tilt: item.struck ? (struck++ % 3) + 1 : 0 }));
+---
+
+<section class="section problem" id={id} aria-labelledby={titleId}>
+  <div class="wrap problem__grid">
+    <div class="problem__text">
+      <SectionHead eyebrow={eyebrow} title={title} lead={lead} titleId={titleId} center />
+      {punch && <p class="problem__punch"><Rich text={punch} /></p>}
+    </div>
+
+    {
+      scraps.length > 0 && (
+        <ul class="scraps" role="list" aria-label={labels.list}>
+          {scraps.map((item) =>
+            item.struck ? (
+              <li class:list={['scrap', 'scrap--struck', `scrap--tilt-${item.tilt}`]}>
+                <p class="scrap__say">
+                  <span class="visually-hidden">{labels.wrong}</span> <s>{item.text}</s>
+                </p>
+                {item.outcome && <p class="scrap__reply">{item.outcome}</p>}
+              </li>
+            ) : (
+              <li class="scrap scrap--right">
+                <p class="scrap__say">
+                  <span class="visually-hidden">{labels.right}</span> {item.text}
+                </p>
+                {item.tag && <span class="tag">{item.tag}</span>}
+              </li>
+            ),
+          )}
+        </ul>
+      )
+    }
+  </div>
+</section>

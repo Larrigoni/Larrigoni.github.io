@@ -1,0 +1,73 @@
+---
+/**
+ * Timeline: i settori, da `SETTORE 1` al `TRAGUARDO` (brief §6.12).
+ *
+ * I dati sono le voci della sezione `prosegue` di home.ts: `tag` porta settore
+ * e nome, `text` il corpo, `outcome` l'esito («Ricevi: …», con l'etichetta in
+ * grassetto e senza colore). La tappa il cui occhiello comincia con
+ * «TRAGUARDO» è la fine: nodo pieno steel e occhiello in --accent-text, mai
+ * numerata. Nessuno stato, nessun riempimento animato, nessun tempo promesso.
+ */
+import Eyebrow from './Eyebrow.astro';
+import type { Cta, Item } from '../data/home.ts';
+
+interface Props {
+  /** Le tappe nell'ordine in cui succedono; l'ultima è il TRAGUARDO. */
+  items: Item[];
+  /** Nota sotto la timeline («Sui tempi: …»). */
+  note?: string;
+  /** Azione ghost sotto la nota («Leggi come nasce il prezzo →»). */
+  cta?: Cta;
+}
+
+const { items, note, cta } = Astro.props;
+
+const stages = items.map((item) => {
+  // «Ricevi: …» → etichetta in grassetto + resto. Senza etichetta, l'esito resta testo semplice.
+  const labelled = item.outcome?.match(/^([^:]{1,24}:)\s*(.+)$/);
+  return {
+    ...item,
+    end: /^traguardo\b/i.test(item.tag ?? ''),
+    outcomeLabel: labelled?.[1],
+    outcomeText: labelled ? labelled[2] : item.outcome,
+  };
+});
+---
+
+<div class="timeline">
+  <ol class="track" role="list">
+    {
+      stages.map((stage) => (
+        <li class:list={['stage', stage.end && 'stage--end']}>
+          {stage.tag && <Eyebrow text={stage.tag} bare />}
+          <p class="stage__text">{stage.text}</p>
+          {stage.outcomeText && (
+            <p class="stage__outcome">
+              {stage.outcomeLabel ? (
+                <>
+                  <strong>{stage.outcomeLabel}</strong> {stage.outcomeText}
+                </>
+              ) : (
+                stage.outcomeText
+              )}
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+  {
+    (note || cta) && (
+      <div class="timeline__foot">
+        {note && <p class="timeline__note">{note}</p>}
+        {cta && (
+          <p>
+            <a class="btn" href={cta.href}>
+              {cta.label}
+            </a>
+          </p>
+        )}
+      </div>
+    )
+  }
+</div>

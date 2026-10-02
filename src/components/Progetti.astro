@@ -1,0 +1,52 @@
+---
+/**
+ * La sezione Progetti della home (brief §11.1, riga 4): testata, i case dei
+ * progetti in vetrina, poi la chiusura con il link a /projects/ e la ghost.
+ * La stessa sezione la mostra il kit (src/design-kit/case.astro): un solo
+ * markup, così home e kit non divergono.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import Case from './Case.astro';
+import SectionHead from './SectionHead.astro';
+import type { Section } from '../data/home.ts';
+
+interface Props {
+  section: Section;
+  /** I case: homeCases() dei progetti pubblicati. */
+  cases: CollectionEntry<'projects'>[];
+}
+
+const { section, cases } = Astro.props;
+const titleId = `${section.id}-titolo`;
+
+// La chiusura contiene il percorso /projects/: diventa un link.
+const closing = section.closing ?? '';
+const at = closing.indexOf('/projects/');
+---
+
+<section class="section" id={section.id} aria-labelledby={titleId}>
+  <div class="wrap">
+    <SectionHead eyebrow={section.eyebrow} title={section.title} lead={section.lead} titleId={titleId} />
+    {
+      cases.length > 0 && (
+        <div class="cases">
+          {cases.map((project) => (
+            <Case project={project} />
+          ))}
+        </div>
+      )
+    }
+    <div class="cases__foot">
+      {
+        closing && (
+          <p class="cases__closing">
+            {/* Su una riga sola: un a capo fra link e testo diventerebbe uno spazio prima del punto. */}
+            {at >= 0 ? <>{closing.slice(0, at)}<a href="/projects/">/projects/</a>{closing.slice(at + '/projects/'.length)}</> : closing}
+          </p>
+        )
+      }
+      {section.cta?.ghost && <a class="btn" href={section.cta.ghost.href}>{section.cta.ghost.label}</a>}
+    </div>
+  </div>
+</section>

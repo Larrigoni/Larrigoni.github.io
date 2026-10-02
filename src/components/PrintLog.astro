@@ -1,0 +1,50 @@
+---
+/**
+ * PrintLog: il registro stampe di un progetto (brief §6.10).
+ *
+ * Testata `Registro stampe` con il conteggio, poi una riga per stampa in
+ * ordine cronologico: `Stampa n` → LED + esito + causa. Le stampe fallite
+ * restano a registro, con la loro causa: è la regola d'onestà del sito.
+ * Il fallimento è ruggine (`.led.fail`), mai rosso.
+ *
+ * Una stampa fallita senza causa non si pubblica (la riga salta e non entra
+ * nel conteggio). Un registro vuoto non rende nulla. Il numero `n` è quello
+ * del tentativo nel frontmatter: se una riga salta, il buco resta.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import Telemetry, { type TeleRow } from './Telemetry.astro';
+import { outcomeInfo } from '../lib/taxonomy.ts';
+
+type PrintLogEntry = CollectionEntry<'projects'>['data']['printLog'][number];
+
+interface Props {
+  /** `project.data.printLog`. */
+  log: PrintLogEntry[];
+  class?: string;
+}
+
+const { log, class: className } = Astro.props;
+
+const entries = log
+  .filter((entry) => entry.outcome !== 'fallita' || entry.note.trim().length > 0)
+  .sort((a, b) => a.attempt - b.attempt);
+
+const rows: TeleRow[] = entries.map((entry) => ({
+  key: `Stampa ${entry.attempt}`,
+  value: outcomeInfo[entry.outcome].label,
+  led: outcomeInfo[entry.outcome].led,
+  detail: entry.note,
+}));
+
+const total = entries.length;
+const failed = entries.filter((entry) => entry.outcome === 'fallita').length;
+const meta = [
+  `${total} ${total === 1 ? 'stampa' : 'stampe'}`,
+  failed > 0 ? `${failed} ${failed === 1 ? 'fallita' : 'fallite'}` : undefined,
+]
+  .filter(Boolean)
+  .join(', ');
+---
+
+<Telemetry title="Registro stampe" meta={meta} rows={rows} class={['tele--log', className].filter(Boolean).join(' ')} />

@@ -1,0 +1,47 @@
+---
+/**
+ * Layout delle pagine del kit: stesso CSS e stessi font del sito, niente nav
+ * né footer. Ogni pagina è una tavola di campioni per Claude Design.
+ */
+import '../lib/fonts.ts';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  note?: string;
+}
+
+const { title, note } = Astro.props;
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main class="wrap kit">
+      <header class="kit-head">
+        <p class="eyebrow">Kit · design system v2</p>
+        <h1>{title}</h1>
+        {note && <p class="lead">{note}</p>}
+      </header>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .kit {
+    padding-block: var(--s-700);
+  }
+
+  .kit-head {
+    display: grid;
+    gap: var(--s-200);
+    margin-bottom: var(--s-700);
+  }
+</style>

@@ -1,0 +1,234 @@
+/*
+ * Componenti: ProjectCard, ProjectGrid, FilterBar.
+ *
+ * File con un solo proprietario: chi scrive questi componenti scrive solo qui.
+ * Consuma i token di tokens.css e le primitive di base.css, senza ridefinirle.
+ * Capitolato: docs/brief-design-system.md §6.8 (card e griglia), §6.17 (filtri).
+ */
+
+/* --- ProjectGrid ---------------------------------------------------------- */
+
+/*
+ * auto-fill, mai auto-fit: la card ha la stessa larghezza con 1, 2, 3 o 4
+ * progetti. Con 2 card la terza colonna resta vuota, con 4 la seconda riga ha
+ * una card sola a sinistra; auto-fit le allargherebbe, e con una sola card
+ * porterebbe la tile a tutta pagina. A 1440px: tre colonne da circa 357px.
+ * min(18rem, 100%): a 320px (zoom 400%) una colonna da 18rem sfonderebbe il
+ * contenitore da 272px e la pagina scorrerebbe in orizzontale (§10.4).
+ */
+.pgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+  gap: var(--s-400) var(--s-300);
+}
+
+.pgrid > li {
+  min-width: 0;
+}
+
+/* --- ProjectCard ---------------------------------------------------------- */
+
+/*
+ * Card compatta: niente bordo, niente fondo. La cornice è la tile; sotto,
+ * occhiello P0n → titolo-link → meta → stato. Il titolo è l'unico link e il
+ * suo ::after copre la card intera: un solo punto di tabulazione per progetto.
+ */
+.pcard {
+  position: relative;
+  display: grid;
+  gap: var(--s-100);
+  align-content: start;
+}
+
+/*
+ * Un solo rapporto per griglia: la copertina può essere dichiarata 16:9 o 1:1,
+ * nella card è sempre 4:3. Nessuno zoom, nessuna ombra in più in hover: cambia
+ * solo il bordo (§6.7).
+ */
+.pcard .tile {
+  aspect-ratio: 4 / 3;
+  transition: border-color var(--t-hover) var(--ease);
+}
+
+.pcard__body {
+  display: grid;
+  gap: var(--s-75);
+}
+
+/* h3 20/28 (o h2 con la stessa resa, se sopra la griglia non c'è un h2). */
+.pcard__title {
+  font-size: var(--fs-h4);
+  line-height: 1.4;
+  letter-spacing: normal;
+}
+
+.pcard__title a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color var(--t-hover) var(--ease);
+}
+
+.pcard__title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/* Meta e stato: dati in mono, mai più di due righe consecutive (§8). */
+.pcard__meta,
+.pcard__state {
+  font: 400 var(--fs-eyebrow) / 1.33 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Il LED non è mai da solo: l'etichetta testuale è sulla stessa riga (§3.C). */
+.pcard__state {
+  display: flex;
+  align-items: center;
+  gap: var(--s-75);
+}
+
+/*
+ * Hover solo sulle card che hanno una pagina: il titolo diventa --accent-text
+ * (stato di un link, l'unico titolo che si fa rosso, §9.23), il bordo della
+ * tile passa a --steel. Niente sollevamento, niente ombra.
+ */
+.pcard--link:hover .pcard__title a {
+  color: var(--accent-text);
+}
+
+.pcard--link:hover .tile {
+  border-color: var(--steel);
+}
+
+/*
+ * Focus: l'anello si sposta sulla tile solo dove il browser sa farlo, con le
+ * due regole nello stesso @supports. Senza :has() resta l'anello globale sul
+ * link e il focus non sparisce mai (WCAG 2.4.7). La guardia :has(.tile) copre
+ * le bozze senza immagine del build di design: lì l'anello resta sul link.
+ * In forced-colors l'outline trasparente torna visibile.
+ */
+@supports selector(:has(a:focus-visible)) {
+  .pcard:has(a:focus-visible) .tile {
+    outline: var(--focus);
+    outline-offset: 2px;
+  }
+
+  .pcard:has(.tile) .pcard__title a:focus-visible {
+    outline-color: transparent;
+  }
+}
+
+/* --- FilterBar ------------------------------------------------------------ */
+
+.filters {
+  display: grid;
+  gap: var(--s-100);
+  margin-bottom: var(--s-400);
+}
+
+/* Riga generata al build: dice il filtro corrente a ogni larghezza (§6.17). */
+.filters__active {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+/*
+ * Mobile-first: sotto 640px una riga sola a scorrimento, e il filtro tagliato
+ * netto dal bordo è il segnale del seguito. Niente mask-image: una dissolvenza
+ * porterebbe un filtro --muted a 2.82:1. I 6px di padding (compensati dal
+ * margine negativo) lasciano spazio all'anello esterno (2px + 3px di offset),
+ * che il contenitore a scorrimento altrimenti ritaglierebbe. Selettore a due
+ * classi: ul[role='list'] di base.css azzera il padding e pesa più di una classe.
+ * contain: inline-size: la riga intera non deve allargare un antenato in
+ * griglia o in flex (min-width:auto), altrimenti è la pagina a scorrere.
+ */
+.filters .filters__list {
+  display: flex;
+  gap: var(--s-75);
+  padding: 6px;
+  margin: -6px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 6px;
+  scrollbar-width: none;
+  contain: inline-size;
+}
+
+/*
+ * Senza JavaScript la striscia non scorre da sola sulla voce con il focus: a
+ * 320-480px la voce restava fuori vista e l'anello ritagliato (WCAG 2.4.7,
+ * 2.4.11; review finale E). Finché il focus è dentro, la striscia va a capo.
+ */
+.filters .filters__list:has(a:focus-visible) {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  contain: none;
+}
+
+.filters__list::-webkit-scrollbar {
+  display: none;
+}
+
+.filters__list > li {
+  flex: none;
+  scroll-snap-align: start;
+}
+
+.filters__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--s-200);
+  border: var(--bd-strong);
+  border-radius: var(--pill);
+  color: var(--muted);
+  font: 500 var(--fs-eyebrow) / 1 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color var(--t-hover) var(--ease),
+    border-color var(--t-hover) var(--ease);
+}
+
+.filters__count {
+  color: var(--faint);
+}
+
+.filters__link:hover {
+  border-color: var(--steel);
+  color: var(--text);
+}
+
+/*
+ * Filtro corrente: tinta (fondo --accent-soft, bordo --accent-line, testo
+ * --accent-text) più la sottolineatura, che è il segnale vero: una forma, non
+ * un colore (§4.2). Nessun rosso pieno. È la regola della voce di nav corrente.
+ */
+.filters__link[aria-current='page'] {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+/* In hover il corrente tiene fondo e sottolineatura; il testo passa a --text. */
+.filters__link[aria-current='page']:hover {
+  border-color: var(--steel);
+  color: var(--text);
+}
+
+/* Da 640px i filtri vanno a capo e non scorrono più. */
+@media (min-width: 40rem) {
+  .filters .filters__list {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    contain: none;
+  }
+}

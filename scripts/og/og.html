@@ -1,0 +1,34 @@
+<!doctype html>
+<!--
+  Sorgente di public/og.png (1200×630), l'immagine Open Graph di tutte le pagine
+  (review finale E; brief §3.D: fondo --pit, monogramma in basso a sinistra).
+  Rigenerare con: node scripts/og/gen-og.mjs
+-->
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face { font-family: 'Plex Sans'; font-weight: 400; src: url('../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2'); }
+      @font-face { font-family: 'Plex Sans'; font-weight: 700; src: url('../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-700-normal.woff2'); }
+      @font-face { font-family: 'Plex Mono'; font-weight: 500; src: url('../../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2'); }
+      html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #07090f; }
+      .kerb { height: 6px; background: repeating-linear-gradient(-45deg, #e5322e 0 16px, #edeae4 16px 32px); }
+      .page { position: relative; height: 624px; box-sizing: border-box; padding: 80px 96px 0; }
+      .eyebrow { display: flex; align-items: center; gap: 24px; color: #7e9cb4; font: 500 24px/1.33 'Plex Mono'; letter-spacing: .14em; text-transform: uppercase; }
+      .eyebrow::before { content: ''; width: 48px; height: 2px; background: currentColor; }
+      h1 { margin: 36px 0 0; max-width: 1008px; color: #edeae4; font: 700 60px/1.1 'Plex Sans'; letter-spacing: -.015em; text-wrap: balance; }
+      h1 span { display: block; text-wrap: nowrap; margin-top: 10px; color: #7e9cb4; font-weight: 400; font-size: 38px; letter-spacing: -.01em; }
+      .logo { position: absolute; left: 96px; bottom: 64px; width: 96px; height: 96px; }
+      .site { position: absolute; left: 216px; bottom: 96px; color: #aba79d; font: 500 26px/1 'Plex Mono'; letter-spacing: .06em; }
+    </style>
+  </head>
+  <body>
+    <div class="kerb"></div>
+    <div class="page">
+      <p class="eyebrow">Lorenzo Arrigoni · Progettazione 3D</p>
+      <h1>Pezzi che non esistono in commercio.<span>Progettati in CAD sulle tue misure, stampati, provati.</span></h1>
+      <img class="logo" src="../../public/logo.svg" alt="" />
+      <p class="site">larrigoni.github.io</p>
+    </div>
+  </body>
+</html>

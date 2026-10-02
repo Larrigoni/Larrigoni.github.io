@@ -1,0 +1,56 @@
+---
+/**
+ * Kit · pannello contatto (brief §6.18). Dati reali: la sezione `contatto` di
+ * home.ts, così com'è. Una sola istanza: il componente porta l'ancora
+ * `#contatto` e l'id del titolo, che in una pagina esistono una volta.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import ContactPanel from '../components/ContactPanel.astro';
+import { home } from '../data/home.ts';
+
+const contatto = home.sections.find((section) => section.id === 'contatto');
+if (!contatto) throw new Error('src/data/home.ts: manca la sezione «contatto».');
+---
+
+<KitLayout
+  title="Pannello contatto"
+  note="L'unico pannello che brilla: bordo e cima tinti, alone fermo. L'indirizzo è in chiaro e punta a un mailto semplice; la CTA piena apre il mailto con la traccia già scritta. Niente modulo, niente pulsante «copia»."
+>
+  <Specimen label="sezione #contatto · .section.alt · dati reali da home.ts · da 960px 6fr/5fr, sotto una colonna con la CTA a tutta larghezza">
+    <div class="kit-bleed">
+      <ContactPanel section={contatto} />
+    </div>
+  </Specimen>
+
+  <Specimen label="stati · sono quelli dei link e della CTA (§6.5): passa il puntatore o usa Tab">
+    <ul class="kit-notes" role="list">
+      <li><span class="mono">Email</span> · link Sans 600 --accent-text, sottolineato; hover --text; focus: anello --accent a 3px.</li>
+      <li><span class="mono">CTA</span> · .btn.primary: in hover il fondo resta --accent-deep, si accendono anello e alone; :active scala .98. Mai nel primo 40% del pannello, dove la tinta abbasserebbe l'anello a 2.93:1.</li>
+      <li><span class="mono">Alone</span> · fermo, non pulsa; in colori forzati sparisce, il bordo resta.</li>
+      <li><span class="mono">375px</span> · una colonna, padding 24, email a 20px con a capo solo prima della chiocciola, CTA a tutta larghezza, un filetto sopra la colonna d'azione.</li>
+    </ul>
+  </Specimen>
+</KitLayout>
+
+<style>
+  /*
+   * La sezione esce dal .wrap del kit di un gutter per lato: così il suo .wrap
+   * interno ha la stessa larghezza che ha in home (327px a 375, 1120 a 1440).
+   */
+  .kit-bleed {
+    margin-inline: calc(-1 * var(--gutter));
+  }
+
+  .kit-notes {
+    display: grid;
+    gap: var(--s-75);
+    max-width: var(--measure);
+    color: var(--muted);
+    font-size: var(--fs-sm);
+  }
+
+  .kit-notes .mono {
+    color: var(--steel);
+  }
+</style>

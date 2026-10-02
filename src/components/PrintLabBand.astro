@@ -1,0 +1,35 @@
+---
+/**
+ * Fascia Print Lab della home (brief §11.1, riga 11): esiste solo se c'è un
+ * modello di terzi pubblicato e non «in coda» (showsPrintLab in projects.ts).
+ * Testata a sinistra, pill e azione ghost a destra da 960px.
+ */
+import SectionHead from './SectionHead.astro';
+import type { Section } from '../data/home.ts';
+
+interface Props {
+  section: Section;
+}
+
+const { section } = Astro.props;
+const { id, eyebrow, title, lead, pills = [], cta } = section;
+const titleId = `${id}-titolo`;
+---
+
+<section class="section alt band printlab" id={id} aria-labelledby={titleId}>
+  <div class="wrap printlab__grid">
+    <SectionHead eyebrow={eyebrow} title={title} lead={lead} titleId={titleId} />
+    <div class="printlab__act">
+      {
+        pills.length > 0 && (
+          <ul class="pills" role="list">
+            {pills.map((pill) => (
+              <li class="pill">{pill}</li>
+            ))}
+          </ul>
+        )
+      }
+      {cta?.ghost && <a class="btn" href={cta.ghost.href}>{cta.ghost.label}</a>}
+    </div>
+  </div>
+</section>

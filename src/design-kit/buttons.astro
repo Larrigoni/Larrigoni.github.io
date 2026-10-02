@@ -1,0 +1,61 @@
+---
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+---
+
+<KitLayout title="Bottoni, pill, tag, LED" note="Una sola CTA piena per schermata, riempita del gradino scuro del rosso. Tutto il resto è ghost, tratteggiato o mono.">
+  <Specimen label="CTA primaria + ghost · altezza minima 44px">
+    <div class="cta-row">
+      <a class="btn primary" href="#">Guarda i progetti →</a>
+      <a class="btn" href="#">Raccontami il problema</a>
+    </div>
+  </Specimen>
+
+  <Specimen label="link d'azione · accent-text">
+    <p><a class="link-arrow" href="#">Vedi la scheda →</a></p>
+  </Specimen>
+
+  <Specimen label="pill · caratteristiche di un progetto, sempre nello stesso ordine">
+    <div class="pills">
+      <span class="pill">PETG · 2 pezzi</span>
+      <span class="pill">3 stampe · 2 fallite</span>
+      <span class="pill">Aggancio a sbalzo</span>
+    </div>
+  </Specimen>
+
+  <Specimen label="tag · origine, stato, tipo di immagine">
+    <div class="pills">
+      <span class="tag">Originale</span>
+      <span class="tag">Derivato</span>
+      <span class="tag">Modello di terzi</span>
+      <span class="tag accent">Consigliato</span>
+    </div>
+  </Specimen>
+
+  <Specimen label="LED di telemetria · sempre con etichetta; il fallimento è ruggine, mai rosso">
+    <ul class="led-list" role="list">
+      <li><span class="led ok" aria-hidden="true"></span> Validato</li>
+      <li><span class="led test" aria-hidden="true"></span> In prova</li>
+      <li><span class="led fail" aria-hidden="true"></span> Fallita</li>
+      <li><span class="led queue" aria-hidden="true"></span> In coda</li>
+    </ul>
+  </Specimen>
+</KitLayout>
+
+<style>
+  .led-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-400);
+    font: 500 var(--fs-note) / 1 var(--font-mono);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .led-list li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-75);
+  }
+</style>

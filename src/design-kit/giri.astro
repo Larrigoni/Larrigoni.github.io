@@ -1,0 +1,39 @@
+---
+/**
+ * Kit · Giri (brief §6.11). La sezione Metodo con i dati di home.ts: sei
+ * tappe `GIRO n/6`, «Il progetto» evidenziato dal componente.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Giri from '../components/Giri.astro';
+import { home } from '../data/home.ts';
+
+const section = home.sections.find((s) => s.id === 'metodo');
+if (!section) throw new Error('home.ts: manca la sezione «metodo».');
+
+const eyebrow = section.eyebrow.split(' · ');
+const bold = (text: string) => text.split(/\*\*([^*]+)\*\*/);
+---
+
+<KitLayout
+  title="Giri"
+  note="Il metodo in sei tappe, sempre nello stesso ordine: 1 → 2 (720px) → 3 (960px) → 6 colonne (1200px). Una sola tappa evidenziata, con il bordo --accent e il numero in --accent-text. Non sono link: nessun hover, nessun sollevamento."
+>
+  <Specimen label="sezione Metodo · su --surface · dati da home.ts · GIRO 3/6 evidenziato">
+    <div class="section alt band demo">
+      <div class="section-head">
+        <p class="eyebrow"><span class="eyebrow__txt">{eyebrow.map((s, i) => <>{i > 0 && ' · '}<span class={s.length <= 26 ? 'nw' : undefined}>{s}</span></>)}</span></p>
+        <h2>{section.title.claim}{section.title.soft && <span class="t-soft">{section.title.soft}</span>}</h2>
+        {section.lead && <p class="lead">{bold(section.lead).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</p>}
+      </div>
+      <Giri items={section.items ?? []} closing={section.closing} />
+    </div>
+  </Specimen>
+</KitLayout>
+
+<style>
+  /* Solo nel kit: la fascia --surface sta dentro il .wrap, le serve un margine interno. */
+  .demo {
+    padding-inline: var(--s-300);
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+/**
+ * Tile: un'immagine di progetto nella sua cornice, con il badge che dichiara
+ * sempre cosa mostra (RENDER, FOTO, DISEGNO…). Un render non passa mai per una
+ * fotografia (ADR-012, ADR-015): il badge viene dallo schema, non dalla didascalia.
+ *
+ * CONTRATTO STABILE: le props sono usate da ProjectCard, Gallery, Case e
+ * dall'hero. Si può rifinire l'interno e media.css, non l'interfaccia.
+ *
+ * Trattamento (brief §6.7, §7.1): un render o un disegno scontornato (`fit:
+ * contain`) si posa sul pavimento della cornice, con l'ombra di contatto nel
+ * CSS; foto, schermate e render di scena a tutta cornice (`cover`) vanno al vivo.
+ *
+ * Rapporto: lo decide il contesto, non l'immagine (un solo rapporto per
+ * griglia). 4:3 di base; `class="tile--3-2"` o `class="tile--1-1"` per gli
+ * altri due. `data-ratio` riporta il rapporto del file, solo come dato.
+ *
+ * Dentro un link: `<a class="tile-link" href="…"><Tile … /></a>` (hover bordo
+ * steel, anello di focus sul link con il raggio della cornice).
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+import { rendersOnFloor, shotBadge } from '../lib/taxonomy.ts';
+
+export type Shot = NonNullable<CollectionEntry<'projects'>['data']['cover']>;
+
+interface Props {
+  shot: Shot;
+  /** Attributo `sizes` dell'immagine responsive. */
+  sizes?: string;
+  /** Prima immagine visibile della pagina: niente lazy loading. */
+  eager?: boolean;
+  class?: string;
+}
+
+const { shot, sizes = '(min-width: 70rem) 34rem, 100vw', eager = false, class: className } = Astro.props;
+
+const onFloor = rendersOnFloor(shot);
+// Il ritocco dichiarato sul tipo d'immagine vero (taxonomy.ts): lo stesso testo apre la didascalia in Gallery.
+const badge = shotBadge(shot);
+---
+
+<div class:list={['tile', onFloor ? 'tile--render' : 'tile--foto', className]} data-ratio={shot.ratio}>
+  <Image
+    src={shot.src}
+    alt={shot.alt}
+    widths={[480, 800, 1200]}
+    sizes={sizes}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+  />
+  <span class="tag tile__kind">{badge}</span>
+</div>

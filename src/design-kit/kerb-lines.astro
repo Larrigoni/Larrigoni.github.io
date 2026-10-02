@@ -1,0 +1,226 @@
+---
+/**
+ * Kit · Cordolo (brief §3.A): il filo da 3px nei suoi usi, e solo in quelli.
+ * Le mini-pagine sono componenti veri (Kerb, Nav, Footer, section-head) in
+ * cornici larghe 1440 e 375: la cornice contiene il filo fisso, e nav e footer
+ * rispondono alla sua larghezza.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Footer from '../components/Footer.astro';
+import Kerb from '../components/Kerb.astro';
+import Logo from '../components/Logo.astro';
+import Nav from '../components/Nav.astro';
+import { home } from '../data/home.ts';
+
+const progetti = home.sections.find((s) => s.id === 'progetti')!;
+
+const uses = [
+  { n: '1 · filo in cima', where: 'ogni pagina, fisso a top:0 sopra la nav, 3px × 100%: fermo, non misura nulla' },
+  { n: '2 · bordo del footer', where: '.site-footer::before, a tutta larghezza' },
+  { n: '3 · trattino del titolo', where: 'sotto ogni h2 di .section-head, 32 × 3px (base.css)' },
+  { n: '4 · chiusura del biglietto', where: 'ultimo elemento del body di /card/lorenzo, a tutta larghezza della viewport, almeno 48px sotto il pannello' },
+];
+
+const divieti = [
+  'mai più alto di 3px',
+  'mai divisore di sezione: i divisori sono filetti da 1px',
+  'mai cornice: né attorno a immagini, card, pannelli, bottoni, badge',
+  'mai verticale, mai animato, mai con un bordo proprio',
+  'mai giallo o nero; mai dentro un pannello telemetria',
+];
+---
+
+<KitLayout
+  title="Cordolo"
+  note="Un filo da 3px a strisce di −45°, rosso e bone, 8px ciascuna: delimita, non decora. Si legge all'ingresso, a ogni sezione e all'uscita. Il filo fermo in cima a questa pagina è l'uso 1, quello vero."
+>
+  <Kerb pos="top" />
+
+  <Specimen label="Il motivo · 1:1, e ingrandito ×8 solo per leggerlo">
+    <div class="swatch">
+      <div class="kerb" aria-hidden="true"></div>
+      <div class="magnify"><div class="kerb" aria-hidden="true"></div></div>
+    </div>
+  </Specimen>
+
+  <Specimen label="Dove vive · elenco chiuso">
+    <div class="rules">
+      <dl class="uses">
+        {
+          uses.map((u) => (
+            <div>
+              <dt class="mono">{u.n}</dt>
+              <dd>{u.where}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <ul class="divieti" role="list">
+        {divieti.map((d) => <li>{d}</li>)}
+      </ul>
+    </div>
+  </Specimen>
+
+  <Specimen label="1440 · usi 1, 2 e 3 in una pagina (ridotta a metà)">
+    <div class="shrink">
+      <div class="frame page page--1440">
+        <Kerb pos="top" />
+        <Nav current="/" />
+        <div class="wrap page__body">
+          <div class="section-head">
+            <p class="eyebrow">{progetti.eyebrow}</p>
+            <h2>{progetti.title.claim}<span class="t-soft">{progetti.title.soft}</span></h2>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    </div>
+  </Specimen>
+
+  <div class="phones">
+    <Specimen label="375 · usi 1, 2 e 3: identici, il filo resta 3px">
+      <div class="frame page phone">
+        <Kerb pos="top" />
+        <Nav current="/" />
+        <div class="wrap page__body">
+          <div class="section-head">
+            <p class="eyebrow">{progetti.eyebrow}</p>
+            <h2>{progetti.title.claim}<span class="t-soft">{progetti.title.soft}</span></h2>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    </Specimen>
+
+    <Specimen label="375 · /card/lorenzo, usi 1 e 4: i fili stanno ai margini della pagina, mai del pannello">
+      <div class="frame page phone">
+        <Kerb pos="top" />
+        <div class="wrap card">
+          <div class="card__panel">
+            <Logo size={64} />
+            <p class="card__name">Lorenzo Arrigoni</p>
+            <p class="eyebrow bare">Progettazione 3D · Su misura</p>
+          </div>
+        </div>
+        <Kerb pos="end" />
+      </div>
+    </Specimen>
+  </div>
+
+  <Specimen label="Colori forzati · il motivo sparisce, il filo resta: bordo 3px CanvasText (chrome.css)">
+    <p class="muted note">La 404 ha gli usi 1 e 2 (non ha section-head); il biglietto ha gli usi 1 e 4 (non ha footer). Nessuna pagina ne ha più di tre.</p>
+  </Specimen>
+</KitLayout>
+
+<style>
+  .swatch {
+    display: grid;
+    gap: var(--s-400);
+  }
+
+  /* Solo per leggere il motivo: 24px di altezza non esistono sul sito. */
+  .magnify {
+    zoom: 8;
+  }
+
+  .rules {
+    display: grid;
+    gap: var(--s-400);
+  }
+
+  @media (min-width: 60rem) {
+    .rules {
+      grid-template-columns: 3fr 2fr;
+      gap: var(--s-600);
+    }
+  }
+
+  .uses {
+    display: grid;
+    gap: var(--s-200);
+  }
+
+  .uses div {
+    display: grid;
+    gap: var(--s-50);
+  }
+
+  .uses dt {
+    font-size: var(--fs-eyebrow);
+    text-transform: uppercase;
+    color: var(--steel);
+  }
+
+  .uses dd {
+    color: var(--muted);
+  }
+
+  .divieti {
+    display: grid;
+    gap: var(--s-75);
+    align-content: start;
+    padding-left: var(--s-200);
+    border-left: 2px solid var(--line-strong);
+    color: var(--muted);
+    font-size: var(--fs-sm);
+  }
+
+  /* Una cornice è una viewport: spigoli vivi, così i fili arrivano ai bordi come sullo schermo. */
+  .frame {
+    contain: layout paint;
+    overflow: hidden;
+    border: var(--bd-strong);
+    background: var(--bg);
+  }
+
+  .shrink {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .page--1440 {
+    width: 1440px;
+    zoom: 0.5;
+  }
+
+  .page__body {
+    padding-block: var(--s-700);
+  }
+
+  .phones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--s-500);
+  }
+
+  .phone {
+    width: 375px;
+    max-width: 100%;
+  }
+
+  .card {
+    padding-top: var(--s-700);
+  }
+
+  .card__panel {
+    display: grid;
+    justify-items: center;
+    gap: var(--s-200);
+    max-width: 24rem;
+    margin-inline: auto;
+    padding: var(--s-400) var(--s-300);
+    border: var(--bd);
+    border-radius: var(--radius-lg);
+    background: var(--surface-2);
+    text-align: center;
+  }
+
+  .card__name {
+    font: 600 var(--fs-h3) / 1.33 var(--font-sans);
+  }
+
+  .note {
+    max-width: var(--measure);
+  }
+</style>

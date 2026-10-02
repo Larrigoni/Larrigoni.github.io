@@ -1,33 +1,19 @@
 ---
+/** 404 (brief §6.19): LED ruggine nell'occhiello, h1 in due frasi, due azioni. Nessun rosso pieno. */
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import { pages } from '../data/pages.ts';
+
+const { meta, head, home, projects } = pages.notFound;
 ---
 
-<BaseLayout title="Pezzo non trovato — Lorenzo Arrigoni" description="La pagina richiesta non esiste.">
-  <div class="wrap not-found">
-    <p class="hero-eyebrow"><span class="dot red" aria-hidden="true"></span>Errore 404</p>
-    <h1 class="display">Pezzo<br />non trovato</h1>
-    <p class="hero-lead" style="margin-top:0">
-      Questa pagina non esiste (ancora). Succede anche ai prototipi: si torna indietro di un
-      passo e si riprova.
-    </p>
-    <div class="cta-row">
-      <a class="btn primary" href="/">Torna alla home →</a>
-      <a class="btn accent" href="/#progetti">Vedi i progetti</a>
+<BaseLayout title={meta.title} description={meta.description} notFound>
+  <section class="wrap narrow not-found" aria-labelledby="errore-titolo">
+    <Eyebrow text={head.eyebrow} bare led="fail" />
+    <h1 id="errore-titolo">{head.title.claim}{head.title.soft && <>{' '}<span class="t-soft">{head.title.soft}</span></>}</h1>
+    <div class="not-found__act">
+      <a class="btn" href={home.href}>{home.label}</a>
+      <a class="link-arrow" href={projects.href}>{projects.label}</a>
     </div>
-  </div>
+  </section>
 </BaseLayout>
-
-<style>
-  .not-found {
-    padding-block: clamp(3rem, 9vw, 5.5rem);
-    display: grid;
-    gap: 1.4rem;
-    justify-items: start;
-  }
-
-  h1.display {
-    font-size: clamp(3rem, 11vw, 6.5rem);
-    color: var(--yellow);
-    transform: skewX(-4deg);
-  }
-</style>

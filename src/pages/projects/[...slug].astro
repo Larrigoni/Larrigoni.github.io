@@ -1,0 +1,109 @@
+---
+/**
+ * Pagina di un progetto (brief §11.2), generata dal Markdown: una per ogni
+ * `scheda` e `case-study`. Le card restano solo nella griglia.
+ *
+ * Testata → 7fr/5fr da 960px: galleria (con l'Attribution sotto, accanto alle
+ * immagini) e scheda del pezzo sticky → corpo Markdown → registro stampe e, nei
+ * case study, le cifre grandi che esistono → fascia CTA. Ogni blocco senza
+ * dati non c'è: lo stato «pochi dati» si disegna così, senza riempire.
+ */
+import { getImage } from 'astro:assets';
+import { render } from 'astro:content';
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Attribution from '../../components/Attribution.astro';
+import BigNumbers from '../../components/BigNumbers.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Gallery from '../../components/Gallery.astro';
+import PrintLog from '../../components/PrintLog.astro';
+import ProjectSpecs from '../../components/ProjectSpecs.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { pages } from '../../data/pages.ts';
+import { getPublishedProjects } from '../../lib/content.ts';
+import { assertCaseStudyHeadings, padOrder, projectPills } from '../../lib/projects.ts';
+import { categoryLabels } from '../../lib/taxonomy.ts';
+
+export async function getStaticPaths() {
+  const projects = await getPublishedProjects();
+  return projects
+    .filter((project) => project.data.depth !== 'card')
+    .map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { title, headline, summary, cover, gallery, order, category, date, depth, print, printLog } = project.data;
+const { Content, headings } = await render(project);
+
+// Un case study è un giro completo del metodo: se mancano tappe, il build si ferma qui.
+if (depth === 'case-study') assertCaseStudyHeadings(project.id, headings);
+
+// «PROGETTO 03 · SU MISURA · 2026». L'anno in UTC: la data del frontmatter è una mezzanotte UTC.
+const eyebrow = [order ? `Progetto ${padOrder(order)}` : undefined, categoryLabels[category], String(date.getUTCFullYear())];
+const pills = projectPills(project.data);
+// Il titolo è la prima frase dell'h1 in due frasi: chiude con un punto (brief §5.3).
+const claim = /[.!?]$/.test(title) ? title : `${title}.`;
+const shots = cover ? [cover, ...gallery] : gallery;
+
+// Cifre grandi solo nei case study, e solo quelle misurate (BigNumbers salta le voci vuote).
+const numbers =
+  depth === 'case-study'
+    ? [
+        { value: print?.grams, unit: 'g', label: 'Materiale' },
+        { value: print?.timeHours, unit: 'h', label: 'Tempo di stampa' },
+        { value: printLog.length || undefined, label: printLog.length === 1 ? 'Stampa' : 'Stampe' },
+        { value: print?.pieces, label: print?.pieces === 1 ? 'Pezzo' : 'Pezzi' },
+      ]
+    : [];
+
+const band = pages.projectBand;
+
+// Open Graph: la copertina ottimizzata (WebP 1200 px), non il PNG originale da 200 KB.
+const og = cover ? await getImage({ src: cover.src, width: Math.min(1200, cover.src.width), format: 'webp' }) : undefined;
+const ogImage = og ? { src: og.src, width: Number(og.attributes.width), height: Number(og.attributes.height) } : undefined;
+---
+
+<BaseLayout title={`${title} · Lorenzo Arrigoni`} description={summary} image={ogImage}>
+  <article aria-labelledby="progetto-titolo">
+    <header class="page-head">
+      <div class="wrap project__intro">
+        <p class="page-back"><a class="link-arrow" href={band.back.href}>{band.back.label}</a></p>
+        <SectionHead eyebrow={eyebrow} title={{ claim: claim, soft: headline }} lead={summary} titleId="progetto-titolo" level={1}>
+          {
+            pills.length > 0 && (
+              <ul class="pills" role="list">
+                {pills.map((pill) => (
+                  <li class="pill">{pill}</li>
+                ))}
+              </ul>
+            )
+          }
+        </SectionHead>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="project__layout">
+        <div class="project__media">
+          <Gallery shots={shots} eager label={`Immagini: ${title}`} />
+          <Attribution project={project} />
+        </div>
+        <aside class="project__side" aria-label="Scheda del pezzo">
+          <ProjectSpecs project={project} />
+        </aside>
+      </div>
+
+      <div class="project__body">
+        <div class:list={['prose', depth === 'case-study' && 'prose--case']}>
+          <Content />
+        </div>
+        <PrintLog log={printLog} />
+        <BigNumbers items={numbers} />
+      </div>
+    </div>
+  </article>
+
+  <div class="project__end">
+    <CtaBand claim={band.claim} cta={band.cta} />
+  </div>
+</BaseLayout>

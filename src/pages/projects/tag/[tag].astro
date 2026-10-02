@@ -1,0 +1,26 @@
+---
+/**
+ * Vista filtrata per tag. Si genera solo per i tag con almeno due progetti:
+ * una pagina con un solo pezzo non è un filtro, è un duplicato (la stessa
+ * soglia di FilterBar).
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ProjectsView from '../../../components/ProjectsView.astro';
+import { getPublishedProjects } from '../../../lib/content.ts';
+import { TAGS, tagLabels } from '../../../lib/taxonomy.ts';
+
+export async function getStaticPaths() {
+  const all = await getPublishedProjects();
+  return TAGS.map((tag) => ({
+    params: { tag },
+    props: { tag, all, projects: all.filter((p) => p.data.tags.includes(tag)) },
+  })).filter(({ props }) => props.projects.length >= 2);
+}
+
+const { tag, all, projects } = Astro.props;
+const label = tagLabels[tag];
+---
+
+<BaseLayout title={`${label} · Progetti · Lorenzo Arrigoni`} description={`Progetti con il tag ${label}.`}>
+  <ProjectsView all={all} projects={projects} current={{ kind: 'tag', slug: tag }} />
+</BaseLayout>

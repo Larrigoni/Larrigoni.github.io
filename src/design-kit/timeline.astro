@@ -1,0 +1,30 @@
+---
+/**
+ * Kit · Timeline (brief §6.12). La sezione Come prosegue con i dati di
+ * home.ts: quattro settori e il TRAGUARDO, esiti «Ricevi: …», nota e ghost.
+ */
+import KitLayout from './KitLayout.astro';
+import Specimen from './Specimen.astro';
+import Timeline from '../components/Timeline.astro';
+import { home } from '../data/home.ts';
+
+const section = home.sections.find((s) => s.id === 'prosegue');
+if (!section) throw new Error('home.ts: manca la sezione «prosegue».');
+
+const eyebrow = section.eyebrow.split(' · ');
+const bold = (text: string) => text.split(/\*\*([^*]+)\*\*/);
+---
+
+<KitLayout
+  title="Timeline"
+  note="Dal primo messaggio al pezzo in mano: binario 2px, nodi 16px, un esito per settore. Il TRAGUARDO non è numerato: nodo pieno steel e occhiello in --accent-text, l'unico tocco rosso della sezione. Rientro e passo 40px, 32 a 375px."
+>
+  <Specimen label="sezione Come prosegue · su --bg · dati da home.ts">
+    <div class="section-head">
+      <p class="eyebrow"><span class="eyebrow__txt">{eyebrow.map((s, i) => <>{i > 0 && ' · '}<span class={s.length <= 26 ? 'nw' : undefined}>{s}</span></>)}</span></p>
+      <h2>{section.title.claim}{section.title.soft && <span class="t-soft">{section.title.soft}</span>}</h2>
+      {section.lead && <p class="lead">{bold(section.lead).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</p>}
+    </div>
+    <Timeline items={section.items ?? []} note={section.note} cta={section.cta?.ghost} />
+  </Specimen>
+</KitLayout>

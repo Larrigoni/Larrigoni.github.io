@@ -1,0 +1,67 @@
+---
+/**
+ * Gallery: le immagini di un progetto, nella colonna 7fr della pagina progetto
+ * (brief §6.19, §7). Ogni immagine è una `figure` con la sua tile e la sua
+ * didascalia sotto; ogni tile è un link all'immagine grande (WebP 1600 px), nella stessa scheda.
+ * Niente lightbox, niente script.
+ *
+ * - Da 768px: griglia a due colonne, la prima immagine promossa a tutta
+ *   larghezza e a 3:2 (di solito la copertina: la pagina passa `[cover, ...gallery]`).
+ * - Sotto 768px: striscia con scroll-snap; la figura successiva sporge dal bordo.
+ *
+ * Le immagini dopo la prima si raggruppano per trattamento, prima i render sul
+ * pavimento e poi quelle al vivo, nell'ordine dato: mai a scacchiera (§7.3).
+ * Un'immagine senza `caption` ha solo il prefisso: una riga in meno, non una
+ * riga finta (§0.6).
+ */
+import { getImage } from 'astro:assets';
+
+import Tile from './Tile.astro';
+import type { Shot } from './Tile.astro';
+import { rendersOnFloor, shotBadge } from '../lib/taxonomy.ts';
+
+interface Props {
+  /** Le immagini, nell'ordine dei dati. La prima è quella promossa. */
+  shots: Shot[];
+  /** La galleria apre la pagina: la prima immagine non è in lazy loading. */
+  eager?: boolean;
+  /** Nome accessibile della lista (`aria-label`), se la pagina ne dà uno. */
+  label?: string;
+  class?: string;
+}
+
+const { shots, eager = false, label, class: className } = Astro.props;
+
+const [lead, ...rest] = shots;
+const ordered = lead ? [lead, ...rest.filter(rendersOnFloor), ...rest.filter((shot) => !rendersOnFloor(shot))] : [];
+
+// Il link porta all'immagine grande, ottimizzata: l'originale PNG supera i 200 KB (brief §7.1).
+// Mai più larga dell'originale: Astro ingrandisce, e una foto da 1000 px portata a 1600 supera i 200 KB.
+const full = await Promise.all(
+  ordered.map((shot) => getImage({ src: shot.src, width: Math.min(1600, shot.src.width), format: 'webp' })),
+);
+
+// Larghezze della colonna 7fr (brief §11.2): 2 colonne da 768, striscia all'85% sotto.
+const SIZES_LEAD = '(min-width: 73rem) 40rem, (min-width: 60rem) 58vw, (min-width: 48rem) 100vw, 85vw';
+const SIZES_ITEM = '(min-width: 73rem) 20rem, (min-width: 60rem) 29vw, (min-width: 48rem) 50vw, 85vw';
+---
+
+{
+  ordered.length > 0 && (
+    <ul class:list={['gallery', className]} role="list" aria-label={label}>
+      {ordered.map((shot, i) => (
+        <li class="gallery__item">
+          <figure>
+            <a class="tile-link" href={full[i].src}>
+              <Tile shot={shot} sizes={i === 0 ? SIZES_LEAD : SIZES_ITEM} eager={eager && i === 0} />
+            </a>
+            <figcaption class="gallery__caption">
+              {/* Spazio indivisibile prima della lineetta: una riga non comincia mai con «—». */}
+              <span class="gallery__kind">{shotBadge(shot)}</span>{shot.caption && ` — ${shot.caption}`}
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  )
+}

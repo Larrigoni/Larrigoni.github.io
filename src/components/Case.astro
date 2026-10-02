@@ -1,0 +1,87 @@
+---
+/**
+ * Case: un progetto in vetrina nella sezione Progetti della home (brief §6.9).
+ *
+ * Testo a sinistra, tile a destra da 860px (6fr/6fr), mai alternati; sotto
+ * 860px la tile viene prima del testo. Ogni riga esiste solo se il dato
+ * esiste: niente pill, confine o azione di ripiego. Un progetto senza
+ * copertina non diventa un case, e qui non rende nulla.
+ *
+ * I case si impilano dentro `.cases` (method.css); la chiusura della sezione
+ * (`closing` + ghost di home.ts) è markup della pagina, in `.cases__foot`.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+import Eyebrow from './Eyebrow.astro';
+import Rich from './Rich.astro';
+import Tile from './Tile.astro';
+import { padOrder, projectHref, projectPills } from '../lib/projects.ts';
+import { contextLabels } from '../lib/taxonomy.ts';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, headline, proof, summary, boundary, trait, context, order, cover, origin, external, print, printLog } =
+  project.data;
+
+// Ancora `p03`: il numero del progetto. Senza `order`, lo slug con un prefisso che non collide.
+const id = order ? `p${padOrder(order)}` : `case-${project.id}`;
+const titleId = `${id}-titolo`;
+
+// Occhiello «PROGETTO 03 · STUDIO» (brief §5.4).
+const eyebrow = [order ? `Progetto ${padOrder(order)}` : undefined, contextLabels[context]];
+
+// Pill in ordine fisso, al massimo tre, solo se il dato esiste.
+const pills = projectPills({ print, printLog, trait });
+
+// Azione a livelli: la scheda, se esiste; altrimenti la fonte di un modello di terzi; altrimenti niente.
+const page = projectHref(project);
+const action = page
+  ? { label: 'Vedi la scheda →', href: page }
+  : origin === 'terzi' && external
+    ? { label: `Modello su ${external.platform} ↗`, href: external.url }
+    : undefined;
+---
+
+{
+  cover && (
+    <article class="case" id={id} aria-labelledby={titleId}>
+      <div class="case__body">
+        <Eyebrow text={eyebrow} bare />
+        <h3 id={titleId}>{headline ?? title}</h3>
+        {/* `proof` porta un solo grassetto, scritto **…** */}
+        <p class="case__proof"><Rich text={proof ?? summary} /></p>
+        {
+          boundary && (
+            <p class="case__boundary">
+              <strong>Cosa non fa:</strong>
+              {' '}
+              {boundary}
+            </p>
+          )
+        }
+        {
+          pills.length > 0 && (
+            <ul class="pills" role="list">
+              {pills.map((pill) => (
+                <li class="pill">{pill}</li>
+              ))}
+            </ul>
+          )
+        }
+        {
+          action && (
+            <p class="case__action">
+              <a class="link-arrow" href={action.href}>
+                {action.label}
+              </a>
+            </p>
+          )
+        }
+      </div>
+      <Tile shot={cover} sizes="(min-width: 70rem) 32rem, (min-width: 53.75rem) 45vw, 100vw" class="case__tile" />
+    </article>
+  )
+}

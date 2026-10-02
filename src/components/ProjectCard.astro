@@ -1,82 +1,68 @@
 ---
+/**
+ * Card compatta di un progetto, per l'indice e le viste filtrate (brief §6.8).
+ *
+ * Anatomia fissa: tile 4:3 → occhiello `P03 · ORIGINALE · 2026` → titolo, che
+ * è l'unico link e copre la card intera → meta mono (materiale · pezzi) →
+ * riga di stato con LED, solo se il progetto non è «completato». Nessun dato
+ * scritto qui: ogni riga viene dal frontmatter, e se il dato manca la riga
+ * non c'è (il porta ciuccio non ha la riga meta).
+ *
+ * Stili in src/styles/components/grid.css. Vive dentro ProjectGrid, che
+ * decide la larghezza: per questo `sizes` è fisso qui.
+ */
 import type { CollectionEntry } from 'astro:content';
+
+import Eyebrow from './Eyebrow.astro';
+import Tile from './Tile.astro';
+import { madeOf, padOrder, projectHref } from '../lib/projects.ts';
+import { originLabels, statusInfo } from '../lib/taxonomy.ts';
 
 interface Props {
   project: CollectionEntry<'projects'>;
+  /**
+   * Livello del titolo. 3 di norma (sotto l'h2 di una sezione); 2 quando la
+   * griglia segue direttamente l'h1, come nell'indice. La resa non cambia.
+   */
+  headingLevel?: 2 | 3;
+  /** Prima immagine visibile della pagina: niente lazy loading (§7.1). */
+  eager?: boolean;
 }
 
-const { project } = Astro.props;
-const { title, status, category, summary, originalDesign, printer, materials, pieces, image, imageAlt, hasPage, featured } =
-  project.data;
+const { project, headingLevel = 3, eager = false } = Astro.props;
+const { title, cover, origin, status, order, date, print } = project.data;
 
-const pageUrl = hasPage ? `/projects/${project.id}/` : undefined;
+const href = projectHref(project);
+const Heading = headingLevel === 2 ? 'h2' : 'h3';
 
-const statusLabels: Record<string, string> = {
-  concept: 'In coda',
-  'in-sviluppo': 'In sviluppo',
-  prototipo: 'In prova',
-  completato: 'Validato',
-};
+// «P» è la sigla di PROGETTO, non una posizione: senza `order` non c'è (§3.B).
+// L'anno in UTC: la data del frontmatter è una mezzanotte UTC.
+const eyebrow = [order === undefined ? undefined : `P${padOrder(order)}`, originLabels[origin], String(date.getUTCFullYear())];
 
-const categoryLabels: Record<string, string> = {
-  'smart-objects': 'Smart Objects',
-  'custom-fit': 'Su misura',
-  'process-tools': 'Process Tools',
-  'print-lab': 'Print Lab',
-};
+const meta = madeOf(print);
+
+const state = status === 'completato' ? undefined : statusInfo[status];
+
+// Larghezza della colonna di ProjectGrid: 1 colonna sotto 648px, 2 fino a
+// 960px, 3 oltre, ferma a ~357px quando il .wrap arriva a 70rem.
+const sizes =
+  '(min-width: 73rem) 357px, (min-width: 60rem) calc((100vw - 96px) / 3), (min-width: 40.5rem) calc((100vw - 72px) / 2), calc(100vw - 48px)';
+
 ---
 
-<article class="pcard">
-  {
-    image ? (
-      pageUrl ? (
-        <a class="shot" href={pageUrl}>
-          <img src={image} alt={imageAlt ?? title} loading="lazy" />
-        </a>
-      ) : (
-        <div class="shot">
-          <img src={image} alt={imageAlt ?? title} loading="lazy" />
-        </div>
+<article class:list={['pcard', href && 'pcard--link']}>
+  {cover && <Tile shot={cover} sizes={sizes} eager={eager} />}
+  <div class="pcard__body">
+    <Eyebrow text={eyebrow} bare />
+    <Heading class="pcard__title">{href ? <a href={href}>{title}</a> : title}</Heading>
+    {meta && <p class="pcard__meta">{meta}</p>}
+    {
+      state && (
+        <p class="pcard__state">
+          <span class:list={['led', state.led]} aria-hidden="true" />
+          {state.label}
+        </p>
       )
-    ) : (
-      <div class="shot">
-        <div class="figure">
-          <span class="big">Foto del pezzo — in arrivo</span>
-          <span class="cap">Placeholder · 4:3 · fondo neutro</span>
-        </div>
-      </div>
-    )
-  }
-  <div class="body">
-    <div class="badges">
-      <span class:list={['badge', originalDesign ? (featured ? 'accent' : 'cyan') : '']}>
-        {originalDesign ? (featured ? 'Progetto originale' : 'Originale') : 'Print Lab'}
-      </span>
-      {materials.length === 0 && <span class="badge">{categoryLabels[category]}</span>}
-      {status !== 'completato' && <span class="badge accent">{statusLabels[status]}</span>}
-      {materials.length > 0 && <span class="badge eco">{materials[0]}</span>}
-    </div>
-    <h3>
-      {pageUrl ? <a class="title-link" href={pageUrl}>{title}</a> : title}
-    </h3>
-    <p class="summary">{summary}</p>
-    <dl class="meta">
-      {pieces && <span class="pair"><dt>Pezzi</dt><dd>{pieces}</dd></span>}
-      {materials.length > 0 && <span class="pair"><dt>Materiale</dt><dd>{materials.join(', ')}</dd></span>}
-      {!pieces && materials.length === 0 && (
-        <span class="pair"><dt>Stampante</dt><dd>{printer}</dd></span>
-      )}
-    </dl>
+    }
   </div>
 </article>
-
-<style>
-  .title-link {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .title-link:hover {
-    color: var(--red);
-  }
-</style>

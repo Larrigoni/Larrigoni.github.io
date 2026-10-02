@@ -1,0 +1,23 @@
+---
+/**
+ * /progetti/ → /projects/. Prima era un `redirects` di Astro, che genera una
+ * pagina senza `lang` e in inglese (review finale E): questa fa lo stesso
+ * reindirizzamento, senza JavaScript, in italiano.
+ */
+const target = new URL('/projects/', Astro.site);
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Progetti · Lorenzo Arrigoni</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={target} />
+    <meta http-equiv="refresh" content="0;url=/projects/" />
+  </head>
+  <body>
+    <p><a href="/projects/">Vai ai progetti</a></p>
+  </body>
+</html>

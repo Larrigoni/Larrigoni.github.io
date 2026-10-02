@@ -1,0 +1,18 @@
+---
+/**
+ * Testo con la convenzione `**…**` di home.ts e dei `.md` (brief §5.5): le
+ * parti marcate vanno in `strong`, oppure, con `mark`, in uno `span` con
+ * quella classe (le parole in --accent-text del manifesto). Niente HTML grezzo.
+ */
+import { boldParts } from '../lib/text.ts';
+
+interface Props {
+  text: string;
+  /** Classe dello `span` al posto di `strong`. */
+  mark?: string;
+}
+
+const { text, mark } = Astro.props;
+---
+
+{boldParts(text).map((part, i) => (i % 2 ? mark ? <span class={mark}>{part}</span> : <strong>{part}</strong> : part))}
