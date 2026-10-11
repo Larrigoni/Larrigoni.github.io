@@ -283,6 +283,12 @@ definizione: riprende i colori del sito. I render di quella scheda restano a
 colori; tutti gli altri render con aspetti nella famiglia rosso-arancio passano
 da `prepare-renders.mjs --neutral`.
 
+**Seconda eccezione (2026-10-11, decisione di Lorenzo):** i render del rack
+homelab usano i colori di progetto decisi nel modello (struttura stampata nera,
+dettagli verdi, cavi per tipo, apparecchi con i colori reali, compreso il rosso
+del router): non più in scala di grigi. Il rosso che compare è quello di un
+apparecchio reale, non un accento dell'interfaccia.
+
 ## ADR-019 — Kit di design generato dal build (2026-09-24)
 
 **Decisione:** Claude Design riceve un bundle generato da
