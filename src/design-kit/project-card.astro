@@ -8,7 +8,9 @@ import { cardVariants, gridFill } from './fixtures-grid.ts';
 // Sul sito una card senza tile non esiste: un progetto senza immagine resta in
 // bozza (§6.8). Nel build di design le bozze compaiono, ma non sono una variante.
 const real = (await getPublishedProjects()).filter((p) => p.data.cover);
-const withFill = (n: number) => [...real, ...gridFill.slice(0, n)];
+// Una sola card reale più le card di prova: le immagini reali incorporate nel
+// bundle non si ripetono cinque volte (la card superava 1 MB).
+const withFill = (n: number) => [...real.slice(0, 1), ...gridFill.slice(0, n)];
 ---
 
 <KitLayout

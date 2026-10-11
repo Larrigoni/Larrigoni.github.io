@@ -18,3 +18,6 @@ Thumbs.db
 
 # Build secondario per il kit di Claude Design
 .design-build/
+
+# Archivio delle critiche Impeccable (locale)
+.impeccable/

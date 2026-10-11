@@ -469,6 +469,29 @@ p {
   margin-top: var(--s-75);
 }
 
+/*
+ * Figure nel corpo (src/lib/remark-figure.mjs): la cornice è la tile della
+ * galleria, la didascalia la sua; qui solo i margini, perché il resto sta in
+ * media.css. La prima figura dopo un titolo non si stacca più del testo.
+ */
+.prose .figure {
+  margin-top: var(--s-400);
+}
+
+/* :where tiene la specificità a zero: i titoli dopo una figura restano con il margine di .prose h2/h3. */
+.prose .figure + :where(:not(h2, h3)) {
+  margin-top: var(--s-400);
+}
+
+.prose .figure__caption {
+  max-width: var(--measure);
+  margin-top: var(--s-100);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
 /* Un case study è un giro del metodo: la numerazione dei sei ## è CSS puro. */
 .prose--case {
   counter-reset: giro;

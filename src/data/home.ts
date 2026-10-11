@@ -157,7 +157,7 @@ export const home: HomeContent = {
         'Render o foto, **lo dice l’etichetta** su ogni immagine. Nessun render passa per una foto.',
       closing: 'Tutti i progetti sono in /projects/. Originale vuol dire che non deriva da un modello di altri.',
       cta: {
-        ghost: { label: 'Il tuo caso somiglia a uno di questi? Scrivimi →', href: '#contatto' },
+        ghost: { label: 'Raccontami il problema →', href: '#contatto' },
       },
     },
 

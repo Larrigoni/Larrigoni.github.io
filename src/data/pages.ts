@@ -109,8 +109,8 @@ export const pages = {
 
   // Fine della pagina progetto (brief §6.19, CTA band): il solo rosso pieno della pagina.
   projectBand: {
-    claim: 'Hai un problema simile?',
-    cta: { label: 'Mandami una foto e due misure →', href: MAILTO } satisfies Cta,
+    claim: 'Hai un pezzo che non trovi in commercio?',
+    cta: { label: 'Mandami una foto con un righello →', href: MAILTO } satisfies Cta,
     back: { label: '← Tutti i progetti', href: '/projects/' } satisfies Cta,
   },
 

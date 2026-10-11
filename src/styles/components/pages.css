@@ -106,6 +106,17 @@
   mask-image: linear-gradient(to bottom, #000 70%, transparent);
 }
 
+/*
+ * Da 60rem lo stage è più alto che largo (5:6): un pezzo alto, come il rack,
+ * riempie l'altezza invece di restare un terzo della larghezza (critica del
+ * 2026-10-10, P1). L'immagine dedicata è il campo `hero` del progetto.
+ */
+@media (min-width: 60rem) {
+  .hero__stage--render {
+    aspect-ratio: 5 / 6;
+  }
+}
+
 .hero__stage img {
   width: 100%;
   height: 100%;
@@ -416,6 +427,11 @@
   display: grid;
   gap: var(--s-500);
   margin-top: var(--sect);
+}
+
+/* Il registro stampe ha due o tre righe: alla misura del testo, non a tutta larghezza. */
+.project__body .tele {
+  max-width: var(--measure);
 }
 
 /* --- /about ------------------------------------------------------------------------- */

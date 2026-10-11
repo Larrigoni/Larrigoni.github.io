@@ -3,14 +3,17 @@ title: 'Biglietto da visita Qredible con NFC'
 status: 'prototipo'
 category: 'oggetti-smart'
 date: 2026-09-30
-summary: 'Biglietto da visita stampato in 3D a quattro colori, con un tag NFC chiuso dentro: avvicinando il telefono alla Q si apre la pagina del socio.'
-headline: 'Un biglietto che si apre col telefono, stampato in un pezzo solo.'
-proof: 'Il tag NFC da 0,25 mm sta chiuso in una sede profonda 0,6 mm, sotto la Q in rilievo: la stampa si ferma allo strato 7, il tag entra e la stampa riprende. Fronte e retro sono intarsi di colore a filo. **La prima stampa ha mostrato tre difetti**, tutti corretti nel modello.'
+summary: 'Biglietto da visita stampato in 3D con quattro filamenti e un tag NFC chiuso dentro, fatto per aprire la pagina del socio avvicinando il telefono alla Q.'
+headline: 'Un biglietto fatto per aprirsi col telefono, stampato in un pezzo solo.'
+proof: 'Il tag NFC da 0,25 mm sta chiuso in una sede profonda 0,6 mm, sotto la Q in rilievo: la stampa si ferma allo strato 7, il tag entra e la stampa riprende. Il fronte è un intarsio di colore a filo; sul retro la Q e le onde sono in rilievo. **La prima stampa ha mostrato tre difetti**, tutti corretti nel modello.'
 trait: 'Tag NFC chiuso nel pezzo'
 origin: 'originale'
 context: 'personale'
 depth: 'scheda'
-featured: true
+# Fuori dalla vetrina della home dal 2026-10-11 (decisione di Lorenzo dopo la critica):
+# la foto della prima stampa ha fondo rosa-rosso e righe teal, fuori palette (brief §7.3-7.4).
+# Torna in vetrina con una foto su fondo neutro. Resta nell'indice e nella sua scheda.
+featured: false
 order: 2
 tags: ['nfc']
 cover:
@@ -25,6 +28,18 @@ gallery:
     caption: 'La prima stampa, retro: la Q in rilievo sopra il tag. Qui si vedono due dei difetti: le righe sottili della Q e la scritta illeggibile.'
     kind: 'foto'
     fit: 'cover'
+  - src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-render-retro.png'
+    alt: 'Render CAD del retro corretto, fondo nero: la Q in rilievo con righe blu e teal a 135°, più larghe della prima stampa, e nessuna scritta'
+    caption: 'Il modello corretto, retro: la Q senza la scritta, con le righe a passo 3,2 mm e larghe almeno 0,8; le tre onde restano.'
+    kind: 'render-cad'
+  - src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-render-fronte.png'
+    alt: 'Render CAD del fronte corretto: fondo blu, logo Qredible e nome in bianco, righe teal ad arco sulla destra'
+    caption: 'Il modello corretto, fronte, nel blu del marchio: il nome a 5,2 mm con la spaziatura aperta di 0,25 mm e i punti delle «i» a 0,65 mm dall’asta.'
+    kind: 'render-cad'
+  - src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-render-iso.png'
+    alt: 'Render CAD del biglietto da tre quarti: la Q del retro in rilievo, le tre onde più basse, il fronte piano sotto'
+    caption: 'Da tre quarti: la Q in rilievo di 1 mm e le tre onde da 0,4 mm sul retro; il fronte, sotto, è tutto piano.'
+    kind: 'render-cad'
 print:
   printer: 'Bambu Lab X2D'
   software: ['Autodesk Fusion']
@@ -79,6 +94,7 @@ La prima stampa ha mostrato tre difetti:
 ## La correzione
 
 Nel modello, adesso, la scritta del retro non c’è più: bastano la Q e le onde.
-Le righe della Q hanno il passo raddoppiato e sono larghe almeno 0,8 mm. Il nome
-ha la spaziatura aperta di 0,25 mm e i punti delle «i» alzati fino a 0,65 mm
-dall’asta. La seconda stampa non c’è ancora.
+Le righe della Q hanno il passo raddoppiato, 3,2 mm, e sono larghe almeno 0,8 mm.
+Il nome ha la spaziatura aperta di 0,25 mm e i punti delle «i» alzati fino a
+0,65 mm dall’asta. I tre render in galleria mostrano il modello così corretto;
+la seconda stampa non c’è ancora.

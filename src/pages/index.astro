@@ -35,7 +35,7 @@ const cases = homeCases(projects);
 
 // Il visual dell'hero è la copertina del primo progetto in vetrina (brief §6.19, Appendice C.4).
 const heroCase = cases[0];
-const visual = heroCase?.data.cover ? { shot: heroCase.data.cover, project: heroCase.data.title } : undefined;
+const visual = heroCase?.data.cover ? { shot: heroCase.data.hero ?? heroCase.data.cover, project: heroCase.data.title } : undefined;
 
 const metodo = section('metodo');
 const prosegue = section('prosegue');

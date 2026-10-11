@@ -281,3 +281,9 @@ test('un modello di terzi sta nella categoria Print Lab', () => {
   fails(base({ origin: 'terzi', category: 'su-misura', external: external() }), 'print-lab');
   assert.equal(schema.safeParse(base({ origin: 'terzi', category: 'print-lab', external: external() })).success, true);
 });
+
+test('`hero` è un\'immagine facoltativa: la copertina resta obbligatoria per le schede', () => {
+  const withHero = schema.parse(base({ depth: 'scheda', cover: shot(), hero: shot() }));
+  assert.equal(withHero.hero?.alt, 'Vista del pezzo');
+  assert.equal(schema.parse(base({ depth: 'scheda', cover: shot() })).hero, undefined);
+});

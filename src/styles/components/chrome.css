@@ -163,14 +163,16 @@
 }
 
 /*
- * Sotto 480px ogni voce occupa due terzi della lista (almeno quanto il suo
- * testo), con il testo al centro: il bordo taglia sempre la seconda voce a
- * metà, a qualunque larghezza del telefono. Con le voci larghe quanto il testo
- * il bordo cadeva fra due voci a 381-403px (iPhone da 390 e 393): nessuna voce
+ * Sotto 480px ogni voce occupa 1/2,4 della lista (almeno quanto il suo testo),
+ * con il testo al centro: due voci intere e la terza sempre tagliata dal bordo,
+ * a qualunque larghezza del telefono. Con le voci larghe quanto il testo il
+ * bordo cadeva fra due voci a 381-403px (iPhone da 390 e 393): nessuna voce
  * tagliata, e il seguito spariva.
  */
 .nav__list li {
-  flex: 0 0 calc(200% / 3);
+  /* 1/2,4 della lista: due voci intere e la terza tagliata («Pre…»). Con 2/3 il
+     taglio cadeva a metà della seconda parola, «Met», e leggeva come un refuso. */
+  flex: 0 0 calc(100% / 2.4);
   min-width: max-content;
   scroll-snap-align: start;
 }
@@ -183,6 +185,34 @@
 .nav__list:has(a:focus-visible) {
   flex-wrap: wrap;
   overflow-x: visible;
+}
+
+/*
+ * Quando la lista va a capo per il focus, la pillola diventa una scheda:
+ * marchio e CTA restano sulla prima riga e il raggio non disegna un ovale su
+ * tre righe (critica del 2026-10-10, P2). Solo dove la lista può andare a capo.
+ */
+@media (max-width: 47.49rem) {
+  .nav:has(.nav__list a:focus-visible) {
+    align-items: flex-start;
+    border-radius: var(--radius-lg);
+  }
+}
+
+
+/*
+ * Sotto 480px la lista sta fra marchio e CTA in 131px: con gap 8 e padding 8
+ * «Progetti» e «Metodo» entrano interi e «Preventivo» fa capolino dal bordo
+ * per una quindicina di pixel (misurato a 375).
+ */
+@media (max-width: 30rem) {
+  .nav {
+    gap: var(--s-75);
+  }
+
+  .nav__list a {
+    padding: 0 var(--s-75);
+  }
 }
 
 .nav__wide {

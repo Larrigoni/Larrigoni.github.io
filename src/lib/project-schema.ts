@@ -69,6 +69,8 @@ export function projectSchema(image: ImageHelper) {
       order: z.number().int().positive().optional(),
       draft: z.boolean().default(false),
       cover: shot.optional(),
+      /** Immagine dedicata all'hero della home, se la copertina non riempie lo stage (per esempio un ritaglio 3:4 di un pezzo alto). */
+      hero: shot.optional(),
       gallery: z.array(shot).default([]),
       tags: z.array(z.enum(TAGS)).default([]),
       print: z

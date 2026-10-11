@@ -31,6 +31,18 @@ order: 4
 depth: 'card'
 draft: true
 tags: ['supporti', 'organizer']
+# Render del documento Fusion «Porta telecomandi» (2026-10-10), in scala di
+# grigi: l'aspetto del modello è nella famiglia rosso-arancio (ADR-018).
+cover:
+  src: '../../assets/projects/porta-telecomandi/porta-telecomandi-top.png'
+  alt: 'Render CAD di una variante a un vano del porta telecomandi, visto di fronte: piastra con due fori svasati e finestra sul fondo del vano'
+  caption: 'Una variante a un vano, vista di fronte: la finestra da 18 mm e i due fori svasati.'
+  kind: 'render-cad'
+gallery:
+  - src: '../../assets/projects/porta-telecomandi/porta-telecomandi-iso.png'
+    alt: 'Render CAD della stessa variante da tre quarti, nella posa di stampa: sdraiata sulla piastra'
+    caption: 'Da tre quarti, nella posa di stampa: sdraiato sulla piastra, senza supporti.'
+    kind: 'render-cad'
 # Nessun blocco `print`: i default dello schema dichiarerebbero stampante e
 # software che per questo progetto non sono documentati. Materiale, grammi e
 # tempi non ci sono (nessun 3MF o G-code). Il numero di varianti sta nel testo.

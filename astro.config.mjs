@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 import { buildChecks } from './src/lib/build-checks.mjs';
+import remarkFigure from './src/lib/remark-figure.mjs';
 
 // Sito pubblicato come "user site" GitHub Pages: nessun `base` necessario.
 // Lo spazio URL dei progetti resta in inglese perché è già pubblico e
@@ -10,4 +11,6 @@ import { buildChecks } from './src/lib/build-checks.mjs';
 export default defineConfig({
   site: 'https://larrigoni.github.io',
   integrations: [sitemap({ filter: (page) => !page.endsWith('/progetti/') }), buildChecks()],
+  // `![alt](… "Render — didascalia")` da solo in un paragrafo diventa una figure con la cornice della tile.
+  markdown: { remarkPlugins: [remarkFigure] },
 });

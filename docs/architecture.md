@@ -276,6 +276,13 @@ riempimento della CTA, testo); i LED di fallimento non sono mai rossi. IBM Plex
 Sans + Mono. Token in `src/styles/tokens.css`, capitolato completo in
 `docs/brief-design-system.md`. Supera ADR-005, 008, 009.
 
+**Eccezione (2026-10-10, decisione di Lorenzo):** la regola «il rosso mai
+dentro o sul bordo di un'immagine» non vale per le immagini della scheda del
+biglietto da visita NFC personale (`biglietto-la-nfc`), che è rosso per
+definizione: riprende i colori del sito. I render di quella scheda restano a
+colori; tutti gli altri render con aspetti nella famiglia rosso-arancio passano
+da `prepare-renders.mjs --neutral`.
+
 ## ADR-019 — Kit di design generato dal build (2026-09-24)
 
 **Decisione:** Claude Design riceve un bundle generato da

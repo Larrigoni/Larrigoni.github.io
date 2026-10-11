@@ -255,7 +255,7 @@ Il rosso **pieno** compare solo su: CTA primaria, cordolo, alone del pannello co
 
 **Dose massima provata e scartata.** Il blocco con raggio 8 e senza inclinazione (troppo «app»); l'inclinazione estesa al nome accanto (torna la targa della pit lane); la banda gialla conservata (secondo colore); un contorno nero di 2px «per staccare» (è il vecchio logo); il nodo finale della timeline riempito di rosso (una bandierina travestita). La versione scelta è la più piatta che resta un marchio racing.
 
-**Divieti:** nessuno skew fuori dal gruppo del monogramma (né sul nome, né su bottoni, titoli, card); nessun contorno, ombra, lucido; nessun giallo; nessun wordmark in font display; il rosso mai dentro o sul bordo di un'immagine; mai due rossi pieni nella stessa schermata; mai un LED rosso.
+**Divieti:** nessuno skew fuori dal gruppo del monogramma (né sul nome, né su bottoni, titoli, card); nessun contorno, ombra, lucido; nessun giallo; nessun wordmark in font display; il rosso mai dentro o sul bordo di un'immagine (unica eccezione, ADR-018: i render del biglietto NFC personale, rosso per definizione); mai due rossi pieni nella stessa schermata; mai un LED rosso.
 
 ### 3.E Test anti-fumetto (su ogni card e ogni pagina)
 
