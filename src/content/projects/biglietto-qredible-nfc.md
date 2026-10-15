@@ -10,19 +10,23 @@ trait: 'Tag NFC chiuso nel pezzo'
 origin: 'originale'
 context: 'personale'
 depth: 'scheda'
-# Fuori dalla vetrina della home dal 2026-10-11 (decisione di Lorenzo dopo la critica):
-# la foto della prima stampa ha fondo rosa-rosso e righe teal, fuori palette (brief §7.3-7.4).
-# Torna in vetrina con una foto su fondo neutro. Resta nell'indice e nella sua scheda.
-featured: false
+# Di nuovo in vetrina in home dal 2026-10-15 (decisione di Lorenzo), con il render
+# del fronte corretto come copertina: la foto della prima stampa ha fondo
+# rosa-rosso e righe teal, fuori palette (brief §7.3-7.4), e resta nella galleria.
+featured: true
 order: 2
 tags: ['nfc']
 cover:
-  src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-fronte.jpg'
-  alt: 'Foto del biglietto stampato, fronte: fondo nero, logo Qredible e nome in bianco, righe teal ad arco sulla destra'
-  caption: 'La prima stampa, fronte: logo, nome e righe sono intarsi a filo, stampati a faccia in giù sul piatto.'
-  kind: 'foto'
-  fit: 'cover'
+  src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-render-fronte.png'
+  alt: 'Render CAD del fronte corretto: fondo blu, logo Qredible e nome in bianco, righe teal ad arco sulla destra'
+  caption: 'Il modello corretto, fronte, nel blu del marchio: il nome a 5,2 mm con la spaziatura aperta di 0,25 mm e i punti delle «i» a 0,65 mm dall’asta.'
+  kind: 'render-cad'
 gallery:
+  - src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-fronte.jpg'
+    alt: 'Foto del biglietto stampato, fronte: fondo nero, logo Qredible e nome in bianco, righe teal ad arco sulla destra'
+    caption: 'La prima stampa, fronte: logo, nome e righe sono intarsi a filo, stampati a faccia in giù sul piatto.'
+    kind: 'foto'
+    fit: 'cover'
   - src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-retro.jpg'
     alt: 'Foto del retro del biglietto: Q in rilievo a righe bianche e teal, tre onde nere in rilievo, scritta piccola impastata'
     caption: 'La prima stampa, retro: la Q in rilievo sopra il tag. Qui si vedono due dei difetti: le righe sottili della Q e la scritta illeggibile.'
@@ -31,10 +35,6 @@ gallery:
   - src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-render-retro.png'
     alt: 'Render CAD del retro corretto, fondo nero: la Q in rilievo con righe blu e teal a 135°, più larghe della prima stampa, e nessuna scritta'
     caption: 'Il modello corretto, retro: la Q senza la scritta, con le righe a passo 3,2 mm e larghe almeno 0,8; le tre onde restano.'
-    kind: 'render-cad'
-  - src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-render-fronte.png'
-    alt: 'Render CAD del fronte corretto: fondo blu, logo Qredible e nome in bianco, righe teal ad arco sulla destra'
-    caption: 'Il modello corretto, fronte, nel blu del marchio: il nome a 5,2 mm con la spaziatura aperta di 0,25 mm e i punti delle «i» a 0,65 mm dall’asta.'
     kind: 'render-cad'
   - src: '../../assets/projects/biglietto-qredible-nfc/biglietto-qredible-render-iso.png'
     alt: 'Render CAD del biglietto da tre quarti: la Q del retro in rilievo, le tre onde più basse, il fronte piano sotto'
@@ -82,7 +82,7 @@ fare la sfumatura, ma mai meno di quello che l’ugello riesce a stampare.
 
 ## La prima stampa
 
-La prima stampa ha mostrato tre difetti:
+Nella prima stampa il tag c’è e il telefono lo legge. I difetti sono tre:
 
 - la scritta del retro, alta 3 mm e stampata sulla faccia in alto, era
   illeggibile;

@@ -59,7 +59,8 @@ export const pages = {
   // scritto»), non la descrizione di un metodo di calcolo: il vecchio testo del
   // sito veniva da un giro di Claude Design ispirato a un software di
   // preventivazione (ADR-009), non da preventivi verificati (review finale E).
-  // Recesso: brief marketing §6.4.
+  // La riga sul recesso (art. 59) è stata tolta il 2026-10-15: Lorenzo non l'ha
+  // confermata (dati-mancanti.md, P2). Torna solo con il suo sì.
   preventivo: {
     meta: {
       title: 'Preventivo · Lorenzo Arrigoni',
@@ -86,10 +87,6 @@ export const pages = {
         { strong: 'La quantità', text: 'un pezzo singolo o una piccola serie cambiano il conto.' },
       ] satisfies Item[],
     },
-    // Art. 59 del Codice del Consumo: l'esclusione del recesso va comunicata prima dell'ordine
-    // (brief marketing §6.4, fonte F14). Da far confermare a Lorenzo (dati-mancanti.md, P2).
-    recesso:
-      'Un pezzo fatto su misura o personalizzato non rientra nel diritto di recesso (art. 59 del Codice del Consumo): te lo dico prima dell’ordine, non dopo.',
     cta: {
       primary: { label: 'Chiedi un preventivo →', href: MAILTO, note: 'Gratuito, non impegna. Nessun modulo.' },
     } satisfies { primary: Cta },

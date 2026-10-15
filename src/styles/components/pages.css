@@ -558,10 +558,6 @@
   padding-bottom: var(--sect);
 }
 
-.voci + .boundary-note {
-  margin-top: var(--s-500);
-}
-
 .project__end {
   margin-top: var(--sect);
 }
