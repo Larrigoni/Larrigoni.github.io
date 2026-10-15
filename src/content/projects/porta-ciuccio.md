@@ -1,15 +1,15 @@
 ---
-# In bozza finché Lorenzo non conferma due cose: come dichiarare che geometria e
-# script li ha generati un assistente AI, e che si pubblicano i fatti presi dalla
-# chat di progetto (prima stampa, difetto, ristampa del solo tappo).
-# `origin: 'originale'` resta solo se Lorenzo conferma che l'etichetta
-# «Originale» va bene per un modello generato da un assistente sulla sua misura:
-# altrimenti serve un valore nuovo in taxonomy.ts. Non togliere `draft` prima.
-# Stato «In prova»: del secondo tappo non c'è nessun esito documentato.
+# Pubblicato il 2026-10-15 con il sì di Lorenzo: i fatti della chat di progetto
+# si possono scrivere, e il tappo ristampato si avvita (sua dichiarazione).
+# `origin: 'originale'` per la geometria generata dall'assistente AI sulla sua
+# misura, dichiarata nel testo (taxonomy.ts, decisione del 2026-09-25).
+# In home per sua scelta: è un oggetto suo, non un articolo per l'infanzia
+# venduto come sicuro (home.ts, brief marketing §4.1). Mai affermazioni su
+# sicurezza, igiene o idoneità.
 # Niente blocco `print`: nessun file dello slicer, e il default affermerebbe
 # una stampante non documentata.
 title: 'Porta ciuccio'
-status: 'prototipo'
+status: 'completato'
 category: 'su-misura'
 date: 2026-09-20
 summary: 'Contenitore con tappo a vite, dimensionato su un ciuccio misurato. Geometria generata da un assistente AI in Fusion, filetto trapezoidale a 3 principi.'
@@ -21,7 +21,6 @@ context: 'studio'
 depth: 'scheda'
 featured: true
 order: 5
-draft: true
 tags: ['filetti', 'contenitori', 'multi-pezzo']
 cover:
   src: '../../assets/projects/porta-ciuccio/porta-ciuccio-iso.png'
@@ -41,6 +40,9 @@ printLog:
   - attempt: 1
     outcome: 'fallita'
     note: 'Il tappo non si imbocca: cava ferma sopra il bordo'
+  - attempt: 2
+    outcome: 'validata'
+    note: 'Ristampato solo il tappo: si avvita sul corpo'
 ---
 
 ## Il problema
@@ -127,5 +129,4 @@ che era già stampato. Il gioco assiale tocca solo il tappo ed è passato da 0,4
 0,45 mm, come margine. Avevo già stampato tutto, quindi ho chiesto di rifare
 solo il tappo: nel modello il corpo è invariato e quello stampato resta com’era.
 
-Il tappo modificato non ha ancora un esito di stampa documentato. Finché non c’è,
-questo progetto resta in prova.
+Ho ristampato il tappo modificato e si avvita sul corpo stampato la prima volta.

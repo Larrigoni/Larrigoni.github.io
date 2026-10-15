@@ -141,7 +141,7 @@ Non servono testimonianze: servono **fatti verificabili e dettagli che un hobbis
 |---|---|---|---|
 | **Fallimenti documentati** | Scolatoio: 3 stampe, 2 fallite | «La prima versione ha ceduto sul bordo: il fissaggio scaricava tutto il peso su 4 mm di parete. Nella seconda ho allargato l'appoggio.» | Non basta dire «ho sbagliato»: serve **la causa e la correzione** |
 | **Dati di stampa reali** | Grammi, tempo, materiale, parametri | `PETG · 2 pezzi · ugello 0,4 · layer 0,2 · 124 g` | Solo valori letti dallo slicer o dalla bilancia. Mai stimati |
-| **Vincoli dichiarati** | Le categorie escluse | «Non progetto parti strutturali portanti, componenti di sicurezza, oggetti a contatto con alte temperature o gas, né articoli per l'infanzia.» | Non presentarlo come scusa: è una scelta professionale |
+| **Vincoli dichiarati** | Le categorie escluse | «Non progetto parti strutturali portanti, componenti di sicurezza, oggetti a contatto con alte temperature o gas, né articoli per l'infanzia venduti come sicuri.» | Non presentarlo come scusa: è una scelta professionale |
 | **Competenza tecnica specifica** | Porta ciuccio, filetto trapezoidale a 3 principi | «Filetto trapezoidale a 3 principi: chiude in un terzo di giro e non si sfila con la mano bagnata.» | Lessico corretto o niente |
 | **Ripetibilità** | Porta telecomandi, 4 varianti | «Stesso progetto, 4 varianti su misura per stanze diverse: cambiano le quote, non il disegno.» | Non spacciare 4 varianti per 4 progetti |
 | **Tracciabilità delle fonti** | Print Lab | Ogni stampa da modello altrui: **autore + link alla fonte + licenza** | Verifica la licenza: una `NonCommercial` non copre un lavoro retribuito `[F10]` |
