@@ -1,0 +1,2 @@
+# vCard 3.0 (RFC 2426) vuole righe chiuse da CRLF: anche il checkout di GitHub Actions le scrive cosi.
+*.vcf text eol=crlf

@@ -25,10 +25,9 @@
   pointer-events: none;
 }
 
-/* Uso 4: chiusura di /card/lorenzo, a tutta larghezza e staccata dal pannello. */
+/* Uso 4: chiusura di /card/lorenzo, a tutta larghezza; lo stacco dalle azioni è il padding di main. */
 .kerb--end {
   width: 100%;
-  margin-top: var(--s-600);
 }
 
 /* Uso 2: il bordo del footer. */

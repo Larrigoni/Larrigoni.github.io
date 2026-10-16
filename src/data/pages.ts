@@ -122,16 +122,29 @@ export const pages = {
     projects: { label: 'Tutti i progetti →', href: '/projects/' } satisfies Cta,
   },
 
-  // /card/lorenzo (brief §6.19): la pagina che apre il tag NFC.
+  // /card/lorenzo (brief §6.19): la pagina che apre il tag NFC. Disegno scelto da
+  // Lorenzo il 2026-10-16 in Claude Design (direzione «La frase»): la frase su cosa
+  // fa è il titolo, il nome fa da firma. La frase è la prima del lead della home;
+  // il cellulare l'ha dato Lorenzo il 2026-10-16 per questa pagina e per il .vcf.
+  // tests/card.test.ts verifica che pagina, .vcf e home dicano la stessa cosa.
   card: {
     meta: {
       title: 'Lorenzo Arrigoni · Biglietto',
       description: 'Contatti di Lorenzo Arrigoni: progettazione 3D su misura per privati e piccole aziende.',
     },
+    eyebrow: 'Progettazione 3D',
+    claim: {
+      text: 'Progetto in CAD e stampo in 3D oggetti su misura per privati e piccole aziende.',
+      /** La parte della frase in rosso (testo, quindi --accent-text). */
+      accent: 'su misura',
+    },
     name: 'Lorenzo Arrigoni',
+    /** Il mestiere del .vcf (TITLE): in pagina lo dicono l'occhiello e la frase. */
     role: 'Progettazione 3D · Su misura',
+    phone: { label: '+39 347 679 2561', href: 'tel:+393476792561' } satisfies Cta,
+    email: home.footer.email,
     save: { label: 'Salva il contatto', href: '/lorenzo-arrigoni.vcf' } satisfies Cta,
     write: { label: 'Scrivimi', href: `mailto:${home.footer.email}` } satisfies Cta,
-    portfolio: { label: 'Guarda il portfolio', href: '/' } satisfies Cta,
+    portfolio: { label: 'Il portfolio', href: '/' } satisfies Cta,
   },
 }

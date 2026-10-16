@@ -510,45 +510,147 @@
 
 /* --- /card/lorenzo (§6.19) ------------------------------------------------------------ */
 
+/*
+ * Disegno «La frase» (Claude Design, 2026-10-16). Niente pannello sospeso nel
+ * vuoto: una colonna alta quanto lo schermo, in tre fasce (testata, frase e
+ * firma, azioni) con le azioni in fondo, sotto il pollice. Il fondo scende da
+ * --pit a --bg come l'hero della home.
+ */
 .vcard-page {
   display: grid;
   min-height: 100svh;
   grid-template-rows: 1fr auto;
+  background: linear-gradient(180deg, var(--pit) 0%, var(--bg) 55%);
 }
 
 .vcard-page main {
   display: grid;
-  place-items: center;
-  padding: var(--s-700) var(--gutter) 0;
+  justify-items: center;
+  padding: var(--s-400) var(--gutter) var(--s-300);
 }
 
 .vcard {
   display: grid;
-  gap: var(--s-200);
-  justify-items: center;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--s-500);
   width: 100%;
-  max-width: 24rem;
-  padding: var(--s-400) var(--s-300);
-  border: var(--bd-strong);
-  border-radius: var(--radius-lg);
-  background: var(--surface-2);
-  text-align: center;
+  max-width: 26rem;
+}
+
+.vcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-200);
+}
+
+.vcard__main {
+  display: grid;
+  align-content: center;
+  gap: var(--s-400);
+}
+
+.vcard__claim {
+  font-size: 2.125rem;
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+/* Testo rosso: il gradino per il testo, mai --accent (brief §2). */
+.vcard__accent {
+  color: var(--accent-text);
+}
+
+/* La firma: un filetto rosso da 3px, come lo spessore del cordolo. */
+.vcard__sign {
+  display: grid;
+  justify-items: start;
+  padding-left: var(--s-200);
+  border-left: var(--kerb-h) solid var(--accent);
 }
 
 .vcard__name {
-  font-size: var(--fs-h3);
-  line-height: 1.33;
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Il numero si tocca per chiamare: bersaglio alto 44px, come i pulsanti. */
+.vcard__tel {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Solo dove c'è un puntatore: su iPhone, annullata la chiamata, :hover resterebbe acceso. */
+@media (hover: hover) {
+  .vcard__tel:hover {
+    color: var(--accent-text);
+  }
+}
+
+.vcard__mail {
+  font-family: var(--font-mono);
+  font-size: var(--fs-note);
+  letter-spacing: 0.04em;
+  color: var(--faint);
 }
 
 .vcard__actions {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--s-100);
-  width: 100%;
-  margin-top: var(--s-200);
 }
 
+/* Etichette come nel disegno: 16px i ghost, 17px la primaria (bianco su --accent-deep 5,35:1). */
 .vcard__actions .btn {
-  width: 100%;
+  min-height: 52px;
+  font-size: var(--fs-body);
+}
+
+.vcard__actions .btn.primary {
+  grid-column: 1 / -1;
+  font-size: 1.0625rem;
+}
+
+/*
+ * Schermi bassi (Safari su iPhone SE con le barre, Android piccoli): la frase
+ * scende di un gradino, poi le tre fasce si stringono, perché le azioni
+ * restino sopra la piega.
+ */
+@media (max-height: 44rem) {
+  .vcard__claim {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-height: 40rem) {
+  .vcard-page main {
+    padding-top: var(--s-300);
+  }
+
+  .vcard,
+  .vcard__main {
+    gap: var(--s-300);
+  }
+
+  /* 40: una delle quattro misure d'uso del monogramma (Logo.astro). */
+  .vcard__top .logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .vcard__claim {
+    font-size: 1.5rem;
+  }
 }
 
 /* --- Raccordi fra blocchi delle pagine interne ------------------------------------- */
