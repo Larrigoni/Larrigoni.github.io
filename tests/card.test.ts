@@ -10,8 +10,9 @@ import { readFileSync } from 'node:fs';
 
 import { home } from '../src/data/home.ts';
 import { pages } from '../src/data/pages.ts';
+import { androidContactIntent } from '../src/lib/contact-intent.ts';
 
-const { claim, name, phone, role, save, write } = pages.card;
+const { claim, name, phone, role, save, saveAndroid, write } = pages.card;
 // Il .vcf è quello a cui punta «Salva il contatto», servito da public/.
 const vcf = readFileSync(new URL(`../public${save.href}`, import.meta.url), 'utf8');
 const digits = (s: string) => s.replace(/\D/g, '');
@@ -37,4 +38,27 @@ test('la frase del biglietto è la prima frase del lead della home, senza i segn
 
 test('la parte rossa compare una volta sola nella frase: la pagina la taglia in due', () => {
   assert.equal(claim.text.split(claim.accent).length, 2);
+});
+
+test("il link «intent» di Android apre Contatti su «Nuovo contatto», con i valori codificati", () => {
+  assert.equal(
+    androidContactIntent({ name: 'A B', phone: '+391', email: 'a@b.it', title: 'X · Y', fallback: 'https://e.it/a.vcf' }),
+    'intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/raw_contact;' +
+      'S.name=A%20B;S.phone=%2B391;i.phone_type=2;S.email=a%40b.it;S.job_title=X%20%C2%B7%20Y;' +
+      'S.browser_fallback_url=https%3A%2F%2Fe.it%2Fa.vcf;end',
+  );
+});
+
+test('su Android «Salva il contatto» porta gli stessi dati del .vcf, e ripiega sullo stesso .vcf', () => {
+  assert.equal(saveAndroid.label, save.label);
+  assert.equal(
+    saveAndroid.href,
+    androidContactIntent({
+      name,
+      phone: phone.href.slice('tel:'.length),
+      email: write.href.slice('mailto:'.length),
+      title: role,
+      fallback: `https://larrigoni.github.io${save.href}`,
+    }),
+  );
 });

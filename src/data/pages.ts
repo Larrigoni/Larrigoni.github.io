@@ -11,6 +11,7 @@
 
 import type { Cta, Item, Title } from './home.ts'
 import { home } from './home.ts'
+import { androidContactIntent } from '../lib/contact-intent.ts'
 
 export interface PageHead { eyebrow: string; title: Title; lead?: string }
 
@@ -19,6 +20,20 @@ if (!contatto?.cta?.primary) throw new Error('home.ts: manca la CTA del contatto
 
 /** Il mailto precompilato della home: tutte le CTA piene delle pagine interne aprono quello. */
 const MAILTO = contatto.cta.primary.href
+
+/**
+ * Il contatto del biglietto (/card/lorenzo): un solo posto per i dati che la
+ * pagina, il .vcf (tests/card.test.ts) e il link Android devono ripetere uguali.
+ * L'indirizzo base è il `site` di astro.config.mjs: il ripiego dell'intent
+ * dev'essere assoluto.
+ */
+const CARD = {
+  name: 'Lorenzo Arrigoni',
+  role: 'Progettazione 3D · Su misura',
+  phone: '+393476792561',
+  vcf: '/lorenzo-arrigoni.vcf',
+  site: 'https://larrigoni.github.io',
+}
 
 /** I settori della home: /preventivo ne usa i primi tre, con gli stessi testi. */
 const prosegue = home.sections.find((s) => s.id === 'prosegue')?.items ?? []
@@ -138,12 +153,24 @@ export const pages = {
       /** La parte della frase in rosso (testo, quindi --accent-text). */
       accent: 'su misura',
     },
-    name: 'Lorenzo Arrigoni',
+    name: CARD.name,
     /** Il mestiere del .vcf (TITLE): in pagina lo dicono l'occhiello e la frase. */
-    role: 'Progettazione 3D · Su misura',
-    phone: { label: '+39 347 679 2561', href: 'tel:+393476792561' } satisfies Cta,
+    role: CARD.role,
+    phone: { label: '+39 347 679 2561', href: `tel:${CARD.phone}` } satisfies Cta,
     email: home.footer.email,
-    save: { label: 'Salva il contatto', href: '/lorenzo-arrigoni.vcf' } satisfies Cta,
+    save: { label: 'Salva il contatto', href: CARD.vcf } satisfies Cta,
+    // Su Android il .vcf si scarica e basta: lì «Salva il contatto» apre Contatti
+    // già compilato (src/lib/contact-intent.ts). La pagina mostra l'uno o l'altro.
+    saveAndroid: {
+      label: 'Salva il contatto',
+      href: androidContactIntent({
+        name: CARD.name,
+        phone: CARD.phone,
+        email: home.footer.email,
+        title: CARD.role,
+        fallback: `${CARD.site}${CARD.vcf}`,
+      }),
+    } satisfies Cta,
     write: { label: 'Scrivimi', href: `mailto:${home.footer.email}` } satisfies Cta,
     portfolio: { label: 'Il portfolio', href: '/' } satisfies Cta,
   },

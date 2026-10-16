@@ -7,16 +7,20 @@
  * «Salva il contatto» piena (il .vcf), «Scrivimi» e «Il portfolio» ghost.
  * Niente pannello sospeso: la colonna occupa tutta l'altezza dello schermo.
  *
- * Il link al .vcf NON ha `download`: su iPhone Safari l'attributo manda il file
- * nei Download invece di aprire la scheda «Aggiungi contatto»; GitHub Pages lo
- * serve come text/x-vcard, che Android e i computer scaricano comunque.
+ * «Salva il contatto» esiste in due versioni e la pagina ne mostra una sola
+ * (pages.css, senza JavaScript):
+ * - il .vcf, su iPhone e sui computer. Senza `download`: su iPhone Safari
+ *   l'attributo manda il file nei Download invece di aprire la scheda
+ *   «Aggiungi contatto»;
+ * - su Android, dove un .vcf si scarica sempre, il link «intent» che apre
+ *   Contatti già compilato (src/lib/contact-intent.ts), con il .vcf come ripiego.
  */
 import CardLayout from '../../layouts/CardLayout.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import Logo from '../../components/Logo.astro';
 import { pages } from '../../data/pages.ts';
 
-const { meta, eyebrow, claim, name, phone, email, save, write, portfolio } = pages.card;
+const { meta, eyebrow, claim, name, phone, email, save, saveAndroid, write, portfolio } = pages.card;
 const [before, after] = claim.text.split(claim.accent);
 ---
 
@@ -35,7 +39,8 @@ const [before, after] = claim.text.split(claim.accent);
       </div>
     </div>
     <div class="vcard__actions">
-      <a class="btn primary" href={save.href}>{save.label}</a>
+      <a class="btn primary vcard__save vcard__save--vcf" href={save.href}>{save.label}</a>
+      <a class="btn primary vcard__save vcard__save--android" href={saveAndroid.href}>{saveAndroid.label}</a>
       <a class="btn" href={write.href}>{write.label}</a>
       <a class="btn" href={portfolio.href}>{portfolio.label}</a>
     </div>

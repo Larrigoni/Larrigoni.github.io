@@ -622,6 +622,27 @@
 }
 
 /*
+ * «Salva il contatto»: il .vcf ovunque, il link «intent» su Android (lorenzo.astro).
+ * Senza JavaScript, Android è «schermo touch che non è iOS»: -webkit-touch-callout
+ * esiste solo nel WebKit di iPhone e iPad (anche Chrome su iOS è WebKit).
+ */
+.vcard__save--android {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  @supports not (-webkit-touch-callout: none) {
+    .vcard__save--vcf {
+      display: none;
+    }
+
+    .vcard__save--android {
+      display: inline-flex;
+    }
+  }
+}
+
+/*
  * Schermi bassi (Safari su iPhone SE con le barre, Android piccoli): la frase
  * scende di un gradino, poi le tre fasce si stringono, perché le azioni
  * restino sopra la piega.
